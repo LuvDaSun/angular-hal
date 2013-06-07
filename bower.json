@@ -1,0 +1,13 @@
+{
+  "name": "angular-hal",
+  "version": "0.0.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components"
+  ],
+  "dependencies": {
+    "url-template": "~2"
+  },
+  "main": "hal.js"
+}
