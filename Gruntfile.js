@@ -7,7 +7,7 @@ module.exports = function (grunt) {
 	cfg.connect = {
 		src: {
 			options: {
-				port: 9200
+				port: 9210
 				, base: 'src/'
 			}
 		}
