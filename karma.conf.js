@@ -34,7 +34,7 @@ port = 9876;
 
 
 // cli runner port
-runnerPort = 9210;
+runnerPort = 9100;
 
 
 // enable / disable colors in the output (reporters and logs)
@@ -67,4 +67,4 @@ captureTimeout = 60000;
 
 // Continuous Integration mode
 // if true, it capture browsers, run tests and exit
-singleRun = false;
+singleRun = true;

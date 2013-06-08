@@ -8,14 +8,10 @@
   "main": "",
   "devDependencies": {
     "bower": "~0.9",
-    "karma": "~0.8",
-    "grunt": "~0.4",
-    "grunt-cli": "~0.1",
-    "grunt-karma": "~0.4",
-    "grunt-contrib-connect": "~0.2"
+    "karma": "~0.8"
   },
   "scripts": {
-    "test": "grunt test",
+    "test": "karma start",
     "install": "bower install"
   }
 }
