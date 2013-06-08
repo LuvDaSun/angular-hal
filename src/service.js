@@ -16,7 +16,8 @@ angular
 		
 		function createResource(url, options, data){
 
-			Object.keys(this._embedded)
+
+			this._embedded && Object.keys(this._embedded)
 			.forEach(function(rel){
 				var embedded = this._embedded[rel];
 				
