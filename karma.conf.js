@@ -34,7 +34,7 @@ port = 9876;
 
 
 // cli runner port
-runnerPort = 9100;
+runnerPort = 9200;
 
 
 // enable / disable colors in the output (reporters and logs)
