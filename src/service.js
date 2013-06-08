@@ -1,6 +1,6 @@
 angular
-.module('ebu.hal')
-.service('hal', [
+.module('ebuHal', [])
+.service('halClient', [
 	'$http'
 	, '$q'
 	, function(
@@ -15,60 +15,62 @@ angular
 		// service.del = del;
 		
 		function createResource(url, options, data){
+
+			Object.keys(this._embedded)
+			.forEach(function(rel){
+				var embedded = this._embedded[rel];
+				
+				this._links[rel] = (
+					Array.isArray(embedded)
+					? embedded.map(function(embedded){
+						embedded._links.self
+					})
+					: embedded._links.self
+				);
+
+			})
+			delete this._embedded;
+
+
+
 			return angular.extend({
 				get: function(rel, params){
-					var link, embedded;
-
-					if(this._embedded && rel in this._embedded) {
-						embedded = this._embedded[rel];
+					var href = relationHref(this, rel, params);
 						
-						return (
-							Array.isArray(embedded)
-							? embedded.map(function(embedded){
-								return $q.when(createResource(resolveUrl(url, embedded._links.self), options, embedded));
-							})
-							: $q.when(createResource(resolveUrl(url, embedded._links.self), options, embedded))
-						);
-					}
-
-					if(this._links && rel in this._links) {
-						link = this._links[rel];
-
-						return (
-							Array.isArray(link)
-							? link.map(function(link){
-								return get(resolveUrl(url, link), options, params)
-							})
-							: get(resolveUrl(url, link), options, params)
-						);
-					}
-
-					return null;
+					return get(resolveUrl(url, href), options, data);
 				}//get
 
-				, post: function(data){
-					return post(url, options, data);
+				, post: function(rel, data){
+					var href = relationHref(this, rel, null);
+						
+					return post(resolveUrl(url, href), options, data);
+
 				}//post
 
-				, put: function(){
-					return put(url, options, this);
+				, put: function(rel, data){
+					var href = relationHref(this, rel, null);
+						
+					return put(resolveUrl(url, href), options, data);
 				}//put
 
-				, patch: function(){
-					return patch(url, options, this);
+				, patch: function(rel, data){
+					var href = relationHref(this, rel, null);
+
+					return patch(resolveUrl(url, href), options, data);
 				}//patch
 
-				, del: function(){
-					return del(url, options);
+				, del: function(rel){
+					var href = relationHref(this, rel, null);
+
+					return del(resolveUrl(url, href), options);
 				}//del
 
 			}, data)
 			
 		}//createResource
 
-		function get(templatedUrl, options, params){
-			var url = urltemplate.parse(templatedUrl).expand(params);
-			
+		function get(url, options){
+
 			return (
 				$http(angular.extend({
 					method: 'GET'
@@ -174,11 +176,6 @@ angular
 
 
 		function resolveUrl(base, url){
-			if(url.href) {
-				return resolveUrl(base, url.href);
-				//return url;
-			}
-
 			var re = /^(?:\w+\:)?.*?\/\/.*?[^\/]*/;
 			var match;
 
@@ -193,6 +190,23 @@ angular
 			throw 'bad url';
 		}//resolveUrl
 
+
+		function relationHref(resource, relation, params){
+			var link, href;
+
+			if(!(this._links && rel in this._links)) throw 'relation not found';
+
+			link = this._links[rel];
+
+			if(Array.isArray(link)) throw 'this method cannot be performed on an array';
+
+			if(link.href) href = link.href;
+			else href = link;
+
+			if(link.template) href = urltemplate.parse(href).expand(params);
+
+			return href;
+		}//relationHref
 
 		return service;
 	}
