@@ -15,6 +15,7 @@
     "grunt-contrib-connect": "~0.2"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt test",
+    "install": "bower install"
   }
 }
