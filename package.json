@@ -2,14 +2,19 @@
   "name": "angular-hal",
   "version": "0.0.0",
   "description": "ERROR: No README.md file found!",
-  "main": "hal.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": "",
   "author": "",
   "license": "BSD",
+  "main": "",
   "devDependencies": {
-    "bower": "~0.9.2"
+    "bower": "~0.9",
+    "karma": "~0.8",
+    "grunt": "~0.4",
+    "grunt-cli": "~0.1",
+    "grunt-karma": "~0.4",
+    "grunt-contrib-connect": "~0.2"
+  },
+  "scripts": {
+    "test": "grunt test"
   }
 }

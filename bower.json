@@ -6,8 +6,13 @@
     "node_modules",
     "components"
   ],
+  "main": "src/service.js",
   "dependencies": {
-    "url-template": "~2"
+    "url-template": "~2.0",
+    "angular": "~1.0"
   },
-  "main": "hal.js"
+  "devDependencies": {
+    "jasmine": "~1.3",
+    "angular-mocks": "~1.0"
+  }
 }
