@@ -48,20 +48,23 @@ describe('simple', function(){
 		$httpBackend.flush();
 	});
 
-	it('should get link by template', function(){
+	it('should get link by templated url', function(){
 		$httpBackend
-		.expect('GET', '/')
+		.expect('GET', 'http://example.com/')
 		.respond({
 			"root": true
 			, "_links": {
 				"self": "/"
-				, "item": "/item{/id}"
+				, "item": {
+					templated: true
+					, href: "/item{/id}"
+				}
 			}
 		})
 		;
 
 		$httpBackend
-		.expect('GET', '/item/1')
+		.expect('GET', 'http://example.com/item/1')
 		.respond({
 			"id": 1
 			, "_links": {
@@ -70,7 +73,7 @@ describe('simple', function(){
 		})
 		;
 
-		var resource = halClient.$get('/').then(function(resource){
+		var resource = halClient.$get('http://example.com/').then(function(resource){
 			expect(resource).toEqual({"root": true});
 
 			resource.$get('item', {id: 1}).then(function(resource){

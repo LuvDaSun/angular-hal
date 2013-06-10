@@ -20,12 +20,10 @@ angular
 			var links = {};
 			var cache = {};
 
-			href = getSelfLink(href, data).href;
-
 			Object.defineProperty(this, '$href', {
 				configurable: false
 				, enumerable: false
-				, value: href
+				, value: getSelfLink(href, data).href
 			});
 
 			Object.defineProperty(this, '$flush', {
@@ -56,12 +54,14 @@ angular
 
 					if(Array.isArray(link)) throw 'method not allowed on arrays';
 
-					var href = link.templated
+					var linkHref = link.templated
 					? urltemplate.parse(link.href).expand(params)
 					: link.href
 					;
+					linkHref = URI.resolve(href, linkHref);
+					linkHref = URI.normalize(linkHref);
 
-					return service_post(href, options, data);
+					return service_post(linkHref, options, data);
 				}//resource_post
 			});
 			Object.defineProperty(this, '$put', {
@@ -72,12 +72,14 @@ angular
 
 					if(Array.isArray(link)) throw 'method not allowed on arrays';
 
-					var href = link.templated
+					var linkHref = link.templated
 					? urltemplate.parse(link.href).expand(params)
 					: link.href
 					;
+					linkHref = URI.resolve(href, linkHref);
+					linkHref = URI.normalize(linkHref);
 
-					return service_put(href, options, data);
+					return service_put(linkHref, options, data);
 				}//resource_put
 			});
 			Object.defineProperty(this, '$patch', {
@@ -88,12 +90,14 @@ angular
 
 					if(Array.isArray(link)) throw 'method not allowed on arrays';
 
-					var href = link.templated
+					var linkHref = link.templated
 					? urltemplate.parse(link.href).expand(params)
 					: link.href
 					;
+					linkHref = URI.resolve(href, linkHref);
+					linkHref = URI.normalize(linkHref);
 
-					return service_patch(href, options, data);
+					return service_patch(linkHref, options, data);
 				}//resource_patch
 			});
 			Object.defineProperty(this, '$del', {
@@ -177,14 +181,17 @@ angular
 					return getLink(link);
 				}));
 			
-				var href = link.templated
+				var linkHref = link.templated
 				? urltemplate.parse(link.href).expand(params)
 				: link.href
 				;
 
-				if(href in cache) return cache[href];
+				linkHref = URI.resolve(href, linkHref);
+				linkHref = URI.normalize(linkHref);
+
+				if(linkHref in cache) return cache[linkHref];
 				
-				return cache[href] = service_get(href, options);
+				return cache[linkHref] = service_get(linkHref, options);
 			}//getLink
 
 			function flushLink(link, params) {
@@ -192,12 +199,15 @@ angular
 					return flushLink(link, params);
 				});
 
-				var href = link.templated
+				var linkHref = link.templated
 				? urltemplate.parse(link.href).expand(params)
 				: link.href
 				;
 
-				if(href in cache) delete cache[href];
+				linkHref = URI.resolve(href, linkHref);
+				linkHref = URI.normalize(linkHref);
+
+				if(linkHref in cache) delete cache[linkHref];
 			}//flushLink
 
 		}//Resource
@@ -212,8 +222,6 @@ angular
 
 			var resource = new Resource(href, options, data);
 
-			if('cache' in options) options.cache[resource.$href] = $q.when(resource);
-
 			return resource;
 
 		}//createResource
@@ -226,13 +234,13 @@ angular
 
 			if(link) {
 				if(typeof link === 'string') link = { href: link };
-				link.href = URI.resolve(baseHref, link.href);
+				//link.href = URI.resolve(baseHref, link.href);
 			}
 			else {
 				link = { href: baseHref };			
 			}
 
-			link.href = URI.normalize(link.href);
+			//link.href = URI.normalize(link.href);
 
 			return link;
 		}//normalizeLink
