@@ -19,6 +19,13 @@ angular
 				return createResource(url, options, data, cache);
 			});
 
+			Object.defineProperty(data, '$href', {
+				configurable: false
+				, enumerable: false
+				, value: URI.resolve(url, getSelfLink(url, data).href)
+			});
+
+
 			var links = {};
 
 			if(data._links) {
@@ -38,10 +45,11 @@ angular
 				.forEach(function(rel){
 					var embedded = data._embedded[rel];
 					var link = Array.isArray(embedded)
-					? embedded.map(getSelfLink)
-					: getSelfLink(embedded)
+					? embedded.map(function(embedded){
+						return getSelfLink(url, embedded);
+					})
+					: getSelfLink(url, embedded)
 					;
-					link = normalizeLink(url, link);
 					links[rel] = link;
 				});
 			}
@@ -60,22 +68,12 @@ angular
 			function cacheResource(resource){
 				if(Array.isArray(resource)) return resource.map(cacheResource);
 
-				var href = resource.$href();
+				var href = resource.$href;
 
 				cache[href] = $q.when(resource);
 			}
 
 
-			delete data._links;
-			delete data._embedded;
-
-			Object.defineProperty(data, '$href', {
-				configurable: false
-				, enumerable: false
-				, value: function resource_href(){
-					return URI.resolve(url, links.self.href);
-				}//resource_href
-			});
 			Object.defineProperty(data, '$get', {
 				configurable: false
 				, enumerable: false
@@ -131,6 +129,8 @@ angular
 				}//resource_del
 			});
 
+			delete data._links;
+			delete data._embedded;
 
 			return data;
 
@@ -257,10 +257,9 @@ angular
 
 			if(link) {
 				if(typeof link === 'string') link = { href: link };
-
 				link.href = URI.resolve(baseHref, link.href);
 			}
-			else{
+			else {
 				link = { href: baseHref };			
 			}
 
@@ -270,8 +269,8 @@ angular
 		}//normalizeLink
 
 
-		function getSelfLink(resource){
-			return resource && resource._links && resource._links.self;
+		function getSelfLink(baseHref, resource){
+			return normalizeLink(baseHref, resource && resource._links && resource._links.self);
 		}//getSelfLink
 
 
