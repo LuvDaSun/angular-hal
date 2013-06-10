@@ -313,7 +313,7 @@ describe('halbuilder test resources', function(){
 			expect(resource).toEqual({
 			});
 
-			resource.get('ns:user').then(function(resource){
+			resource.$get('ns:user').then(function(resource){
 				expect(resource).toEqual({
 					"age" : 32
 					, "expired" : false
@@ -383,7 +383,7 @@ describe('halbuilder test resources', function(){
 			expect(resource).toEqual({
 			});
 
-			resource.get('ns:user').then(function(resource){
+			resource.$get('ns:user').then(function(resource){
 				expect(resource).toEqual({
 					"age" : 32
 					, "expired" : false
@@ -467,7 +467,7 @@ describe('halbuilder test resources', function(){
 			expect(resource).toEqual({
 			});
 		
-			resource.get('ns:user').then(function(resource){
+			resource.$get('ns:user').then(function(resource){
 				expect(resource[0]).toEqual({
 					"age" : 32
 					, "expired" : false
@@ -571,7 +571,7 @@ describe('halbuilder test resources', function(){
 			expect(resource).toEqual({
 			});
 
-			resource.get('ns:user').then(function(resource){
+			resource.$get('ns:user').then(function(resource){
 				expect(resource[0]).toEqual({
 					"age" : 32
 					, "expired" : false
@@ -589,7 +589,7 @@ describe('halbuilder test resources', function(){
 				});
 
 
-				resource[0].get('phone:cell').then(function(resource){
+				resource[0].$get('phone:cell').then(function(resource){
 					expect(resource).toEqual({
 						"id" : 1
 						, "number" : "555-666-7890"

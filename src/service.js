@@ -66,7 +66,7 @@ angular
 			function cacheResource(resource){
 				if(Array.isArray(resource)) return resource.map(cacheResource);
 
-				var href = resource.href();
+				var href = resource.$href();
 
 				cache[href] = $q.when(resource);
 			}
@@ -75,32 +75,32 @@ angular
 			delete data._links;
 			delete data._embedded;
 
-			Object.defineProperty(data, 'href', {
+			Object.defineProperty(data, '$href', {
 				configurable: false
 				, enumerable: false
 				, value: resource_href
 			});
-			Object.defineProperty(data, 'get', {
+			Object.defineProperty(data, '$get', {
 				configurable: false
 				, enumerable: false
 				, value: resource_get
 			});
-			Object.defineProperty(data, 'post', {
+			Object.defineProperty(data, '$post', {
 				configurable: false
 				, enumerable: false
 				, value: resource_post
 			});
-			Object.defineProperty(data, 'put', {
+			Object.defineProperty(data, '$put', {
 				configurable: false
 				, enumerable: false
 				, value: resource_put
 			});
-			Object.defineProperty(data, 'patch', {
+			Object.defineProperty(data, '$patch', {
 				configurable: false
 				, enumerable: false
 				, value: resource_patch
 			});
-			Object.defineProperty(data, 'del', {
+			Object.defineProperty(data, '$del', {
 				configurable: false
 				, enumerable: false
 				, value: resource_del
