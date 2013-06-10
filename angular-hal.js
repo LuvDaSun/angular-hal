@@ -201,7 +201,7 @@ angular
 			var resource = (
 				$http({
 					method: method
-					, url: href
+					, url: options.transformUrl ? options.transformUrl(href) : href
 					, headers: {
 						'Authorization': options.authorization
 						, 'Content-Type': 'application/json'

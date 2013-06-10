@@ -135,4 +135,52 @@ describe('simple', function(){
 	});
 
 
+	it('should transform url', function(){
+		$httpBackend
+		.expect('GET', 'http://example.com/api/')
+		.respond({
+			"root": true
+			, "_links": {
+				"self": "/"
+				, "item": {
+					templated: true
+					, href: "/item{/id}"
+				}
+			}
+		})
+		;
+
+		$httpBackend
+		.expect('GET', 'http://example.com/api/item/1')
+		.respond({
+			"id": 1
+			, "_links": {
+				"self": "/item/1"
+			}
+		})
+		;
+
+		var resource = halClient.$get('https://example.com/', {transformUrl: transformUrl}).then(function(resource){
+			expect(resource).toEqual({"root": true});
+
+			resource.$get('item', {id: 1}).then(function(resource){
+				expect(resource).toEqual({"id": 1});
+			});
+		});
+
+		$httpBackend.flush();
+
+		function transformUrl(url){
+			var from = 'https://example.com/';
+			var to = 'http://example.com/api/';
+			
+			if(url.substring(0, from.length) === from){
+				return to + url.substring(from.length);
+			}
+
+
+			return url;
+		}
+	});
+
 });
