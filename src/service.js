@@ -14,67 +14,15 @@ angular
 		// service.patch = patch;
 		// service.del = del;
 		
-		function createResource(url, options, data, cache){
-			if(Array.isArray(data)) return data.map(function(data){
-				return createResource(url, options, data, cache);
-			});
+		function Resource(href, options, data, cache){
 
-			Object.defineProperty(data, '$href', {
+			Object.defineProperty(this, '$href', {
 				configurable: false
 				, enumerable: false
-				, value: URI.resolve(url, getSelfLink(url, data).href)
+				, value: getSelfLink(href, data).href
 			});
 
-
-			var links = {};
-
-			if(data._links) {
-				Object
-				.keys(data._links)
-				.forEach(function(rel){
-					var link = data._links[rel];					
-					link = normalizeLink(url, link);
-					links[rel] = link;
-				})
-				;
-			}
-
-			if(data._embedded) {
-				Object
-				.keys(data._embedded)
-				.forEach(function(rel){
-					var embedded = data._embedded[rel];
-					var link = Array.isArray(embedded)
-					? embedded.map(function(embedded){
-						return getSelfLink(url, embedded);
-					})
-					: getSelfLink(url, embedded)
-					;
-					links[rel] = link;
-				});
-			}
-
-			if(data._embedded) {
-				Object
-				.keys(data._embedded)
-				.forEach(function(rel){
-					var embedded = data._embedded[rel];
-					var resource = createResource(url, options, embedded, cache);
-					cacheResource(resource);
-				});
-			}
-
-
-			function cacheResource(resource){
-				if(Array.isArray(resource)) return resource.map(cacheResource);
-
-				var href = resource.$href;
-
-				cache[href] = $q.when(resource);
-			}
-
-
-			Object.defineProperty(data, '$get', {
+			Object.defineProperty(this, '$get', {
 				configurable: false
 				, enumerable: false
 				, value: function resource_get(rel, params){
@@ -100,28 +48,28 @@ angular
 
 				}//resource_get
 			});
-			Object.defineProperty(data, '$post', {
+			Object.defineProperty(this, '$post', {
 				configurable: false
 				, enumerable: false
 				, value: function resource_post(rel, data){
 					return post(links[rel].href, options, data);
 				}//resource_post
 			});
-			Object.defineProperty(data, '$put', {
+			Object.defineProperty(this, '$put', {
 				configurable: false
 				, enumerable: false
 				, value: function resource_put(rel, data){
 					return put(links[rel].href, options, data);
 				}//resource_put
 			});
-			Object.defineProperty(data, '$patch', {
+			Object.defineProperty(this, '$patch', {
 				configurable: false
 				, enumerable: false
 				, value: function resource_patch(rel, data){
 					return patch(links[rel].href, options, data);
 				}//resource_patch
 			});
-			Object.defineProperty(data, '$del', {
+			Object.defineProperty(this, '$del', {
 				configurable: false
 				, enumerable: false
 				, value: function resource_del(rel){
@@ -129,10 +77,80 @@ angular
 				}//resource_del
 			});
 
-			delete data._links;
-			delete data._embedded;
 
-			return data;
+			Object.keys(data)
+			.filter(function(key){
+				return !~['_', '$'].indexOf(key[0]);
+			})
+			.forEach(function(key){
+				Object.defineProperty(this, key, {
+					configurable: false
+					, enumerable: true
+					, value: data[key]
+				});
+			}, this)
+			;
+
+			
+
+
+			var links = {};
+
+			if(data._links) {
+				Object
+				.keys(data._links)
+				.forEach(function(rel){
+					var link = data._links[rel];					
+					link = normalizeLink(href, link);
+					links[rel] = link;
+				}, this)
+				;
+			}
+
+			if(data._embedded) {
+				Object
+				.keys(data._embedded)
+				.forEach(function(rel){
+					var embedded = data._embedded[rel];
+					var link = Array.isArray(embedded)
+					? embedded.map(function(embedded){
+						return getSelfLink(href, embedded);
+					})
+					: getSelfLink(href, embedded)
+					;
+					links[rel] = link;
+				}, this);
+			}
+
+			if(data._embedded) {
+				Object
+				.keys(data._embedded)
+				.forEach(function(rel){
+					var embedded = data._embedded[rel];
+					var resource = createResource(href, options, embedded, cache);
+					cacheResource(resource);
+				}, this);
+			}
+
+
+			function cacheResource(resource){
+				if(Array.isArray(resource)) return resource.map(cacheResource);
+
+				var href = resource.$href;
+
+				cache[href] = $q.when(resource);
+			}
+
+		}//Resource
+
+		function createResource(href, options, data, cache){
+			if(Array.isArray(data)) return data.map(function(data){
+				return createResource(href, options, data, cache);
+			});
+
+			var resource = new Resource(href, options, data, cache);
+
+			return resource;
 
 		}//createResource
 
