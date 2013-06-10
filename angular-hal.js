@@ -30,7 +30,9 @@ angular
 			var links = {};
 			var cache = {};
 
-			defineHiddenProperty(this, '$href', getSelfLink(href, data).href);
+			href = getSelfLink(href, data).href;
+
+			defineHiddenProperty(this, '$href', href);
 
 			defineHiddenProperty(this, '$flush', function(rel, params) {
 				var link = links[rel];
@@ -96,9 +98,6 @@ angular
 				}, this);
 			}
 
-
-
-
 			function defineHiddenProperty(target, name, value) {
 				Object.defineProperty(target, name, {
 					configurable: false
@@ -120,16 +119,13 @@ angular
 				if(Array.isArray(link)) return $q.all(link.map(function(link){
 					if(method !== 'GET') throw 'method is not supported for arrays';
 
-					return callLink(method, link, params);
+					return callLink(method, link, params, data);
 				}));
-
 
 				var linkHref = link.templated
 				? urltemplate.parse(link.href).expand(params)
 				: link.href
 				;
-				linkHref = URI.resolve(href, linkHref);
-				linkHref = URI.normalize(linkHref);
 
 				if(method === 'GET') {
 					if(linkHref in cache) return cache[linkHref];
@@ -151,9 +147,6 @@ angular
 				? urltemplate.parse(link.href).expand(params)
 				: link.href
 				;
-
-				linkHref = URI.resolve(href, linkHref);
-				linkHref = URI.normalize(linkHref);
 
 				if(linkHref in cache) delete cache[linkHref];
 			}//flushLink
@@ -182,13 +175,11 @@ angular
 
 			if(link) {
 				if(typeof link === 'string') link = { href: link };
-				//link.href = URI.resolve(baseHref, link.href);
+				link.href = resolveUrl(baseHref, link.href);
 			}
 			else {
 				link = { href: baseHref };			
 			}
-
-			//link.href = URI.normalize(link.href);
 
 			return link;
 		}//normalizeLink
@@ -235,6 +226,20 @@ angular
 		}//callService
 
 
+
+		function resolveUrl(baseHref, href){
+			var resultHref = '';
+			var reFullUrl = /^(\w+\:)?(\/\/)?([^\/]*)(\/.*)$/;
+			var baseHrefMatch = reFullUrl.exec(baseHref);
+			var hrefMatch = reFullUrl.exec(href);
+
+			for(var partIndex = 1; partIndex < 5; partIndex++) {
+				if(hrefMatch[partIndex]) resultHref += hrefMatch[partIndex];
+				else resultHref += baseHrefMatch[partIndex]
+			}
+
+			return resultHref;
+		}//resolveUrl
 
 	}
 ])//service

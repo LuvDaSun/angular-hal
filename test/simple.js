@@ -84,5 +84,55 @@ describe('simple', function(){
 		$httpBackend.flush();
 	});
 
+	it('should get lists', function(){
+		$httpBackend
+		.expect('GET', 'http://example.com/')
+		.respond({
+			"root": true
+			, "_links": {
+				"self": "/"
+				, "item": {
+					templated: true
+					, href: "/item{/id}"
+				}
+			}
+			, "_embedded": {
+				"item": [
+					{
+						"id": 1
+						, "_links": {
+							"self": "/item/1"
+						}
+					}
+					, {
+						"id": 2
+						, "_links": {
+							"self": "/item/2"
+						}
+					}
+					, {
+						"id": 3
+						, "_links": {
+							"self": "/item/3"
+						}
+					}
+				]
+			}
+		})
+		;
+
+		var resource = halClient.$get('http://example.com/').then(function(resource){
+			expect(resource).toEqual({"root": true});
+
+			resource.$get('item').then(function(resource){
+				expect(resource[0]).toEqual({"id": 1});
+				expect(resource[1]).toEqual({"id": 2});
+				expect(resource[2]).toEqual({"id": 3});
+			});
+		});
+
+		$httpBackend.flush();
+	});
+
 
 });
