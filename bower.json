@@ -1,12 +1,16 @@
 {
   "name": "angular-hal",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "ignore": [
     "**/.*",
     "node_modules",
-    "components"
+    "components",
+    "test",
+    "karma.conf.js",
+    "karma",
+    "bower"
   ],
-  "main": "service.js",
+  "main": "angular-hal.js",
   "dependencies": {
     "url-template": "~2.0",
     "uri-js": "git://github.com/garycourt/uri-js",
