@@ -202,7 +202,10 @@ angular
 				$http({
 					method: method
 					, url: href
-					, headers: options.headers
+					, headers: {
+						'Authorization': options.authorization
+						, 'Content-Type': 'application/json'
+					}
 					, data: data
 				})
 				.then(function(res){

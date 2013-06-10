@@ -35,9 +35,7 @@ example of usage:
 
 			$rootScope.apiRoot =
 			halClient.$get('https://api.example.com/', {
-				headers: {
-					'Authorization': token && 'Bearer ' + token + ''
-				}
+				authorization: token && 'Bearer ' + token + ''
 			})
 			;
 			
