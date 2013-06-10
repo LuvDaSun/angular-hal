@@ -16,22 +16,23 @@ angular
 		};
 
 		
-		function service_get(url, options, cache){
-			if(!cache) cache = {};
+		function service_get(href, options){
+			if(!options) options = {};
 
-			if(cache && url in cache){
-				return cache[url];
+			if('cache' in options && href in options.cache){
+				return options.cache[href];
 			}
 			
 			var resource = (
-				$http(angular.extend({
+				$http({
 					method: 'GET'
-					, url: url
-				}, options))
+					, url: href
+					, headers: options.headers
+				})
 				.then(function(res){
 					switch(res.status){
 						case 200:
-						return createResource(url, options, res.data, cache);
+						return createResource(href, options, res.data);
 
 						default:
 						return $q.reject(res.status);
@@ -39,19 +40,21 @@ angular
 				})
 			);
 
-			if(cache) cache[url] = resource;
+			if('cache' in options) options.cache[href] = resource;
 
 			return resource;
 		}//get
 
-		function service_post(url, options, data){
-			
+		function service_post(href, options, data){
+			if(!options) options = {};
+
 			return (
-				$http(angular.extend({
+				$http({
 					method: 'POST'
-					, url: url
+					, url: href
+					, headers: options.headers
 					, data: data
-				}, options))
+				})
 				.then(function(res){
 					switch(res.status){
 						case 201:
@@ -65,14 +68,16 @@ angular
 
 		}//post
 
-		function service_put(url, options, data){
+		function service_put(href, options, data){
+			if(!options) options = {};
 			
 			return (
-				$http(angular.extend({
+				$http({
 					method: 'PUT'
-					, url: url
+					, url: href
+					, headers: options.headers
 					, data: data
-				}, options))
+				})
 				.then(function(res){
 					switch(res.status){
 						case 204:
@@ -86,14 +91,16 @@ angular
 
 		}//put
 
-		function service_patch(url, options, data){
+		function service_patch(href, options, data){
+			if(!options) options = {};
 			
 			return (
-				$http(angular.extend({
+				$http({
 					method: 'PATCH'
-					, url: url
+					, url: href
+					, headers: options.headers
 					, data: data
-				}, options))
+				})
 				.then(function(res){
 					switch(res.status){
 						case 204:
@@ -108,14 +115,15 @@ angular
 		}//patch
 
 
-		function service_del(url, options){
+		function service_del(href, options){
+			if(!options) options = {};
 			
 			return (
-				$http(angular.extend({
+				$http({
 					method: 'DELETE'
-					, url: url
-					, data: data
-				}, options))
+					, url: href
+					, headers: options.headers
+				})
 				.then(function(res){
 					switch(res.status){
 						case 204:
@@ -131,7 +139,7 @@ angular
 
 
 
-		function Resource(href, options, data, cache){
+		function Resource(href, options, data){
 			href = getSelfLink(href, data).href;
 
 			Object.defineProperty(this, '$href', {
@@ -152,7 +160,7 @@ angular
 							? urltemplate.parse(link.href).expand(params)
 							: link.href
 							;
-							return service_get(href, options, cache);
+							return service_get(href, options);
 						}));
 					}
 					else {
@@ -161,7 +169,7 @@ angular
 						: link.href
 						;
 
-						return service_get(href, options, cache);
+						return service_get(href, options);
 					}
 
 				}//resource_get
@@ -240,21 +248,21 @@ angular
 				.keys(data._embedded)
 				.forEach(function(rel){
 					var embedded = data._embedded[rel];
-					var resource = createResource(href, options, embedded, cache);
+					var resource = createResource(href, options, embedded);
 				}, this);
 			}
 
 		}//Resource
 
 
-		function createResource(href, options, data, cache){
+		function createResource(href, options, data){
 			if(Array.isArray(data)) return data.map(function(data){
-				return createResource(href, options, data, cache);
+				return createResource(href, options, data);
 			});
 
-			var resource = new Resource(href, options, data, cache);
+			var resource = new Resource(href, options, data);
 
-			cache[resource.$href] = $q.when(resource);
+			if('cache' in options) options.cache[resource.$href] = $q.when(resource);
 
 			return resource;
 
