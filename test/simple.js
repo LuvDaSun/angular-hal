@@ -23,11 +23,12 @@ describe('simple', function(){
 		;
 
 		var resource = halClient.get('/').then(function(resource){
-			expect(JSON.stringify(resource)).toBe(JSON.stringify({}));
+			expect(resource).toEqual({});
 		});
 
 		$httpBackend.flush();
 	});
+
 
 	it('should get resource', function(){
 		$httpBackend
@@ -41,7 +42,7 @@ describe('simple', function(){
 		;
 
 		var resource = halClient.get('/').then(function(resource){
-			expect(JSON.stringify(resource)).toBe(JSON.stringify({"test": true}));
+			expect(resource).toEqual({"test": true});
 		});
 
 		$httpBackend.flush();
