@@ -19,10 +19,6 @@ angular
 		function service_get(href, options){
 			if(!options) options = {};
 
-			if('cache' in options && href in options.cache){
-				return options.cache[href];
-			}
-			
 			var resource = (
 				$http({
 					method: 'GET'
@@ -39,8 +35,6 @@ angular
 					}
 				})
 			);
-
-			if('cache' in options) options.cache[href] = resource;
 
 			return resource;
 		}//get
@@ -140,6 +134,8 @@ angular
 
 
 		function Resource(href, options, data){
+			var links = {};
+
 			href = getSelfLink(href, data).href;
 
 			Object.defineProperty(this, '$href', {
@@ -220,7 +216,6 @@ angular
 			
 
 
-			var links = {};
 
 			if(data._links) {
 				Object
