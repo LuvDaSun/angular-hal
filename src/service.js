@@ -26,10 +26,7 @@ angular
 				.keys(data._links)
 				.forEach(function(rel){
 					var link = data._links[rel];					
-					link = Array.isArray(link)
-					? link.map(normalizeLink)
-					: normalizeLink(link)
-					;
+					link = normalizeLink(url, link);
 					links[rel] = link;
 				})
 				;
@@ -44,10 +41,7 @@ angular
 					? embedded.map(getSelfLink)
 					: getSelfLink(embedded)
 					;
-					link = Array.isArray(link)
-					? link.map(normalizeLink)
-					: normalizeLink(link)
-					;
+					link = normalizeLink(url, link);
 					links[rel] = link;
 				});
 			}
@@ -122,7 +116,7 @@ angular
 						? urltemplate.parse(link.href).expand(params)
 						: link.href
 						;
-						return get(resolveUrl(url, href), options, cache);
+						return get(href, options, cache);
 					}));
 				}
 				else {
@@ -131,7 +125,7 @@ angular
 					: link.href
 					;
 
-					return get(resolveUrl(url, href), options, cache);
+					return get(href, options, cache);
 				}
 
 			}//resource_get
@@ -140,7 +134,7 @@ angular
 				var link = links[rel];
 				var href = link.href;
 
-				return post(resolveUrl(url, href), options, data);
+				return post(href, options, data);
 
 			}//resource_post
 
@@ -148,21 +142,21 @@ angular
 				var link = links[rel];
 				var href = link.href;
 					
-				return put(resolveUrl(url, href), options, data);
+				return put(href, options, data);
 			}//resource_put
 
 			function resource_patch(rel, data){
 				var link = links[rel];
 				var href = link.href;
 
-				return patch(resolveUrl(url, href), options, data);
+				return patch(href, options, data);
 			}//resource_patch
 
 			function resource_del(rel){
 				var link = links[rel];
 				var href = link.href;
 
-				return del(resolveUrl(url, href), options);
+				return del(href, options);
 			}//resource_del
 
 
@@ -298,23 +292,28 @@ angular
 				return match[0] + url;
 			}
 
-			throw 'bad url';
+			return url;
 		}//resolveUrl
 
 
-		function normalizeLink(link){
-			return (
-				typeof link === 'string'
-				? { href: link }
-				: link
-			); 
+		function normalizeLink(baseHref, link){
+			if(Array.isArray(link)) return link.map(function(link){
+				return normalizeLink(baseHref, link);
+			});
+
+			if(!link) return { href: baseHref };
+
+			if(typeof link === 'string') link = { href: link };
+
+			link.href = resolveUrl(baseHref, link.href);
+
+			return link;
 		}//normalizeLink
+
 
 		function getSelfLink(resource){
 			return resource && resource._links && resource._links.self;
 		}//getSelfLink
-
-
 
 
 		return service;
