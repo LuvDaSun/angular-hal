@@ -15,11 +15,12 @@ angular
 		// service.del = del;
 		
 		function Resource(href, options, data, cache){
+			href = getSelfLink(href, data).href;
 
 			Object.defineProperty(this, '$href', {
 				configurable: false
 				, enumerable: false
-				, value: getSelfLink(href, data).href
+				, value: href
 			});
 
 			Object.defineProperty(this, '$get', {
