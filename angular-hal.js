@@ -8,11 +8,21 @@ angular
 		, $q
 	){
 		return {
-			$get: service_get
-			, $post: service_post
-			, $put: service_put
-			, $patch: service_patch
-			, $del: service_del
+			$get: function(href, options){
+				return callService('GET', href, options);
+			}//get
+			, $post: function(href, options, data){
+				return callService('POST', href, options, data);
+			}//post
+			, $put: function(href, options, data){
+				return callService('PUT', href, options, data);
+			}//put
+			, $patch: function(href, options, data){
+				return callService('PATCH', href, options, data);
+			}//patch
+			, $del: function(href, options){
+				return callService('DELETE', href, options);
+			}//del
 		};
 
 	
@@ -20,69 +30,31 @@ angular
 			var links = {};
 			var cache = {};
 
-			href = getSelfLink(href, data).href;
+			defineHiddenProperty(this, '$href', getSelfLink(href, data).href);
 
-			Object.defineProperty(this, '$href', {
-				configurable: false
-				, enumerable: false
-				, value: href
+			defineHiddenProperty(this, '$flush', function(rel, params) {
+				var link = links[rel];
+				return flushLink(link, params);
 			});
-
-			Object.defineProperty(this, '$flush', {
-				configurable: false
-				, enumerable: false
-				, value: function(rel, params) {
-					var link = links[rel];
-
-					return flushLink(link, params);
-				}
+			defineHiddenProperty(this, '$get', function(rel, params){
+				var link = links[rel];
+				return callLink('GET', link, params);
 			});
-
-
-			Object.defineProperty(this, '$get', {
-				configurable: false
-				, enumerable: false
-				, value: function resource_get(rel, params){
-					var link = links[rel];
-
-					return getLink(link, params);
-				}//resource_get
+			defineHiddenProperty(this, '$post', function(rel, params, data){
+				var link = links[rel];
+				return callLink('POST', link, params, data);
 			});
-			Object.defineProperty(this, '$post', {
-				configurable: false
-				, enumerable: false
-				, value: function resource_post(rel, data){
-					var link = links[rel];
-
-					return service_post(link.href, options, data);
-				}//resource_post
+			defineHiddenProperty(this, '$put', function(rel, params, data){
+				var link = links[rel];
+				return callLink('PUT', link, params, data);
 			});
-			Object.defineProperty(this, '$put', {
-				configurable: false
-				, enumerable: false
-				, value: function resource_put(rel, data){
-					var link = links[rel];
-
-					return service_put(link.href, options, data);
-				}//resource_put
+			defineHiddenProperty(this, '$patch', function(rel, params, data){
+				var link = links[rel];
+				return callLink('PATCH', link, params, data);
 			});
-			Object.defineProperty(this, '$patch', {
-				configurable: false
-				, enumerable: false
-				, value: function resource_patch(rel, data){
-					var link = links[rel];
-
-					return service_patch(link.href, options, data);
-				}//resource_patch
-			});
-			Object.defineProperty(this, '$del', {
-				configurable: false
-				, enumerable: false
-				, value: function resource_del(rel){
-					var link = links[rel];
-
-					return service_del(link.href, options);
-				}//resource_del
+			defineHiddenProperty(this, '$del', function(rel, params){
+				var link = links[rel];
+				return callLink('DELETE', link, params);
 			});
 
 
@@ -98,9 +70,6 @@ angular
 				});
 			}, this)
 			;
-
-			
-
 
 
 			if(data._links) {
@@ -121,19 +90,22 @@ angular
 					var embedded = data._embedded[rel];
 					var link = getSelfLink(href, embedded);
 					links[rel] = link;
-				}, this);
-			}
 
-			if(data._embedded) {
-				Object
-				.keys(data._embedded)
-				.forEach(function(rel){
-					var embedded = data._embedded[rel];
 					var resource = createResource(href, options, embedded);
 					cacheResource(resource);
 				}, this);
 			}
 
+
+
+
+			function defineHiddenProperty(target, name, value) {
+				Object.defineProperty(target, name, {
+					configurable: false
+					, enumerable: false
+					, value: value
+				});
+			}//defineHiddenProperty
 
 
 			function cacheResource(resource) {
@@ -144,32 +116,46 @@ angular
 				cache[resource.$href] = $q.when(resource);
 			}//cacheResource
 
-			function getLink(link, params) {
+			function callLink(method, link, params, data) {
 				if(Array.isArray(link)) return $q.all(link.map(function(link){
-					return getLink(link);
+					if(method !== 'GET') throw 'method is not supported for arrays';
+
+					return callLink(method, link, params);
 				}));
-			
-				var href = link.templated
+
+
+				var linkHref = link.templated
 				? urltemplate.parse(link.href).expand(params)
 				: link.href
 				;
+				linkHref = URI.resolve(href, linkHref);
+				linkHref = URI.normalize(linkHref);
 
-				if(href in cache) return cache[href];
-				
-				return cache[href] = service_get(href, options);
-			}//getLink
+				if(method === 'GET') {
+					if(linkHref in cache) return cache[linkHref];
+					
+					return cache[linkHref] = callService(method, linkHref, options, data);
+				}
+				else {
+					return callService(method, linkHref, options, data);	
+				}
+
+			}//callLink
 
 			function flushLink(link, params) {
 				if(Array.isArray(link)) return link.map(function(link){
 					return flushLink(link, params);
 				});
 
-				var href = link.templated
+				var linkHref = link.templated
 				? urltemplate.parse(link.href).expand(params)
 				: link.href
 				;
 
-				if(href in cache) delete cache[href];
+				linkHref = URI.resolve(href, linkHref);
+				linkHref = URI.normalize(linkHref);
+
+				if(linkHref in cache) delete cache[linkHref];
 			}//flushLink
 
 		}//Resource
@@ -184,8 +170,6 @@ angular
 
 			var resource = new Resource(href, options, data);
 
-			if('cache' in options) options.cache[resource.$href] = $q.when(resource);
-
 			return resource;
 
 		}//createResource
@@ -198,13 +182,13 @@ angular
 
 			if(link) {
 				if(typeof link === 'string') link = { href: link };
-				link.href = URI.resolve(baseHref, link.href);
+				//link.href = URI.resolve(baseHref, link.href);
 			}
 			else {
 				link = { href: baseHref };			
 			}
 
-			link.href = URI.normalize(link.href);
+			//link.href = URI.normalize(link.href);
 
 			return link;
 		}//normalizeLink
@@ -220,22 +204,26 @@ angular
 
 
 
-
-
-
-		function service_get(href, options){
+		function callService(method, href, options, data){
 			if(!options) options = {};
 
 			var resource = (
 				$http({
-					method: 'GET'
+					method: method
 					, url: href
 					, headers: options.headers
+					, data: data
 				})
 				.then(function(res){
 					switch(res.status){
 						case 200:
 						return createResource(href, options, res.data);
+
+						case 201:
+						return res.headers('Content-Location');
+
+						case 204:
+						return null
 
 						default:
 						return $q.reject(res.status);
@@ -244,102 +232,7 @@ angular
 			);
 
 			return resource;
-		}//get
-
-		function service_post(href, options, data){
-			if(!options) options = {};
-
-			return (
-				$http({
-					method: 'POST'
-					, url: href
-					, headers: options.headers
-					, data: data
-				})
-				.then(function(res){
-					switch(res.status){
-						case 201:
-						return res.headers('Content-Location');
-
-						default:
-						return $q.reject(res.status);
-					}
-				})
-			);
-
-		}//post
-
-		function service_put(href, options, data){
-			if(!options) options = {};
-			
-			return (
-				$http({
-					method: 'PUT'
-					, url: href
-					, headers: options.headers
-					, data: data
-				})
-				.then(function(res){
-					switch(res.status){
-						case 204:
-						return null
-
-						default:
-						return $q.reject(res.status);
-					}
-				})
-			);
-
-		}//put
-
-		function service_patch(href, options, data){
-			if(!options) options = {};
-			
-			return (
-				$http({
-					method: 'PATCH'
-					, url: href
-					, headers: options.headers
-					, data: data
-				})
-				.then(function(res){
-					switch(res.status){
-						case 204:
-						return null
-
-						default:
-						return $q.reject(res.status);
-					}
-				})
-			);
-
-		}//patch
-
-
-		function service_del(href, options){
-			if(!options) options = {};
-			
-			return (
-				$http({
-					method: 'DELETE'
-					, url: href
-					, headers: options.headers
-				})
-				.then(function(res){
-					switch(res.status){
-						case 204:
-						return null
-
-						default:
-						return $q.reject(res.status);
-					}
-				})
-			);
-
-		}//del
-
-
-
+		}//callService
 
 
 
