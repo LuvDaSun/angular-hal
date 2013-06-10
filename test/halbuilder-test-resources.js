@@ -9,7 +9,7 @@ git://github.com/HalBuilder/halbuilder-test-resources.git
 describe('halbuilder test resources', function(){
 	var halClient, httpBackend;
 
-	beforeEach(module('ebuHal'));
+	beforeEach(module('angular-hal'));
 	beforeEach(inject(function($injector) {
 		$httpBackend = $injector.get('$httpBackend');
 		halClient = $injector.get('halClient');

@@ -1,7 +1,7 @@
 describe('simple', function(){
 	var halClient, httpBackend;
 
-	beforeEach(module('ebuHal'));
+	beforeEach(module('angular-hal'));
 	beforeEach(inject(function($injector) {
 		$httpBackend = $injector.get('$httpBackend');
 		halClient = $injector.get('halClient');

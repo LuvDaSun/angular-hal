@@ -1,5 +1,5 @@
 angular
-.module('ebuHal', [])
+.module('angular-hal', [])
 .service('halClient', [
 	'$http'
 	, '$q'

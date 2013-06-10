@@ -14,7 +14,7 @@ files = [
 	'components/angular-mocks/angular-mocks.js',
 	'components/url-template/lib/url-template.js',
 	'components/uri-js/src/uri.js',
-	'src/service.js',
+	'angular-hal.js',
 	'test/**.js'
 ];
 
