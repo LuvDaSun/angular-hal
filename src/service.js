@@ -165,7 +165,9 @@ angular
 							? urltemplate.parse(link.href).expand(params)
 							: link.href
 							;
-							return service_get(href, options);
+
+							if(href in cache) return cache[href];
+							return cache[href] = service_get(href, options);
 						}));
 					}
 					else {
@@ -174,7 +176,8 @@ angular
 						: link.href
 						;
 
-						return service_get(href, options);
+						if(href in cache) return cache[href];
+						return cache[href] = service_get(href, options);
 					}
 
 				}//resource_get
@@ -253,9 +256,12 @@ angular
 				.forEach(function(rel){
 					var embedded = data._embedded[rel];
 					var resource = createResource(href, options, embedded);
+					if(Array.isArray(resource)) resource.forEach(function(resource){
+						cache[resource.$href] = $q.when(resource);
+					});
+					else cache[resource.$href] = $q.when(resource);
 				}, this);
 			}
-
 		}//Resource
 
 
