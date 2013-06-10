@@ -14,65 +14,168 @@ angular
 		// service.patch = patch;
 		// service.del = del;
 		
-		function createResource(url, options, data){
+		function createResource(url, options, data, cache){
+			if(Array.isArray(data)) return data.map(function(data){
+				return createResource(url, options, data, cache);
+			});
+
+			var links = {};
+
+			if(data._links) {
+				Object
+				.keys(data._links)
+				.forEach(function(rel){
+					var link = data._links[rel];					
+					link = Array.isArray(link)
+					? link.map(normalizeLink)
+					: normalizeLink(link)
+					;
+					links[rel] = link;
+				})
+				;
+			}
+
+			if(data._embedded) {
+				Object
+				.keys(data._embedded)
+				.forEach(function(rel){
+					var embedded = data._embedded[rel];
+					var link = Array.isArray(embedded)
+					? embedded.map(getSelfLink)
+					: getSelfLink(embedded)
+					;
+					link = Array.isArray(link)
+					? link.map(normalizeLink)
+					: normalizeLink(link)
+					;
+					links[rel] = link;
+				});
+			}
+
+			if(data._embedded) {
+				Object
+				.keys(data._embedded)
+				.forEach(function(rel){
+					var embedded = data._embedded[rel];
+					var resource = createResource(url, options, embedded, cache);
+					cacheResource(resource);
+				});
+			}
 
 
-			this._embedded && Object.keys(this._embedded)
-			.forEach(function(rel){
-				var embedded = this._embedded[rel];
-				
-				this._links[rel] = (
-					Array.isArray(embedded)
-					? embedded.map(function(embedded){
-						embedded._links.self
-					})
-					: embedded._links.self
-				);
+			function cacheResource(resource){
+				if(Array.isArray(resource)) return resource.map(cacheResource);
 
-			})
-			delete this._embedded;
+				var href = resource.href();
+
+				cache[href] = $q.when(resource);
+			}
 
 
+			delete data._links;
+			delete data._embedded;
 
-			return angular.extend({
-				get: function(rel, params){
-					var href = relationHref(this, rel, params);
-						
-					return get(resolveUrl(url, href), options, data);
-				}//get
+			Object.defineProperty(data, 'href', {
+				configurable: false
+				, enumerable: false
+				, value: resource_href
+			});
+			Object.defineProperty(data, 'get', {
+				configurable: false
+				, enumerable: false
+				, value: resource_get
+			});
+			Object.defineProperty(data, 'post', {
+				configurable: false
+				, enumerable: false
+				, value: resource_post
+			});
+			Object.defineProperty(data, 'put', {
+				configurable: false
+				, enumerable: false
+				, value: resource_put
+			});
+			Object.defineProperty(data, 'patch', {
+				configurable: false
+				, enumerable: false
+				, value: resource_patch
+			});
+			Object.defineProperty(data, 'del', {
+				configurable: false
+				, enumerable: false
+				, value: resource_del
+			});
 
-				, post: function(rel, data){
-					var href = relationHref(this, rel, null);
-						
-					return post(resolveUrl(url, href), options, data);
 
-				}//post
+			return data;
 
-				, put: function(rel, data){
-					var href = relationHref(this, rel, null);
-						
-					return put(resolveUrl(url, href), options, data);
-				}//put
+			function resource_href(){
+				return resolveUrl(url, links.self.href);
+			}//resource_href
 
-				, patch: function(rel, data){
-					var href = relationHref(this, rel, null);
+			function resource_get(rel, params){
+				var link = links[rel];
 
-					return patch(resolveUrl(url, href), options, data);
-				}//patch
+				if(Array.isArray(link)) {
+					return $q.all(link.map(function(link){
+						var href = link.templated
+						? urltemplate.parse(link.href).expand(params)
+						: link.href
+						;
+						return get(resolveUrl(url, href), options, cache);
+					}));
+				}
+				else {
+					var href = link.templated
+					? urltemplate.parse(link.href).expand(params)
+					: link.href
+					;
 
-				, del: function(rel){
-					var href = relationHref(this, rel, null);
+					return get(resolveUrl(url, href), options, cache);
+				}
 
-					return del(resolveUrl(url, href), options);
-				}//del
+			}//resource_get
 
-			}, data)
-			
+			function resource_post(rel, data){
+				var link = links[rel];
+				var href = link.href;
+
+				return post(resolveUrl(url, href), options, data);
+
+			}//resource_post
+
+			function resource_put(rel, data){
+				var link = links[rel];
+				var href = link.href;
+					
+				return put(resolveUrl(url, href), options, data);
+			}//resource_put
+
+			function resource_patch(rel, data){
+				var link = links[rel];
+				var href = link.href;
+
+				return patch(resolveUrl(url, href), options, data);
+			}//resource_patch
+
+			function resource_del(rel){
+				var link = links[rel];
+				var href = link.href;
+
+				return del(resolveUrl(url, href), options);
+			}//resource_del
+
+
 		}//createResource
 
-		function get(url, options){
+		function get(url, options, cache){
+			if(!cache) cache = {};
 
-			return (
+			if(cache && url in cache){
+				return cache[url];
+			}
+			
+			var resource = (
 				$http(angular.extend({
 					method: 'GET'
 					, url: url
@@ -80,7 +183,7 @@ angular
 				.then(function(res){
 					switch(res.status){
 						case 200:
-						return createResource(url, options, res.data);
+						return createResource(url, options, res.data, cache);
 
 						default:
 						return $q.reject(res.status);
@@ -88,6 +191,9 @@ angular
 				})
 			);
 
+			if(cache) cache[url] = resource;
+
+			return resource;
 		}//get
 
 		function post(url, options, data){
@@ -176,7 +282,11 @@ angular
 		}//del
 
 
+
+
 		function resolveUrl(base, url){
+			if(!url) return base;
+
 			var re = /^(?:\w+\:)?.*?\/\/.*?[^\/]*/;
 			var match;
 
@@ -192,22 +302,20 @@ angular
 		}//resolveUrl
 
 
-		function relationHref(resource, relation, params){
-			var link, href;
+		function normalizeLink(link){
+			return (
+				typeof link === 'string'
+				? { href: link }
+				: link
+			); 
+		}//normalizeLink
 
-			if(!(this._links && rel in this._links)) throw 'relation not found';
+		function getSelfLink(resource){
+			return resource && resource._links && resource._links.self;
+		}//getSelfLink
 
-			link = this._links[rel];
 
-			if(Array.isArray(link)) throw 'this method cannot be performed on an array';
 
-			if(link.href) href = link.href;
-			else href = link;
-
-			if(link.template) href = urltemplate.parse(href).expand(params);
-
-			return href;
-		}//relationHref
 
 		return service;
 	}
