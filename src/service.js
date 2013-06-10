@@ -104,7 +104,7 @@ angular
 			return data;
 
 			function resource_href(){
-				return resolveUrl(url, links.self.href);
+				return URI.resolve(url, links.self.href);
 			}//resource_href
 
 			function resource_get(rel, params){
@@ -278,34 +278,22 @@ angular
 
 
 
-		function resolveUrl(base, url){
-			if(!url) return base;
-
-			var re = /^(?:\w+\:)?.*?\/\/.*?[^\/]*/;
-			var match;
-
-			if(re.test(url)) return url;
-
-			match = re.exec(base);
-
-			if(match && url[0] == '/'){
-				return match[0] + url;
-			}
-
-			return url;
-		}//resolveUrl
-
 
 		function normalizeLink(baseHref, link){
 			if(Array.isArray(link)) return link.map(function(link){
 				return normalizeLink(baseHref, link);
 			});
 
-			if(!link) return { href: baseHref };
+			if(link) {
+				if(typeof link === 'string') link = { href: link };
 
-			if(typeof link === 'string') link = { href: link };
+				link.href = URI.resolve(baseHref, link.href);
+			}
+			else{
+				link = { href: baseHref };			
+			}
 
-			link.href = resolveUrl(baseHref, link.href);
+			link.href = URI.normalize(link.href);
 
 			return link;
 		}//normalizeLink

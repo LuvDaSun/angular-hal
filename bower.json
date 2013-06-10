@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "jasmine": "~1.3",
-    "angular-mocks": "~1.0"
+    "angular-mocks": "~1.0",
+    "uri-js": "git://github.com/garycourt/uri-js"
   }
 }

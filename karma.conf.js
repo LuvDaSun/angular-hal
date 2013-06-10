@@ -13,6 +13,7 @@ files = [
 	'components/angular/angular.js',
 	'components/angular-mocks/angular-mocks.js',
 	'components/url-template/lib/url-template.js',
+	'components/uri-js/src/uri.js',
 	'src/service.js',
 	'test/**.js'
 ];
