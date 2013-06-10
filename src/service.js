@@ -72,93 +72,67 @@ angular
 			Object.defineProperty(data, '$href', {
 				configurable: false
 				, enumerable: false
-				, value: resource_href
+				, value: function resource_href(){
+					return URI.resolve(url, links.self.href);
+				}//resource_href
 			});
 			Object.defineProperty(data, '$get', {
 				configurable: false
 				, enumerable: false
-				, value: resource_get
-			});
-			Object.defineProperty(data, '$post', {
-				configurable: false
-				, enumerable: false
-				, value: resource_post
-			});
-			Object.defineProperty(data, '$put', {
-				configurable: false
-				, enumerable: false
-				, value: resource_put
-			});
-			Object.defineProperty(data, '$patch', {
-				configurable: false
-				, enumerable: false
-				, value: resource_patch
-			});
-			Object.defineProperty(data, '$del', {
-				configurable: false
-				, enumerable: false
-				, value: resource_del
-			});
+				, value: function resource_get(rel, params){
+					var link = links[rel];
 
-
-			return data;
-
-			function resource_href(){
-				return URI.resolve(url, links.self.href);
-			}//resource_href
-
-			function resource_get(rel, params){
-				var link = links[rel];
-
-				if(Array.isArray(link)) {
-					return $q.all(link.map(function(link){
+					if(Array.isArray(link)) {
+						return $q.all(link.map(function(link){
+							var href = link.templated
+							? urltemplate.parse(link.href).expand(params)
+							: link.href
+							;
+							return get(href, options, cache);
+						}));
+					}
+					else {
 						var href = link.templated
 						? urltemplate.parse(link.href).expand(params)
 						: link.href
 						;
+
 						return get(href, options, cache);
-					}));
-				}
-				else {
-					var href = link.templated
-					? urltemplate.parse(link.href).expand(params)
-					: link.href
-					;
+					}
 
-					return get(href, options, cache);
-				}
+				}//resource_get
+			});
+			Object.defineProperty(data, '$post', {
+				configurable: false
+				, enumerable: false
+				, value: function resource_post(rel, data){
+					return post(links[rel].href, options, data);
+				}//resource_post
+			});
+			Object.defineProperty(data, '$put', {
+				configurable: false
+				, enumerable: false
+				, value: function resource_put(rel, data){
+					return put(links[rel].href, options, data);
+				}//resource_put
+			});
+			Object.defineProperty(data, '$patch', {
+				configurable: false
+				, enumerable: false
+				, value: function resource_patch(rel, data){
+					return patch(links[rel].href, options, data);
+				}//resource_patch
+			});
+			Object.defineProperty(data, '$del', {
+				configurable: false
+				, enumerable: false
+				, value: function resource_del(rel){
+					return del(links[rel].href, options);
+				}//resource_del
+			});
 
-			}//resource_get
 
-			function resource_post(rel, data){
-				var link = links[rel];
-				var href = link.href;
-
-				return post(href, options, data);
-
-			}//resource_post
-
-			function resource_put(rel, data){
-				var link = links[rel];
-				var href = link.href;
-					
-				return put(href, options, data);
-			}//resource_put
-
-			function resource_patch(rel, data){
-				var link = links[rel];
-				var href = link.href;
-
-				return patch(href, options, data);
-			}//resource_patch
-
-			function resource_del(rel){
-				var link = links[rel];
-				var href = link.href;
-
-				return del(href, options);
-			}//resource_del
-
+			return data;
 
 		}//createResource
 
@@ -274,9 +248,6 @@ angular
 			);
 
 		}//del
-
-
-
 
 
 		function normalizeLink(baseHref, link){
