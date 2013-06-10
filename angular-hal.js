@@ -229,7 +229,7 @@ angular
 
 		function resolveUrl(baseHref, href){
 			var resultHref = '';
-			var reFullUrl = /^(\w+\:)?(\/\/)?([^\/]*)(\/.*)$/;
+			var reFullUrl = /^((?:\w+\:)?)((?:\/\/)?)([^\/]*)((?:\/.*)?)$/;
 			var baseHrefMatch = reFullUrl.exec(baseHref);
 			var hrefMatch = reFullUrl.exec(href);
 
