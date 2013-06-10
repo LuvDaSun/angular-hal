@@ -120,7 +120,7 @@ angular
 				if(Array.isArray(link)) return $q.all(link.map(function(link){
 					if(method !== 'GET') throw 'method is not supported for arrays';
 
-					return callLink(method, link, params);
+					return callLink(method, link, params, data);
 				}));
 
 
