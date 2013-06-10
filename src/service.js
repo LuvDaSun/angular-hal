@@ -135,6 +135,7 @@ angular
 
 		function Resource(href, options, data){
 			var links = {};
+			var cache = {};
 
 			href = getSelfLink(href, data).href;
 
@@ -142,6 +143,14 @@ angular
 				configurable: false
 				, enumerable: false
 				, value: href
+			});
+
+			Object.defineProperty(this, '$flush', {
+				configurable: false
+				, enumerable: false
+				, value: function() {
+					cache = {};
+				}
 			});
 
 			Object.defineProperty(this, '$get', {
