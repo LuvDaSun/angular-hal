@@ -254,7 +254,7 @@ angular
 				.then(function(res){
 					switch(res.status){
 						case 201:
-						return res.headers('Content-Location');
+						return service_get(res.headers('Content-Location'), options);
 
 						default:
 						return $q.reject(res.status);
@@ -277,7 +277,7 @@ angular
 				.then(function(res){
 					switch(res.status){
 						case 204:
-						return null
+						return service_get(href, options);
 
 						default:
 						return $q.reject(res.status);
@@ -300,7 +300,7 @@ angular
 				.then(function(res){
 					switch(res.status){
 						case 204:
-						return null
+						return service_get(href, options);
 
 						default:
 						return $q.reject(res.status);
