@@ -71,9 +71,6 @@ angular
 			}, this)
 			;
 
-			
-
-
 
 			if(data._links) {
 				Object
@@ -93,14 +90,7 @@ angular
 					var embedded = data._embedded[rel];
 					var link = getSelfLink(href, embedded);
 					links[rel] = link;
-				}, this);
-			}
 
-			if(data._embedded) {
-				Object
-				.keys(data._embedded)
-				.forEach(function(rel){
-					var embedded = data._embedded[rel];
 					var resource = createResource(href, options, embedded);
 					cacheResource(resource);
 				}, this);
