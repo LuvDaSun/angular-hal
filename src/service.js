@@ -113,12 +113,7 @@ angular
 				.keys(data._embedded)
 				.forEach(function(rel){
 					var embedded = data._embedded[rel];
-					var link = Array.isArray(embedded)
-					? embedded.map(function(embedded){
-						return getSelfLink(href, embedded);
-					})
-					: getSelfLink(href, embedded)
-					;
+					var link = getSelfLink(href, embedded);
 					links[rel] = link;
 				}, this);
 			}
@@ -129,20 +124,11 @@ angular
 				.forEach(function(rel){
 					var embedded = data._embedded[rel];
 					var resource = createResource(href, options, embedded, cache);
-					cacheResource(resource);
 				}, this);
 			}
 
-
-			function cacheResource(resource){
-				if(Array.isArray(resource)) return resource.map(cacheResource);
-
-				var href = resource.$href;
-
-				cache[href] = $q.when(resource);
-			}
-
 		}//Resource
+
 
 		function createResource(href, options, data, cache){
 			if(Array.isArray(data)) return data.map(function(data){
@@ -151,9 +137,12 @@ angular
 
 			var resource = new Resource(href, options, data, cache);
 
+			cache[resource.$href] = $q.when(resource);
+
 			return resource;
 
 		}//createResource
+		
 
 		function get(url, options, cache){
 			if(!cache) cache = {};
@@ -289,6 +278,10 @@ angular
 
 
 		function getSelfLink(baseHref, resource){
+			if(Array.isArray(resource)) return resource.map(function(resource){
+				return getSelfLink(baseHref, resource);
+			});
+
 			return normalizeLink(baseHref, resource && resource._links && resource._links.self);
 		}//getSelfLink
 
