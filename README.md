@@ -62,9 +62,9 @@ then, run all tests with:
 	npm test
 	
 
-you may also run the tests by opening SpecRunner.html
+you may also run the tests by opening SpecRunner.html in your favorite browser!
 
-Then, help me out by providing me with some unit tests and / or some awsome code!
+Then, help me out by providing me with some unit tests and / or some awesome code!
 
 
 
