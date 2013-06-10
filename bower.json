@@ -13,7 +13,6 @@
   "main": "angular-hal.js",
   "dependencies": {
     "url-template": "~2.0",
-    "uri-js": "git://github.com/garycourt/uri-js",
     "angular": "~1.0"
   },
   "devDependencies": {
