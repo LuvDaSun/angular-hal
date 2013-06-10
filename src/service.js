@@ -153,61 +153,50 @@ angular
 				}
 			});
 
+
 			Object.defineProperty(this, '$get', {
 				configurable: false
 				, enumerable: false
 				, value: function resource_get(rel, params){
 					var link = links[rel];
 
-					if(Array.isArray(link)) {
-						return $q.all(link.map(function(link){
-							var href = link.templated
-							? urltemplate.parse(link.href).expand(params)
-							: link.href
-							;
-
-							if(href in cache) return cache[href];
-							return cache[href] = service_get(href, options);
-						}));
-					}
-					else {
-						var href = link.templated
-						? urltemplate.parse(link.href).expand(params)
-						: link.href
-						;
-
-						if(href in cache) return cache[href];
-						return cache[href] = service_get(href, options);
-					}
-
+					return getLink(link, params);
 				}//resource_get
 			});
 			Object.defineProperty(this, '$post', {
 				configurable: false
 				, enumerable: false
 				, value: function resource_post(rel, data){
-					return service_post(links[rel].href, options, data);
+					var link = links[rel];
+
+					return service_post(link.href, options, data);
 				}//resource_post
 			});
 			Object.defineProperty(this, '$put', {
 				configurable: false
 				, enumerable: false
 				, value: function resource_put(rel, data){
-					return service_put(links[rel].href, options, data);
+					var link = links[rel];
+
+					return service_put(link.href, options, data);
 				}//resource_put
 			});
 			Object.defineProperty(this, '$patch', {
 				configurable: false
 				, enumerable: false
 				, value: function resource_patch(rel, data){
-					return service_patch(links[rel].href, options, data);
+					var link = links[rel];
+
+					return service_patch(link.href, options, data);
 				}//resource_patch
 			});
 			Object.defineProperty(this, '$del', {
 				configurable: false
 				, enumerable: false
 				, value: function resource_del(rel){
-					return service_del(links[rel].href, options);
+					var link = links[rel];
+
+					return service_del(link.href, options);
 				}//resource_del
 			});
 
@@ -256,13 +245,40 @@ angular
 				.forEach(function(rel){
 					var embedded = data._embedded[rel];
 					var resource = createResource(href, options, embedded);
-					if(Array.isArray(resource)) resource.forEach(function(resource){
-						cache[resource.$href] = $q.when(resource);
-					});
-					else cache[resource.$href] = $q.when(resource);
+					cacheResource(resource);
 				}, this);
 			}
+
+
+
+			function cacheResource(resource) {
+				if(Array.isArray(resource)) return resource.map(function(resource){
+					return cacheResource(resource);
+				});
+
+				cache[resource.$href] = $q.when(resource);
+			}//cacheResource
+
+			function getLink(link, params) {
+				if(Array.isArray(link)) return $q.all(link.map(function(link){
+					return getLink(link);
+				}));
+			
+				var href = link.templated
+				? urltemplate.parse(link.href).expand(params)
+				: link.href
+				;
+
+				if(href in cache) return cache[href];
+				
+				return cache[href] = service_get(href, options);
+			}//getLink
+
+
+
 		}//Resource
+
+
 
 
 		function createResource(href, options, data){
