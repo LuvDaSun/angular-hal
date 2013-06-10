@@ -257,21 +257,26 @@ angular
 
 
 
-
-
-		function service_get(href, options){
+		function service_call(method, href, options, data){
 			if(!options) options = {};
 
 			var resource = (
 				$http({
-					method: 'GET'
+					method: method
 					, url: href
 					, headers: options.headers
+					, data: data
 				})
 				.then(function(res){
 					switch(res.status){
 						case 200:
 						return createResource(href, options, res.data);
+
+						case 201:
+						return res.headers('Content-Location');
+
+						case 204:
+						return null
 
 						default:
 						return $q.reject(res.status);
@@ -280,98 +285,28 @@ angular
 			);
 
 			return resource;
+		}//service_call
+
+
+		function service_get(href, options){
+			return service_call('GET', href, options);
 		}//get
 
 		function service_post(href, options, data){
-			if(!options) options = {};
-
-			return (
-				$http({
-					method: 'POST'
-					, url: href
-					, headers: options.headers
-					, data: data
-				})
-				.then(function(res){
-					switch(res.status){
-						case 201:
-						return res.headers('Content-Location');
-
-						default:
-						return $q.reject(res.status);
-					}
-				})
-			);
-
+			return service_call('POST', href, options, data);
 		}//post
 
 		function service_put(href, options, data){
-			if(!options) options = {};
-			
-			return (
-				$http({
-					method: 'PUT'
-					, url: href
-					, headers: options.headers
-					, data: data
-				})
-				.then(function(res){
-					switch(res.status){
-						case 204:
-						return null
-
-						default:
-						return $q.reject(res.status);
-					}
-				})
-			);
-
+			return service_call('PUT', href, options, data);
 		}//put
 
 		function service_patch(href, options, data){
-			if(!options) options = {};
-			
-			return (
-				$http({
-					method: 'PATCH'
-					, url: href
-					, headers: options.headers
-					, data: data
-				})
-				.then(function(res){
-					switch(res.status){
-						case 204:
-						return null
-
-						default:
-						return $q.reject(res.status);
-					}
-				})
-			);
-
+			return service_call('PATCH', href, options, data);
 		}//patch
 
 
 		function service_del(href, options){
-			if(!options) options = {};
-			
-			return (
-				$http({
-					method: 'DELETE'
-					, url: href
-					, headers: options.headers
-				})
-				.then(function(res){
-					switch(res.status){
-						case 204:
-						return null
-
-						default:
-						return $q.reject(res.status);
-					}
-				})
-			);
-
+			return service_call('DELETE', href, options);
 		}//del
 
 
