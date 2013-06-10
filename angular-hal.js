@@ -8,11 +8,21 @@ angular
 		, $q
 	){
 		return {
-			$get: service_get
-			, $post: service_post
-			, $put: service_put
-			, $patch: service_patch
-			, $del: service_del
+			$get: function(href, options){
+				return callService('GET', href, options);
+			}//get
+			, $post: function(href, options, data){
+				return callService('POST', href, options, data);
+			}//post
+			, $put: function(href, options, data){
+				return callService('PUT', href, options, data);
+			}//put
+			, $patch: function(href, options, data){
+				return callService('PATCH', href, options, data);
+			}//patch
+			, $del: function(href, options){
+				return callService('DELETE', href, options);
+			}//del
 		};
 
 	
@@ -20,101 +30,31 @@ angular
 			var links = {};
 			var cache = {};
 
-			Object.defineProperty(this, '$href', {
-				configurable: false
-				, enumerable: false
-				, value: getSelfLink(href, data).href
+			defineHiddenProperty(this, '$href', getSelfLink(href, data).href);
+
+			defineHiddenProperty(this, '$flush', function(rel, params) {
+				var link = links[rel];
+				return flushLink(link, params);
 			});
-
-			Object.defineProperty(this, '$flush', {
-				configurable: false
-				, enumerable: false
-				, value: function(rel, params) {
-					var link = links[rel];
-
-					return flushLink(link, params);
-				}
+			defineHiddenProperty(this, '$get', function(rel, params){
+				var link = links[rel];
+				return callLink('GET', link, params);
 			});
-
-
-			Object.defineProperty(this, '$get', {
-				configurable: false
-				, enumerable: false
-				, value: function resource_get(rel, params){
-					var link = links[rel];
-
-					return getLink(link, params);
-				}//resource_get
+			defineHiddenProperty(this, '$post', function(rel, params, data){
+				var link = links[rel];
+				return callLink('POST', link, params, data);
 			});
-			Object.defineProperty(this, '$post', {
-				configurable: false
-				, enumerable: false
-				, value: function resource_post(rel, params, data){
-					var link = links[rel];
-
-					if(Array.isArray(link)) throw 'method not allowed on arrays';
-
-					var linkHref = link.templated
-					? urltemplate.parse(link.href).expand(params)
-					: link.href
-					;
-					linkHref = URI.resolve(href, linkHref);
-					linkHref = URI.normalize(linkHref);
-
-					return service_post(linkHref, options, data);
-				}//resource_post
+			defineHiddenProperty(this, '$put', function(rel, params, data){
+				var link = links[rel];
+				return callLink('PUT', link, params, data);
 			});
-			Object.defineProperty(this, '$put', {
-				configurable: false
-				, enumerable: false
-				, value: function resource_put(rel, params, data){
-					var link = links[rel];
-
-					if(Array.isArray(link)) throw 'method not allowed on arrays';
-
-					var linkHref = link.templated
-					? urltemplate.parse(link.href).expand(params)
-					: link.href
-					;
-					linkHref = URI.resolve(href, linkHref);
-					linkHref = URI.normalize(linkHref);
-
-					return service_put(linkHref, options, data);
-				}//resource_put
+			defineHiddenProperty(this, '$patch', function(rel, params, data){
+				var link = links[rel];
+				return callLink('PATCH', link, params, data);
 			});
-			Object.defineProperty(this, '$patch', {
-				configurable: false
-				, enumerable: false
-				, value: function resource_patch(rel, params, data){
-					var link = links[rel];
-
-					if(Array.isArray(link)) throw 'method not allowed on arrays';
-
-					var linkHref = link.templated
-					? urltemplate.parse(link.href).expand(params)
-					: link.href
-					;
-					linkHref = URI.resolve(href, linkHref);
-					linkHref = URI.normalize(linkHref);
-
-					return service_patch(linkHref, options, data);
-				}//resource_patch
-			});
-			Object.defineProperty(this, '$del', {
-				configurable: false
-				, enumerable: false
-				, value: function resource_del(rel, params){
-					var link = links[rel];
-
-					if(Array.isArray(link)) throw 'method not allowed on arrays';
-
-					var href = link.templated
-					? urltemplate.parse(link.href).expand(params)
-					: link.href
-					;
-
-					return service_del(href, options);
-				}//resource_del
+			defineHiddenProperty(this, '$del', function(rel, params){
+				var link = links[rel];
+				return callLink('DELETE', link, params);
 			});
 
 
@@ -168,6 +108,16 @@ angular
 
 
 
+
+			function defineHiddenProperty(target, name, value) {
+				Object.defineProperty(target, name, {
+					configurable: false
+					, enumerable: false
+					, value: value
+				});
+			}//defineHiddenProperty
+
+
 			function cacheResource(resource) {
 				if(Array.isArray(resource)) return resource.map(function(resource){
 					return cacheResource(resource);
@@ -176,23 +126,31 @@ angular
 				cache[resource.$href] = $q.when(resource);
 			}//cacheResource
 
-			function getLink(link, params) {
+			function callLink(method, link, params, data) {
 				if(Array.isArray(link)) return $q.all(link.map(function(link){
-					return getLink(link);
+					if(method !== 'GET') throw 'method is not supported for arrays';
+
+					return callLink(method, link, params);
 				}));
-			
+
+
 				var linkHref = link.templated
 				? urltemplate.parse(link.href).expand(params)
 				: link.href
 				;
-
 				linkHref = URI.resolve(href, linkHref);
 				linkHref = URI.normalize(linkHref);
 
-				if(linkHref in cache) return cache[linkHref];
-				
-				return cache[linkHref] = service_get(linkHref, options);
-			}//getLink
+				if(method === 'GET') {
+					if(linkHref in cache) return cache[linkHref];
+					
+					return cache[linkHref] = callService(method, linkHref, options, data);
+				}
+				else {
+					return callService(method, linkHref, options, data);	
+				}
+
+			}//callLink
 
 			function flushLink(link, params) {
 				if(Array.isArray(link)) return link.map(function(link){
@@ -256,8 +214,7 @@ angular
 
 
 
-
-		function service_call(method, href, options, data){
+		function callService(method, href, options, data){
 			if(!options) options = {};
 
 			var resource = (
@@ -285,32 +242,7 @@ angular
 			);
 
 			return resource;
-		}//service_call
-
-
-		function service_get(href, options){
-			return service_call('GET', href, options);
-		}//get
-
-		function service_post(href, options, data){
-			return service_call('POST', href, options, data);
-		}//post
-
-		function service_put(href, options, data){
-			return service_call('PUT', href, options, data);
-		}//put
-
-		function service_patch(href, options, data){
-			return service_call('PATCH', href, options, data);
-		}//patch
-
-
-		function service_del(href, options){
-			return service_call('DELETE', href, options);
-		}//del
-
-
-
+		}//callService
 
 
 
