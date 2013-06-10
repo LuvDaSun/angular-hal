@@ -51,37 +51,65 @@ angular
 			Object.defineProperty(this, '$post', {
 				configurable: false
 				, enumerable: false
-				, value: function resource_post(rel, data){
+				, value: function resource_post(rel, params, data){
 					var link = links[rel];
 
-					return service_post(link.href, options, data);
+					if(Array.isArray(link)) throw 'method not allowed on arrays';
+
+					var href = link.templated
+					? urltemplate.parse(link.href).expand(params)
+					: link.href
+					;
+
+					return service_post(href, options, data);
 				}//resource_post
 			});
 			Object.defineProperty(this, '$put', {
 				configurable: false
 				, enumerable: false
-				, value: function resource_put(rel, data){
+				, value: function resource_put(rel, params, data){
 					var link = links[rel];
 
-					return service_put(link.href, options, data);
+					if(Array.isArray(link)) throw 'method not allowed on arrays';
+
+					var href = link.templated
+					? urltemplate.parse(link.href).expand(params)
+					: link.href
+					;
+
+					return service_put(href, options, data);
 				}//resource_put
 			});
 			Object.defineProperty(this, '$patch', {
 				configurable: false
 				, enumerable: false
-				, value: function resource_patch(rel, data){
+				, value: function resource_patch(rel, params, data){
 					var link = links[rel];
 
-					return service_patch(link.href, options, data);
+					if(Array.isArray(link)) throw 'method not allowed on arrays';
+
+					var href = link.templated
+					? urltemplate.parse(link.href).expand(params)
+					: link.href
+					;
+
+					return service_patch(href, options, data);
 				}//resource_patch
 			});
 			Object.defineProperty(this, '$del', {
 				configurable: false
 				, enumerable: false
-				, value: function resource_del(rel){
+				, value: function resource_del(rel, params){
 					var link = links[rel];
 
-					return service_del(link.href, options);
+					if(Array.isArray(link)) throw 'method not allowed on arrays';
+
+					var href = link.templated
+					? urltemplate.parse(link.href).expand(params)
+					: link.href
+					;
+
+					return service_del(href, options);
 				}//resource_del
 			});
 
