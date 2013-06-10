@@ -1,0 +1,17 @@
+{
+  "name": "angular-hal",
+  "version": "0.0.0",
+  "description": "Hal client for angularjs",
+  "repository": "git@github.com:elmerbulthuis/angular-hal.git",
+  "author": "elmerbulthuis <elmerbulthuis@gmail.com>",
+  "license": "BSD",
+  "main": "",
+  "devDependencies": {
+    "bower": "~0.9",
+    "karma": "~0.8"
+  },
+  "scripts": {
+    "test": "karma start",
+    "install": "bower install"
+  }
+}
