@@ -15,124 +15,7 @@ angular
 			, $del: service_del
 		};
 
-		
-		function service_get(href, options){
-			if(!options) options = {};
-
-			var resource = (
-				$http({
-					method: 'GET'
-					, url: href
-					, headers: options.headers
-				})
-				.then(function(res){
-					switch(res.status){
-						case 200:
-						return createResource(href, options, res.data);
-
-						default:
-						return $q.reject(res.status);
-					}
-				})
-			);
-
-			return resource;
-		}//get
-
-		function service_post(href, options, data){
-			if(!options) options = {};
-
-			return (
-				$http({
-					method: 'POST'
-					, url: href
-					, headers: options.headers
-					, data: data
-				})
-				.then(function(res){
-					switch(res.status){
-						case 201:
-						return res.headers('Content-Location');
-
-						default:
-						return $q.reject(res.status);
-					}
-				})
-			);
-
-		}//post
-
-		function service_put(href, options, data){
-			if(!options) options = {};
-			
-			return (
-				$http({
-					method: 'PUT'
-					, url: href
-					, headers: options.headers
-					, data: data
-				})
-				.then(function(res){
-					switch(res.status){
-						case 204:
-						return null
-
-						default:
-						return $q.reject(res.status);
-					}
-				})
-			);
-
-		}//put
-
-		function service_patch(href, options, data){
-			if(!options) options = {};
-			
-			return (
-				$http({
-					method: 'PATCH'
-					, url: href
-					, headers: options.headers
-					, data: data
-				})
-				.then(function(res){
-					switch(res.status){
-						case 204:
-						return null
-
-						default:
-						return $q.reject(res.status);
-					}
-				})
-			);
-
-		}//patch
-
-
-		function service_del(href, options){
-			if(!options) options = {};
-			
-			return (
-				$http({
-					method: 'DELETE'
-					, url: href
-					, headers: options.headers
-				})
-				.then(function(res){
-					switch(res.status){
-						case 204:
-						return null
-
-						default:
-						return $q.reject(res.status);
-					}
-				})
-			);
-
-		}//del
-
-
-
+	
 		function Resource(href, options, data){
 			var links = {};
 			var cache = {};
@@ -321,6 +204,127 @@ angular
 
 			return normalizeLink(baseHref, resource && resource._links && resource._links.self);
 		}//getSelfLink
+
+
+
+
+
+
+		function service_get(href, options){
+			if(!options) options = {};
+
+			var resource = (
+				$http({
+					method: 'GET'
+					, url: href
+					, headers: options.headers
+				})
+				.then(function(res){
+					switch(res.status){
+						case 200:
+						return createResource(href, options, res.data);
+
+						default:
+						return $q.reject(res.status);
+					}
+				})
+			);
+
+			return resource;
+		}//get
+
+		function service_post(href, options, data){
+			if(!options) options = {};
+
+			return (
+				$http({
+					method: 'POST'
+					, url: href
+					, headers: options.headers
+					, data: data
+				})
+				.then(function(res){
+					switch(res.status){
+						case 201:
+						return res.headers('Content-Location');
+
+						default:
+						return $q.reject(res.status);
+					}
+				})
+			);
+
+		}//post
+
+		function service_put(href, options, data){
+			if(!options) options = {};
+			
+			return (
+				$http({
+					method: 'PUT'
+					, url: href
+					, headers: options.headers
+					, data: data
+				})
+				.then(function(res){
+					switch(res.status){
+						case 204:
+						return null
+
+						default:
+						return $q.reject(res.status);
+					}
+				})
+			);
+
+		}//put
+
+		function service_patch(href, options, data){
+			if(!options) options = {};
+			
+			return (
+				$http({
+					method: 'PATCH'
+					, url: href
+					, headers: options.headers
+					, data: data
+				})
+				.then(function(res){
+					switch(res.status){
+						case 204:
+						return null
+
+						default:
+						return $q.reject(res.status);
+					}
+				})
+			);
+
+		}//patch
+
+
+		function service_del(href, options){
+			if(!options) options = {};
+			
+			return (
+				$http({
+					method: 'DELETE'
+					, url: href
+					, headers: options.headers
+				})
+				.then(function(res){
+					switch(res.status){
+						case 204:
+						return null
+
+						default:
+						return $q.reject(res.status);
+					}
+				})
+			);
+
+		}//del
+
 
 
 
