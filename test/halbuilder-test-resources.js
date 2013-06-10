@@ -28,7 +28,7 @@ describe('halbuilder test resources', function(){
 		})
 		;
 
-		var resource = halClient.get('/exampleWithoutHref').then(function(resource){
+		var resource = halClient.$get('/exampleWithoutHref').then(function(resource){
 			expect(resource).toEqual({
 				"name" : "Example Resource"
 			});
@@ -48,7 +48,7 @@ describe('halbuilder test resources', function(){
 		})
 		;
 
-		var resource = halClient.get('/exampleWithArray').then(function(resource){
+		var resource = halClient.$get('/exampleWithArray').then(function(resource){
 			expect(resource).toEqual({
 				"array" : [ "one", "two", "three" ]
 				, "name" : "Example Resource"
@@ -97,7 +97,7 @@ describe('halbuilder test resources', function(){
 		})
 		;
 
-		var resource = halClient.get("https://example.com/api/customer/123456").then(function(resource){
+		var resource = halClient.$get("https://example.com/api/customer/123456").then(function(resource){
 			expect(resource).toEqual({
 				"age": 33
 				, "expired": false
@@ -148,7 +148,7 @@ describe('halbuilder test resources', function(){
 		})
 		;
 
-		var resource = halClient.get("https://example.com/api/customer/123456").then(function(resource){
+		var resource = halClient.$get("https://example.com/api/customer/123456").then(function(resource){
 			expect(resource).toEqual({
 				"age" : 33
 				, "expired" : false
@@ -200,7 +200,7 @@ describe('halbuilder test resources', function(){
 		})
 		;
 
-		var resource = halClient.get("https://example.com/api/customer").then(function(resource){
+		var resource = halClient.$get("https://example.com/api/customer").then(function(resource){
 			expect(resource).toEqual({
 			});
 		});
@@ -248,7 +248,7 @@ describe('halbuilder test resources', function(){
 		})
 		;
 
-		var resource = halClient.get("https://example.com/api/customer/123456").then(function(resource){
+		var resource = halClient.$get("https://example.com/api/customer/123456").then(function(resource){
 			expect(resource).toEqual({
 				"age" : 33
 				, "expired" : false
@@ -309,7 +309,7 @@ describe('halbuilder test resources', function(){
 		})
 		;
 		
-		var resource = halClient.get("https://example.com/api/customer/123456").then(function(resource){
+		var resource = halClient.$get("https://example.com/api/customer/123456").then(function(resource){
 			expect(resource).toEqual({
 			});
 
@@ -379,7 +379,7 @@ describe('halbuilder test resources', function(){
 		})
 		;
 
-		var resource = halClient.get("https://example.com/api/customer/123456").then(function(resource){
+		var resource = halClient.$get("https://example.com/api/customer/123456").then(function(resource){
 			expect(resource).toEqual({
 			});
 
@@ -463,7 +463,7 @@ describe('halbuilder test resources', function(){
 		})
 		;
 
-		var resource = halClient.get("https://example.com/api/customer/123456").then(function(resource){
+		var resource = halClient.$get("https://example.com/api/customer/123456").then(function(resource){
 			expect(resource).toEqual({
 			});
 		
@@ -567,7 +567,7 @@ describe('halbuilder test resources', function(){
 		})
 		;
 
-		var resource = halClient.get("https://example.com/api/customer/123456").then(function(resource){
+		var resource = halClient.$get("https://example.com/api/customer/123456").then(function(resource){
 			expect(resource).toEqual({
 			});
 

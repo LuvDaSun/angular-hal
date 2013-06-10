@@ -7,13 +7,130 @@ angular
 		$http
 		, $q
 	){
-		var service = {};
-		service.get = get;
-		// service.post = post;
-		// service.put = get;
-		// service.patch = patch;
-		// service.del = del;
+		return {
+			$get: service_get
+			, $post: service_post
+			, $put: service_put
+			, $patch: service_patch
+			, $del: service_del
+		};
+
 		
+		function service_get(url, options, cache){
+			if(!cache) cache = {};
+
+			if(cache && url in cache){
+				return cache[url];
+			}
+			
+			var resource = (
+				$http(angular.extend({
+					method: 'GET'
+					, url: url
+				}, options))
+				.then(function(res){
+					switch(res.status){
+						case 200:
+						return createResource(url, options, res.data, cache);
+
+						default:
+						return $q.reject(res.status);
+					}
+				})
+			);
+
+			if(cache) cache[url] = resource;
+
+			return resource;
+		}//get
+
+		function service_post(url, options, data){
+			
+			return (
+				$http(angular.extend({
+					method: 'POST'
+					, url: url
+					, data: data
+				}, options))
+				.then(function(res){
+					switch(res.status){
+						case 201:
+						return res.headers('Content-Location');
+
+						default:
+						return $q.reject(res.status);
+					}
+				})
+			);
+
+		}//post
+
+		function service_put(url, options, data){
+			
+			return (
+				$http(angular.extend({
+					method: 'PUT'
+					, url: url
+					, data: data
+				}, options))
+				.then(function(res){
+					switch(res.status){
+						case 204:
+						return null
+
+						default:
+						return $q.reject(res.status);
+					}
+				})
+			);
+
+		}//put
+
+		function service_patch(url, options, data){
+			
+			return (
+				$http(angular.extend({
+					method: 'PATCH'
+					, url: url
+					, data: data
+				}, options))
+				.then(function(res){
+					switch(res.status){
+						case 204:
+						return null
+
+						default:
+						return $q.reject(res.status);
+					}
+				})
+			);
+
+		}//patch
+
+
+		function service_del(url, options){
+			
+			return (
+				$http(angular.extend({
+					method: 'DELETE'
+					, url: url
+					, data: data
+				}, options))
+				.then(function(res){
+					switch(res.status){
+						case 204:
+						return null
+
+						default:
+						return $q.reject(res.status);
+					}
+				})
+			);
+
+		}//del
+
+
+
 		function Resource(href, options, data, cache){
 			href = getSelfLink(href, data).href;
 
@@ -35,7 +152,7 @@ angular
 							? urltemplate.parse(link.href).expand(params)
 							: link.href
 							;
-							return get(href, options, cache);
+							return service_get(href, options, cache);
 						}));
 					}
 					else {
@@ -44,7 +161,7 @@ angular
 						: link.href
 						;
 
-						return get(href, options, cache);
+						return service_get(href, options, cache);
 					}
 
 				}//resource_get
@@ -53,28 +170,28 @@ angular
 				configurable: false
 				, enumerable: false
 				, value: function resource_post(rel, data){
-					return post(links[rel].href, options, data);
+					return service_post(links[rel].href, options, data);
 				}//resource_post
 			});
 			Object.defineProperty(this, '$put', {
 				configurable: false
 				, enumerable: false
 				, value: function resource_put(rel, data){
-					return put(links[rel].href, options, data);
+					return service_put(links[rel].href, options, data);
 				}//resource_put
 			});
 			Object.defineProperty(this, '$patch', {
 				configurable: false
 				, enumerable: false
 				, value: function resource_patch(rel, data){
-					return patch(links[rel].href, options, data);
+					return service_patch(links[rel].href, options, data);
 				}//resource_patch
 			});
 			Object.defineProperty(this, '$del', {
 				configurable: false
 				, enumerable: false
 				, value: function resource_del(rel){
-					return del(links[rel].href, options);
+					return service_del(links[rel].href, options);
 				}//resource_del
 			});
 
@@ -142,120 +259,6 @@ angular
 			return resource;
 
 		}//createResource
-		
-
-		function get(url, options, cache){
-			if(!cache) cache = {};
-
-			if(cache && url in cache){
-				return cache[url];
-			}
-			
-			var resource = (
-				$http(angular.extend({
-					method: 'GET'
-					, url: url
-				}, options))
-				.then(function(res){
-					switch(res.status){
-						case 200:
-						return createResource(url, options, res.data, cache);
-
-						default:
-						return $q.reject(res.status);
-					}
-				})
-			);
-
-			if(cache) cache[url] = resource;
-
-			return resource;
-		}//get
-
-		function post(url, options, data){
-			
-			return (
-				$http(angular.extend({
-					method: 'POST'
-					, url: url
-					, data: data
-				}, options))
-				.then(function(res){
-					switch(res.status){
-						case 201:
-						return res.headers('Content-Location');
-
-						default:
-						return $q.reject(res.status);
-					}
-				})
-			);
-
-		}//post
-
-		function put(url, options, data){
-			
-			return (
-				$http(angular.extend({
-					method: 'PUT'
-					, url: url
-					, data: data
-				}, options))
-				.then(function(res){
-					switch(res.status){
-						case 204:
-						return null
-
-						default:
-						return $q.reject(res.status);
-					}
-				})
-			);
-
-		}//put
-
-		function patch(url, options, data){
-			
-			return (
-				$http(angular.extend({
-					method: 'PATCH'
-					, url: url
-					, data: data
-				}, options))
-				.then(function(res){
-					switch(res.status){
-						case 204:
-						return null
-
-						default:
-						return $q.reject(res.status);
-					}
-				})
-			);
-
-		}//patch
-
-
-		function del(url, options){
-			
-			return (
-				$http(angular.extend({
-					method: 'DELETE'
-					, url: url
-					, data: data
-				}, options))
-				.then(function(res){
-					switch(res.status){
-						case 204:
-						return null
-
-						default:
-						return $q.reject(res.status);
-					}
-				})
-			);
-
-		}//del
 
 
 		function normalizeLink(baseHref, link){
@@ -286,7 +289,9 @@ angular
 		}//getSelfLink
 
 
-		return service;
+
+
+
 	}
 ])//service
 ;

@@ -22,7 +22,7 @@ describe('simple', function(){
 		})
 		;
 
-		var resource = halClient.get('/').then(function(resource){
+		var resource = halClient.$get('/').then(function(resource){
 			expect(resource).toEqual({});
 		});
 
@@ -41,7 +41,7 @@ describe('simple', function(){
 		})
 		;
 
-		var resource = halClient.get('/').then(function(resource){
+		var resource = halClient.$get('/').then(function(resource){
 			expect(resource).toEqual({"test": true});
 		});
 
