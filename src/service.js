@@ -31,8 +31,10 @@ angular
 			Object.defineProperty(this, '$flush', {
 				configurable: false
 				, enumerable: false
-				, value: function() {
-					cache = {};
+				, value: function(rel) {
+					var link = links[rel];
+
+					return flushLink(link);
 				}
 			});
 
@@ -157,7 +159,13 @@ angular
 				return cache[href] = service_get(href, options);
 			}//getLink
 
+			function flushLink(link) {
+				if(Array.isArray(link)) return link.map(function(link){
+					return flushLink(link);
+				});
 
+				delete cache[link.href];
+			}//flushLink
 
 		}//Resource
 
