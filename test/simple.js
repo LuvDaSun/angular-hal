@@ -48,5 +48,38 @@ describe('simple', function(){
 		$httpBackend.flush();
 	});
 
+	it('should get link by template', function(){
+		$httpBackend
+		.expect('GET', '/')
+		.respond({
+			"root": true
+			, "_links": {
+				"self": "/"
+				, "item": "/item{/id}"
+			}
+		})
+		;
+
+		$httpBackend
+		.expect('GET', '/item/1')
+		.respond({
+			"id": 1
+			, "_links": {
+				"self": "/item/1"
+			}
+		})
+		;
+
+		var resource = halClient.$get('/').then(function(resource){
+			expect(resource).toEqual({"root": true});
+
+			resource.$get('item', {id: 1}).then(function(resource){
+				expect(resource).toEqual({"id": 1});
+			});
+		});
+
+		$httpBackend.flush();
+	});
+
 
 });
