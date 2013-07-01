@@ -100,7 +100,9 @@ angular
 					links[rel] = link;
 
 					var resource = createResource(href, options, embedded);
+
 					embedResource(resource);
+
 				}, this);
 			}
 
@@ -118,8 +120,9 @@ angular
 					return embedResource(resource);
 				});
 				
-				var link = getSelfLink(href, resource);
-				embedded[link.href] = $q.when(resource);
+				var href = resource.$href('self');
+
+				embedded[href] = $q.when(resource);
 			}//embedResource
 
 			function callLink(method, link, params, data) {
