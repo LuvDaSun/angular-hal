@@ -28,12 +28,18 @@ angular
 	
 		function Resource(href, options, data){
 			var links = {};
-			var cache = {};
+			var embedded = {};
 
 			href = getSelfLink(href, data).href;
 
-			defineHiddenProperty(this, '$href', href);
+			defineHiddenProperty(this, '$href', function(rel) {
+				if(!(rel in links)) return null;
 
+				return links[rel].href;
+			});
+			defineHiddenProperty(this, '$has', function(rel) {
+				return rel in links;
+			});
 			defineHiddenProperty(this, '$flush', function(rel, params) {
 				var link = links[rel];
 				return flushLink(link, params);
@@ -94,7 +100,9 @@ angular
 					links[rel] = link;
 
 					var resource = createResource(href, options, embedded);
-					cacheResource(resource);
+
+					embedResource(resource);
+
 				}, this);
 			}
 
@@ -107,13 +115,15 @@ angular
 			}//defineHiddenProperty
 
 
-			function cacheResource(resource) {
+			function embedResource(resource) {
 				if(Array.isArray(resource)) return resource.map(function(resource){
-					return cacheResource(resource);
+					return embedResource(resource);
 				});
+				
+				var href = resource.$href('self');
 
-				cache[resource.$href] = $q.when(resource);
-			}//cacheResource
+				embedded[href] = $q.when(resource);
+			}//embedResource
 
 			function callLink(method, link, params, data) {
 				if(Array.isArray(link)) return $q.all(link.map(function(link){
@@ -128,9 +138,9 @@ angular
 				;
 
 				if(method === 'GET') {
-					if(linkHref in cache) return cache[linkHref];
+					if(linkHref in embedded) return embedded[linkHref];
 					
-					return cache[linkHref] = callService(method, linkHref, options, data);
+					return embedded[linkHref] = callService(method, linkHref, options, data);
 				}
 				else {
 					return callService(method, linkHref, options, data);	
@@ -148,7 +158,7 @@ angular
 				: link.href
 				;
 
-				if(linkHref in cache) delete cache[linkHref];
+				if(linkHref in embedded) delete embedded[linkHref];
 			}//flushLink
 
 		}//Resource
@@ -201,17 +211,23 @@ angular
 			var resource = (
 				$http({
 					method: method
-					, url: href
-					, headers: options.headers
+					, url: options.transformUrl ? options.transformUrl(href) : href
+					, headers: {
+						'Authorization': options.authorization
+						, 'Content-Type': 'application/json'
+					}
 					, data: data
 				})
 				.then(function(res){
 					switch(res.status){
 						case 200:
-						return createResource(href, options, res.data);
+						if(res.data) return createResource(href, options, res.data);
+						return null;
 
 						case 201:
-						return res.headers('Content-Location');
+						if(res.data) return createResource(href, options, res.data);
+						if(res.headers('Content-Location')) return res.headers('Content-Location');
+						return null;
 
 						case 204:
 						return null
@@ -229,7 +245,7 @@ angular
 
 		function resolveUrl(baseHref, href){
 			var resultHref = '';
-			var reFullUrl = /^(\w+\:)?(\/\/)?([^\/]*)(\/.*)$/;
+			var reFullUrl = /^((?:\w+\:)?)((?:\/\/)?)([^\/]*)((?:\/.*)?)$/;
 			var baseHrefMatch = reFullUrl.exec(baseHref);
 			var hrefMatch = reFullUrl.exec(href);
 
