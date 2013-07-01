@@ -28,7 +28,7 @@ angular
 	
 		function Resource(href, options, data){
 			var links = {};
-			var cache = {};
+			var embedded = {};
 
 			href = getSelfLink(href, data).href;
 
@@ -100,7 +100,7 @@ angular
 					links[rel] = link;
 
 					var resource = createResource(href, options, embedded);
-					cacheResource(resource);
+					embedResource(resource);
 				}, this);
 			}
 
@@ -113,13 +113,14 @@ angular
 			}//defineHiddenProperty
 
 
-			function cacheResource(resource) {
+			function embedResource(resource) {
 				if(Array.isArray(resource)) return resource.map(function(resource){
-					return cacheResource(resource);
+					return embedResource(resource);
 				});
-
-				cache[resource.$href('self').href] = $q.when(resource);
-			}//cacheResource
+				
+				var link = getSelfLink(href, resource);
+				embedded[link.href] = $q.when(resource);
+			}//embedResource
 
 			function callLink(method, link, params, data) {
 				if(Array.isArray(link)) return $q.all(link.map(function(link){
@@ -134,9 +135,9 @@ angular
 				;
 
 				if(method === 'GET') {
-					if(linkHref in cache) return cache[linkHref];
+					if(linkHref in embedded) return embedded[linkHref];
 					
-					return cache[linkHref] = callService(method, linkHref, options, data);
+					return embedded[linkHref] = callService(method, linkHref, options, data);
 				}
 				else {
 					return callService(method, linkHref, options, data);	
@@ -154,7 +155,7 @@ angular
 				: link.href
 				;
 
-				if(linkHref in cache) delete cache[linkHref];
+				if(linkHref in embedded) delete embedded[linkHref];
 			}//flushLink
 
 		}//Resource
