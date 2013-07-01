@@ -32,8 +32,11 @@ angular
 
 			href = getSelfLink(href, data).href;
 
-			defineHiddenProperty(this, '$href', href);
+			defineHiddenProperty(this, '$href', function(rel) {
+				if(!(rel in links)) return null;
 
+				return links[rel].href;
+			});
 			defineHiddenProperty(this, '$flush', function(rel, params) {
 				var link = links[rel];
 				return flushLink(link, params);
@@ -112,7 +115,7 @@ angular
 					return cacheResource(resource);
 				});
 
-				cache[resource.$href] = $q.when(resource);
+				cache[resource.$href('self').href] = $q.when(resource);
 			}//cacheResource
 
 			function callLink(method, link, params, data) {
