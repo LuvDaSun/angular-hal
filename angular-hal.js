@@ -37,6 +37,9 @@ angular
 
 				return links[rel].href;
 			});
+			defineHiddenProperty(this, '$has', function(rel) {
+				return rel in links;
+			});
 			defineHiddenProperty(this, '$flush', function(rel, params) {
 				var link = links[rel];
 				return flushLink(link, params);
@@ -214,10 +217,13 @@ angular
 				.then(function(res){
 					switch(res.status){
 						case 200:
-						return createResource(href, options, res.data);
+						if(res.data) return createResource(href, options, res.data);
+						return null;
 
 						case 201:
-						return res.headers('Content-Location');
+						if(res.data) return createResource(href, options, res.data);
+						if(res.headers('Content-Location')) return res.headers('Content-Location');
+						return null;
 
 						case 204:
 						return null
