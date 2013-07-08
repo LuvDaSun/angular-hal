@@ -32,10 +32,10 @@ angular
 
 			href = getSelfLink(href, data).href;
 
-			defineHiddenProperty(this, '$href', function(rel) {
+			defineHiddenProperty(this, '$href', function(rel, params) {
 				if(!(rel in links)) return null;
 
-				return links[rel].href;
+				return hrefLink(links[rel], params);
 			});
 			defineHiddenProperty(this, '$has', function(rel) {
 				return rel in links;
@@ -125,6 +125,15 @@ angular
 				embedded[href] = $q.when(resource);
 			}//embedResource
 
+			function hrefLink(link, params) {
+				var href = link.templated
+				? urltemplate.parse(link.href).expand(params)
+				: link.href
+				;
+
+				return href;
+			}//hrefLink
+
 			function callLink(method, link, params, data) {
 				if(Array.isArray(link)) return $q.all(link.map(function(link){
 					if(method !== 'GET') throw 'method is not supported for arrays';
@@ -132,10 +141,7 @@ angular
 					return callLink(method, link, params, data);
 				}));
 
-				var linkHref = link.templated
-				? urltemplate.parse(link.href).expand(params)
-				: link.href
-				;
+				var linkHref = hrefLink(link, params);
 
 				if(method === 'GET') {
 					if(linkHref in embedded) return embedded[linkHref];
