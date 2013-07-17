@@ -11,7 +11,7 @@
     "karma": "~0.8"
   },
   "scripts": {
-    "test": "karma start",
+    "test": "karma start --single-run --no-auto-watch",
     "install": "bower install"
   }
 }
