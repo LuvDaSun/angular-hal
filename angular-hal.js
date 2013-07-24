@@ -1,6 +1,6 @@
 angular
 .module('angular-hal', [])
-.service('halClient', [
+.factory('halClient', [
 	'$http'
 	, '$q'
 	, function(
