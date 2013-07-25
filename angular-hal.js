@@ -1,6 +1,6 @@
 angular
 .module('angular-hal', [])
-.service('halClient', [
+.factory('halClient', [
 	'$http'
 	, '$q'
 	, function(
@@ -159,10 +159,7 @@ angular
 					return flushLink(link, params);
 				});
 
-				var linkHref = link.templated
-				? urltemplate.parse(link.href).expand(params)
-				: link.href
-				;
+				var linkHref = hrefLink(link, params);
 
 				if(linkHref in embedded) delete embedded[linkHref];
 			}//flushLink

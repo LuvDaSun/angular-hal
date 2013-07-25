@@ -1,6 +1,6 @@
 {
   "name": "angular-hal",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Hal client for angularjs",
   "repository": "git@github.com:elmerbulthuis/angular-hal.git",
   "author": "elmerbulthuis <elmerbulthuis@gmail.com>",
@@ -11,7 +11,7 @@
     "karma": "~0.8"
   },
   "scripts": {
-    "test": "karma start",
+    "test": "karma start --single-run --no-auto-watch",
     "install": "bower install"
   }
 }
