@@ -7,8 +7,8 @@
   "license": "BSD",
   "main": "",
   "devDependencies": {
-    "bower": "~0.9",
-    "karma": "~0.8"
+    "bower": "~1",
+    "karma": "~0.8.7"
   },
   "scripts": {
     "test": "karma start --single-run --no-auto-watch",
