@@ -1,10 +1,11 @@
 {
   "name": "angular-hal",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "ignore": [
     "**/.*",
     "node_modules",
-    "components",
+    "bower_components",
+    "package.json",
     "test",
     "karma.conf.js",
     "karma",
@@ -12,11 +13,10 @@
   ],
   "main": "angular-hal.js",
   "dependencies": {
-    "url-template": "~2.0",
+    "rfc6570": "~0.0.3",
     "angular": "~1.0"
   },
   "devDependencies": {
-    "jasmine": "~1.3",
     "angular-mocks": "~1.0"
   }
 }

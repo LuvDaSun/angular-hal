@@ -127,7 +127,7 @@ angular
 
 			function hrefLink(link, params) {
 				var href = link.templated
-				? urltemplate.parse(link.href).expand(params)
+				? new UriTemplate(link.href).stringify(params)
 				: link.href
 				;
 
