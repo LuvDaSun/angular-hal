@@ -1,6 +1,6 @@
 {
   "name": "angular-hal",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "ignore": [
     "**/.*",
     "node_modules",
@@ -13,7 +13,7 @@
   ],
   "main": "angular-hal.js",
   "dependencies": {
-    "rfc6570": "~0.0.3",
+    "rfc6570": "~0.0.4",
     "angular": "~1.0"
   },
   "devDependencies": {
