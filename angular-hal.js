@@ -218,6 +218,7 @@ angular
 					, headers: {
 						'Authorization': options.authorization
 						, 'Content-Type': 'application/json'
+						, 'Accept': 'application/hal+json,application/json'
 					}
 					, data: data
 				})
