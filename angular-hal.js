@@ -223,6 +223,7 @@ angular
 					, data: data
 				})
 				.then(function(res){
+
 					switch(res.status){
 						case 200:
 						if(res.data) return createResource(href, options, res.data);
@@ -233,12 +234,14 @@ angular
 						if(res.headers('Content-Location')) return res.headers('Content-Location');
 						return null;
 
+						case 202:
 						case 204:
 						return null
 
 						default:
 						return $q.reject(res.status);
 					}
+					
 				})
 			);
 
