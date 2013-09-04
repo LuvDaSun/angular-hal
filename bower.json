@@ -14,7 +14,7 @@
   "main": "angular-hal.js",
   "dependencies": {
     "rfc6570": "~0.0.4",
-    "angular": "~1.0"
+    "angular": "~1"
   },
   "devDependencies": {
     "angular-mocks": "~1.0"
