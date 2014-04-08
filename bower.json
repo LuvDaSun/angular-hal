@@ -3,12 +3,7 @@
   "ignore": [
     "**/.*",
     "node_modules",
-    "bower_components",
-    "package.json",
-    "test",
-    "karma.conf.js",
-    "karma",
-    "bower"
+    "bower_components"
   ],
   "main": "angular-hal.js",
   "dependencies": {
@@ -16,6 +11,6 @@
     "angular": "~1"
   },
   "devDependencies": {
-    "angular-mocks": "~1"
+    "angular-mocks": "*"
   }
 }
