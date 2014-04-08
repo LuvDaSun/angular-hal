@@ -12,7 +12,7 @@
   ],
   "main": "angular-hal.js",
   "dependencies": {
-    "rfc6570": "~0.0.4",
+    "rfc6570": "~0.1",
     "angular": "~1"
   },
   "devDependencies": {
