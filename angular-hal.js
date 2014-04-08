@@ -45,10 +45,6 @@ angular
             defineHiddenProperty(this, '$has', function (rel) {
                 return rel in links;
             });
-            defineHiddenProperty(this, '$flush', function (rel, params) {
-                var link = links[rel];
-                return flushLink(link, params);
-            });
             defineHiddenProperty(this, '$get', function (rel, params) {
                 var link = links[rel];
                 return callLink('GET', link, params);
@@ -101,6 +97,7 @@ angular
                         var embedded = data._embedded[rel];
                         var link = getSelfLink(href, embedded);
                         links[rel] = link;
+                //console.log(link)
 
                         var resource = createResource(href, options, embedded);
 
@@ -150,22 +147,12 @@ angular
                 if (method === 'GET') {
                     if (linkHref in embedded) return embedded[linkHref];
 
-                    return (embedded[linkHref] = callService(method, linkHref, options, data));
+                    return callService(method, linkHref, options, data);
                 } else {
                     return callService(method, linkHref, options, data);
                 }
 
             } //callLink
-
-            function flushLink(link, params) {
-                if (Array.isArray(link)) return link.map(function (link) {
-                    return flushLink(link, params);
-                });
-
-                var linkHref = hrefLink(link, params);
-
-                if (linkHref in embedded) delete embedded[linkHref];
-            } //flushLink
 
         } //Resource
 
