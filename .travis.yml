@@ -1,3 +1,18 @@
 language: node_js
-node_js:
-  - "0.8"
+node_js: '0.10'
+before_install:
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
+install:
+- npm install bower karma-cli --global --quiet
+- npm install --quiet
+- bower install --quiet
+script:
+- karma start --browsers=PhantomJS,Firefox
+deploy:
+  provider: npm
+  email: elmerbulthuis@gmail.com
+  api_key:
+    secure: G5YVIuoGKRVINa9TQmGxIIcMtqG3FueeY2gqGoYie4nhiYUFZKTChOaWRWo7k1eRuOSnBy/Q+xHYOAdpG7y6ckMjxjLnIAdWt3STHkE8gBvOSkqNd758z4j14gExijXT32nYIcr2HqJJ76IsN9UEIheC8EIAj2xTQPGXBaHGMSA=
+  on:
+    tags: true
