@@ -7,32 +7,33 @@ angular
 .run(function ($httpBackend) {
     var last_id = 0;
     var contacts = [];
+
     contacts.push({
-        id: ++last_id,
-        name: "Elmer",
-        email: "elmer@luvdasun.com"
+        "id": ++last_id,
+        "name": "Elmer",
+        "email": "elmer@luvdasun.com"
     });
     contacts.push({
-        id: ++last_id,
-        name: "Denise",
-        email: "denise@luvdasun.com"
+        "id": ++last_id,
+        "name": "Denise",
+        "email": "denise@luvdasun.com"
     });
 
     $httpBackend
         .whenGET("//api/")
         .respond(function () {
             return [200, {
-                _links: {
+                "_links": {
                     "self": {
                         "href": "/"
                     },
                     "contacts": {
-                        templated: true,
-                        href: "/contacts{?search}"
+                        "templated": true,
+                        "href": "/contacts{?search}"
                     },
                     "contact": {
-                        templated: true,
-                        href: "/contact{/id}"
+                        "templated": true,
+                        "href": "/contact{/id}"
                     }
                 }
             }];
