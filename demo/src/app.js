@@ -53,6 +53,7 @@ angular
         }
         return promise.then(function (contacts) {
             $scope.contacts = contacts;
+            $scope.newContactForm.$setPristine();
             delete $scope.newContact;
         });
     }
