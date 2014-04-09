@@ -18,7 +18,7 @@
 <main ng-controller="contacts">
 
 	<form novalidate>
-		<input type="search" ng-model="search" />	
+		<input type="search" ng-model="search" placeholder="search" /><br />
 	</form>
 
 	<p ng-if="contacts.count === 0">
@@ -39,8 +39,8 @@
 	</ul>
 
 	<form novalidate name="newContactForm" ng-submit="submitNewContactForm()">
-		<label>Name: <input type="name" required ng-model="newContact.name" ng-minlength="2" /></label><br />
-		<label>Email: <input type="email" required ng-model="newContact.email" /></label><br />
+		<input type="name" required ng-model="newContact.name" ng-minlength="2" placeholder="name" /><br />
+		<input type="email" required ng-model="newContact.email" placeholder="email" /><br />
 		<button type="submit">Add contact</button><br />
 	</form>
 
