@@ -200,16 +200,15 @@ angular
 
         function callService(method, href, options, data) {
             if (!options) options = {};
+            if (!options.headers) options.headers = {};
+            if (!options.headers['Content-Type']) options.headers['Content-Type'] = 'application/json';
+            if (!options.headers.Accept) options.headers.Accept = 'application/hal+json,application/json';
 
             var resource = (
                 $http({
                     method: method,
                     url: options.transformUrl ? options.transformUrl(href) : href,
-                    headers: {
-                        'Authorization': options.authorization,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/hal+json,application/json'
-                    },
+                    headers: options.headers,
                     data: data
                 })
                 .then(function (res) {
