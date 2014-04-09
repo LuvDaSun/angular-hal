@@ -1,8 +1,6 @@
 # angular-hal
 
-* Master: [![Build Status](https://travis-ci.org/elmerbulthuis/angular-hal.png?branch=master)](https://travis-ci.org/elmerbulthuis/angular-hal)
-* Develop: [![Build Status](https://travis-ci.org/elmerbulthuis/angular-hal.png?branch=develop)](https://travis-ci.org/elmerbulthuis/angular-hal)
-
+[![Build Status](https://travis-ci.org/LuvDaSun/angular-hal.svg)](https://travis-ci.org/LuvDaSun/angular-hal)
 
 ## use it in your project!
 
@@ -50,7 +48,7 @@ stay tuned for more!
 
 If you wish to use this service in old (ie) browsers, you may need to use the following polyfills:
 - es5shim & es5sham, https://github.com/kriskowal/es5-shim, some parts of the service use es5 methods.
-- xhr-polyfill, git://github.com/elmerbulthuis/xhr-polyfill.git, if you want to make cross domain requests in ie8 / ie9 using the xhr-channel standard.
+- xhr-polyfill, git://github.com/LuvDaSun/xhr-polyfill.git, if you want to make cross domain requests in ie8 / ie9 using the xhr-channel standard.
 
 
 ## help me out!
