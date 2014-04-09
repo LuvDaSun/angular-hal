@@ -24,7 +24,7 @@ angular
         }).then(load);
     };
 
-    $scope.deleteContact = function (index) {
+    $scope.deleteContact = function (index) {\
         var contact = $scope.contactItems[index];
 
         contact.$del('self').then(load);
