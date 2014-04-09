@@ -33,8 +33,8 @@
 
 	<ul>
 		<li ng-repeat="contactItem in contactItems">
-		<a href data-mailto="{{ contactItem.email }}" ng-bind="contactItem.name"></a>
-		<a href ng-click="deleteContact($index)">X</a>
+			<a href data-mailto="{{ contactItem.email }}" ng-bind="contactItem.name"></a>
+			<a href ng-click="deleteContact($index)">X</a>
 		</li>
 	</ul>
 
