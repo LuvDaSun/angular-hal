@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>angular-hal demo</title>
+	<script src="bower_components/angular/angular.js"></script>
+	<script src="bower_components/angular-mocks/angular-mocks.js"></script>
+	<script src="bower_components/angular-hal/angular-hal.js"></script>
+	<script src="bower_components/rfc6570/rfc6570.js"></script>
+	<script src="bower_components/angular-hal/angular-hal.js"></script>
+	<script src="mocks.js"></script>
+	<script src="app.js"></script>
+</head>
+
+<body ng-app="app-mock">
+
+<main ng-controller="contacts">
+
+	<form novalidate>
+		<input type="search" ng-model="search" />	
+	</form>
+
+	<p>
+		Aantal <span ng-bind="contacts.count"></span>
+	</p>
+	<ul>
+		<li ng-repeat="contactItem in contactItems">
+		<a href mailto="{{ contactItem.email }}" ng-bind="contactItem.name"></a>
+		<a href ng-click="deleteContact($index)">X</a>
+		</li>
+	</ul>
+
+	<form novalidate name="newContactForm" ng-submit="submitNewContactForm()">
+		<label>Name: <input type="name" required ng-model="newContact.name" /></label><br />
+		<label>Email: <input type="email" required ng-model="newContact.email" /></label><br />
+		<button type="submit">Add contact</button><br />
+	</form>
+
+</main>
+
+</body>
+
+</html>
