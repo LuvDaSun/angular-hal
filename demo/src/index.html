@@ -3,6 +3,7 @@
 
 <head>
 	<title>angular-hal demo</title>
+	<link rel="stylesheet" type="text/css" href="style.css" />
 	<script src="bower_components/angular/angular.js"></script>
 	<script src="bower_components/angular-mocks/angular-mocks.js"></script>
 	<script src="bower_components/angular-hal/angular-hal.js"></script>
@@ -20,9 +21,16 @@
 		<input type="search" ng-model="search" />	
 	</form>
 
-	<p>
-		Aantal <span ng-bind="contacts.count"></span>
+	<p ng-if="contacts.count === 0">
+		No contacts found :-(
 	</p>
+	<p ng-if="contacts.count === 1">
+		One contact found :-)
+	</p>
+	<p ng-if="contacts.count > 1">
+		<span ng-bind="contacts.count"></span> contacts found.
+	</p>
+
 	<ul>
 		<li ng-repeat="contactItem in contactItems">
 		<a href data-mailto="{{ contactItem.email }}" ng-bind="contactItem.name"></a>
@@ -31,7 +39,7 @@
 	</ul>
 
 	<form novalidate name="newContactForm" ng-submit="submitNewContactForm()">
-		<label>Name: <input type="name" required ng-model="newContact.name" /></label><br />
+		<label>Name: <input type="name" required ng-model="newContact.name" ng-minlength="2" /></label><br />
 		<label>Email: <input type="email" required ng-model="newContact.email" /></label><br />
 		<button type="submit">Add contact</button><br />
 	</form>
