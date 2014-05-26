@@ -43,6 +43,10 @@ You may use it like this:
 stay tuned for more!
 
 
+## check this out!
+- [A blog post by Yuan Ji about Angular-HAL](https://www.jiwhiz.com/post/2014/4/Consume_RESTful_API_With_Angular_HAL)
+
+
 ## compatibility
 
 If you wish to use this service in old (ie) browsers, you may need to use the following polyfills:
