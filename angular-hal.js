@@ -31,8 +31,8 @@ angular.module('angular-hal', [])
 
 
         function Resource(href, options, data) {
-            var linksAttribute = '_links';
-            var embeddedAttribute = '_embedded';
+            var linksAttribute = options.linksAttribute || '_links';
+            var embeddedAttribute = options.embeddedAttribute || '_embedded';
             var links = {};
             var embedded = {};
 
