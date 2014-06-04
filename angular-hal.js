@@ -126,9 +126,18 @@ angular
             } //embedResource
 
             function hrefLink(link, params) {
-                var href = link.templated ? new rfc6570.UriTemplate(link.href).stringify(params) : link.href;
+                if (link.templated) {
+                    return new rfc6570.UriTemplate(link.href).stringify(params);
+                }
 
-                return href;
+                if (params) {
+                    var keys = Object.keys(params);
+                    if (keys.length > 0) {
+                        return new rfc6570.UriTemplate(link.href + '{?' + keys.map(function (key) { return key; }).join(',') + '}').stringify(params);
+                    }
+                }
+
+                return link.href;
             } //hrefLink
 
             function callLink(method, link, params, data) {
