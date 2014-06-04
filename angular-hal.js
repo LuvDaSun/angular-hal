@@ -1,7 +1,6 @@
 /* global angular */
 
-angular
-    .module('angular-hal', [])
+angular.module('angular-hal', [])
 
 .service('halClient', [
     '$http', '$q', '$window',
@@ -97,7 +96,7 @@ angular
                         var embedded = data._embedded[rel];
                         var link = getSelfLink(href, embedded);
                         links[rel] = link;
-                //console.log(link)
+                        //console.log(link)
 
                         var resource = createResource(href, options, embedded);
 
@@ -246,4 +245,5 @@ angular
         } //resolveUrl
 
     }
+    
 ]); //service
