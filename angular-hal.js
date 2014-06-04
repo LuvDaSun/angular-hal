@@ -31,6 +31,8 @@ angular.module('angular-hal', [])
 
 
         function Resource(href, options, data) {
+            var linksAttribute = options.linksAttribute || '_links';
+            var embeddedAttribute = options.embeddedAttribute || '_embedded';
             var links = {};
             var embedded = {};
 
@@ -68,7 +70,7 @@ angular.module('angular-hal', [])
 
             Object.keys(data)
                 .filter(function (key) {
-                    return !~['_', '$'].indexOf(key[0]);
+                    return key !== linksAttribute && key !== embeddedAttribute && !~['_', '$'].indexOf(key[0]);
                 })
                 .forEach(function (key) {
                     Object.defineProperty(this, key, {
@@ -79,21 +81,21 @@ angular.module('angular-hal', [])
                 }, this);
 
 
-            if (data._links) {
+            if (data[linksAttribute]) {
                 Object
-                    .keys(data._links)
+                    .keys(data[linksAttribute])
                     .forEach(function (rel) {
-                        var link = data._links[rel];
+                        var link = data[linksAttribute][rel];
                         link = normalizeLink(href, link);
                         links[rel] = link;
                     }, this);
             }
 
-            if (data._embedded) {
+            if (data[embeddedAttribute]) {
                 Object
-                    .keys(data._embedded)
+                    .keys(data[embeddedAttribute])
                     .forEach(function (rel) {
-                        var embedded = data._embedded[rel];
+                        var embedded = data[embeddedAttribute][rel];
                         var link = getSelfLink(href, embedded);
                         links[rel] = link;
                         //console.log(link)
@@ -153,6 +155,15 @@ angular.module('angular-hal', [])
 
             } //callLink
 
+            function getSelfLink(baseHref, resource) {
+
+                if (Array.isArray(resource)) return resource.map(function (resource) {
+                    return getSelfLink(baseHref, resource);
+                });
+
+                return normalizeLink(baseHref, resource && resource[linksAttribute] && resource[linksAttribute].self);
+            } //getSelfLink
+
         } //Resource
 
 
@@ -186,15 +197,6 @@ angular.module('angular-hal', [])
 
             return link;
         } //normalizeLink
-
-
-        function getSelfLink(baseHref, resource) {
-            if (Array.isArray(resource)) return resource.map(function (resource) {
-                return getSelfLink(baseHref, resource);
-            });
-
-            return normalizeLink(baseHref, resource && resource._links && resource._links.self);
-        } //getSelfLink
 
 
         function callService(method, href, options, data) {
@@ -245,5 +247,5 @@ angular.module('angular-hal', [])
         } //resolveUrl
 
     }
-    
+
 ]); //service
