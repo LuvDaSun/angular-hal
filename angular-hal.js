@@ -70,7 +70,7 @@ angular.module('angular-hal', [])
 
             Object.keys(data)
                 .filter(function (key) {
-                    return !~['_', '$'].indexOf(key[0]);
+                    return key !== linksAttribute && key !== embeddedAttribute && !~['_', '$'].indexOf(key[0]);
                 })
                 .forEach(function (key) {
                     Object.defineProperty(this, key, {
