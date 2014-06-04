@@ -7,6 +7,8 @@ angular.module('angular-hal', [])
     function (
         $http, $q, $window
     ) {
+        var linksAttribute = '_links';
+        var embeddedAttribute = '_embedded';
         var rfc6570 = $window.rfc6570;
 
         this.$get = function (href, options) {
@@ -79,21 +81,21 @@ angular.module('angular-hal', [])
                 }, this);
 
 
-            if (data._links) {
+            if (data[linksAttribute]) {
                 Object
-                    .keys(data._links)
+                    .keys(data[linksAttribute])
                     .forEach(function (rel) {
-                        var link = data._links[rel];
+                        var link = data[linksAttribute][rel];
                         link = normalizeLink(href, link);
                         links[rel] = link;
                     }, this);
             }
 
-            if (data._embedded) {
+            if (data[embeddedAttribute]) {
                 Object
-                    .keys(data._embedded)
+                    .keys(data[embeddedAttribute])
                     .forEach(function (rel) {
-                        var embedded = data._embedded[rel];
+                        var embedded = data[embeddedAttribute][rel];
                         var link = getSelfLink(href, embedded);
                         links[rel] = link;
                         //console.log(link)
@@ -193,7 +195,7 @@ angular.module('angular-hal', [])
                 return getSelfLink(baseHref, resource);
             });
 
-            return normalizeLink(baseHref, resource && resource._links && resource._links.self);
+            return normalizeLink(baseHref, resource && resource[linksAttribute] && resource[linksAttribute].self);
         } //getSelfLink
 
 
@@ -245,5 +247,5 @@ angular.module('angular-hal', [])
         } //resolveUrl
 
     }
-    
+
 ]); //service
