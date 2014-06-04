@@ -9,9 +9,10 @@ Easy installation using bower
 	bower install angular-hal
 
 
-then, reference the js file in your html page
+then, reference the js files in your html page
 
-	<script src="/bower_components/angular-hal/angular-hal.js"></script>
+	<script src="bower_components/rfc6570/rfc6570.js"></script>
+	<script src="bower_components/angular-hal/angular-hal.js"></script>
 
 
 You may use it like this:
