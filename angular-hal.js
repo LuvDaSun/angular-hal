@@ -7,8 +7,6 @@ angular.module('angular-hal', [])
     function (
         $http, $q, $window
     ) {
-        var linksAttribute = '_links';
-        var embeddedAttribute = '_embedded';
         var rfc6570 = $window.rfc6570;
 
         this.$get = function (href, options) {
@@ -33,6 +31,8 @@ angular.module('angular-hal', [])
 
 
         function Resource(href, options, data) {
+            var linksAttribute = '_links';
+            var embeddedAttribute = '_embedded';
             var links = {};
             var embedded = {};
 
@@ -155,6 +155,15 @@ angular.module('angular-hal', [])
 
             } //callLink
 
+            function getSelfLink(baseHref, resource) {
+
+                if (Array.isArray(resource)) return resource.map(function (resource) {
+                    return getSelfLink(baseHref, resource);
+                });
+
+                return normalizeLink(baseHref, resource && resource[linksAttribute] && resource[linksAttribute].self);
+            } //getSelfLink
+
         } //Resource
 
 
@@ -188,15 +197,6 @@ angular.module('angular-hal', [])
 
             return link;
         } //normalizeLink
-
-
-        function getSelfLink(baseHref, resource) {
-            if (Array.isArray(resource)) return resource.map(function (resource) {
-                return getSelfLink(baseHref, resource);
-            });
-
-            return normalizeLink(baseHref, resource && resource[linksAttribute] && resource[linksAttribute].self);
-        } //getSelfLink
 
 
         function callService(method, href, options, data) {
