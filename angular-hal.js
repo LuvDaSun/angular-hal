@@ -124,7 +124,10 @@ angular.module('angular-hal', [])
 
                 var href = resource.$href('self');
 
-                embedded[href] = $q.when(resource);
+                if (!jQuery.isEmptyObject(resource))
+                	embedded[href] = $q.when(resource);
+                else
+                	embedded[href] = false;
             } //embedResource
 
             function hrefLink(link, params) {
@@ -147,7 +150,13 @@ angular.module('angular-hal', [])
                 linkHref = hrefLink(link, params);
 
                 if (method === 'GET') {
-                    if (linkHref in embedded) return embedded[linkHref];
+                    if (linkHref in embedded) {
+                    	if (embedded[linkHref])
+                    		return embedded[linkHref];
+                    	else
+                            return callService(method, linkHref, options, data);                    		
+                    	
+                    } 
 
                     return callService(method, linkHref, options, data);
                 } else {
