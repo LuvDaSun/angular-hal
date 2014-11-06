@@ -151,7 +151,14 @@ angular.module('angular-hal', [])
 
                     return callService(method, linkHref, options, data);
                 } else {
-                    return callService(method, linkHref, options, data);
+                    var opt = options;
+                    if (params && params['Content-Type']) {
+                        opt = angular.copy(options);
+                        if (!opt) opt = {};
+                        if (!opt.headers) opt.headers = {};
+                        opt.headers['Content-Type'] = params['Content-Type'];
+                    }
+                    return callService(method, linkHref, opt, data);
                 }
 
             } //callLink
