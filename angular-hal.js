@@ -128,6 +128,11 @@ angular.module('angular-hal', [])
             } //embedResource
 
             function hrefLink(link, params) {
+                if (Array.isArray(link)) {
+                    return link.map(function (link) {
+                        return hrefLink(link, params);
+                    });
+                }
                 var href = link.templated ? new rfc6570.UriTemplate(link.href).stringify(params) : link.href;
 
                 return href;
@@ -217,7 +222,11 @@ angular.module('angular-hal', [])
 
                     switch (Math.floor(res.status / 100)) {
                     case 2:
-                        if (res.data) return createResource(href, options, res.data);
+                        if (res.data) {
+                            var resource = createResource(href, options, res.data);
+                            resource.$res = res;
+                            return resource;
+                        }
                         if (res.headers('Content-Location')) return res.headers('Content-Location');
                         if (res.headers('Location')) return res.headers('Location');
                         return null;
