@@ -9,6 +9,7 @@ angular.module('angular-hal', [])
     ) {
         var rfc6570 = $window.rfc6570;
 
+        /* @ngNoInject */
         this.$get = function (href, options) {
             return callService('GET', href, options);
         }; //get
