@@ -80,7 +80,8 @@ angular.module('angular-hal', [])
                     Object.defineProperty(this, key, {
                         configurable: false,
                         enumerable: true,
-                        value: data[key]
+                        value: data[key],
+                        writable: true
                     });
                 }, this);
 
