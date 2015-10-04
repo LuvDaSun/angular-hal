@@ -226,4 +226,31 @@ describe('simple', function () {
         $httpBackend.flush();
     });
 
+
+    it('should get response from $res', function () {
+        $httpBackend
+            .expect('GET', 'https://example.com/')
+            .respond({
+                "id": 1,
+                "_links": {
+                    "self": "/",
+                    "item": {
+                        templated: true,
+                        href: "/item{/id}"
+                    }
+                }
+            });
+
+        var resource = halClient.$get('https://example.com/', {}).then(function (resource) {
+            expect(resource).toEqual({
+                "id": 1
+            });
+
+            expect(resource.$response().status).toEqual(200);
+            expect(resource.$response().data.id).toEqual(1);
+            expect(resource.$response().config.url).toEqual('https://example.com/');
+        });
+
+        $httpBackend.flush();
+    });
 });

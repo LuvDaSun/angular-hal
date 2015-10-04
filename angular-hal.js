@@ -30,7 +30,7 @@ angular.module('angular-hal', [])
         }; //del
 
 
-        function Resource(href, options, data) {
+        function Resource(href, options, data, response) {
             var linksAttribute = options.linksAttribute || '_links';
             var embeddedAttribute = options.embeddedAttribute || '_embedded';
             var ignoreAttributePrefixes = options.ignoreAttributePrefixes || ['_', '$'];
@@ -67,6 +67,9 @@ angular.module('angular-hal', [])
                 var link = links[rel];
                 return callLink('DELETE', link, params);
             });
+            defineHiddenProperty(this, '$response', function () {
+                return response;
+            });
 
 
             Object.keys(data)
@@ -101,7 +104,7 @@ angular.module('angular-hal', [])
                         links[rel] = link;
                         //console.log(link)
 
-                        var resource = createResource(href, options, embedded);
+                        var resource = createResource(href, options, embedded, response);
 
                         embedResource(resource);
 
@@ -168,12 +171,12 @@ angular.module('angular-hal', [])
         } //Resource
 
 
-        function createResource(href, options, data) {
+        function createResource(href, options, data, response) {
             if (Array.isArray(data)) return data.map(function (data) {
-                return createResource(href, options, data);
+                return createResource(href, options, data, response);
             });
 
-            var resource = new Resource(href, options, data);
+            var resource = new Resource(href, options, data, response);
 
             return resource;
 
@@ -217,7 +220,9 @@ angular.module('angular-hal', [])
 
                     switch (Math.floor(res.status / 100)) {
                     case 2:
-                        if (res.data) return createResource(href, options, res.data);
+                        if (res.data) {
+                            if (res.data) return createResource(href, options, res.data, res);
+                        }
                         if (res.headers('Content-Location')) return res.headers('Content-Location');
                         if (res.headers('Location')) return res.headers('Location');
                         return null;
