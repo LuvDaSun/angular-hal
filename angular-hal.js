@@ -206,13 +206,20 @@ angular.module('angular-hal', [])
             if (!options.headers['Content-Type']) options.headers['Content-Type'] = 'application/json';
             if (!options.headers.Accept) options.headers.Accept = 'application/hal+json,application/json';
 
-            var resource = (
-                $http({
+            var httpOptions = angular.merge(
+                {},
+                options,
+                {
                     method: method,
                     url: options.transformUrl ? options.transformUrl(href) : href,
                     headers: options.headers,
-                    data: data
-                })
+                    data: data,
+                    withCredentials: true
+                }
+            );
+
+            var resource = (
+                $http(httpOptions)
                 .then(function (res) {
 
                     switch (Math.floor(res.status / 100)) {
