@@ -4,7 +4,7 @@
   "description": "Hal client for angularjs",
   "repository": "git@github.com:elmerbulthuis/angular-hal.git",
   "author": "elmerbulthuis <elmerbulthuis@gmail.com>",
-  "license": "BSD",
+  "license": "WTFPL",
   "main": "",
   "devDependencies": {
     "bower": "~1",
