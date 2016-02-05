@@ -60,5 +60,5 @@ stay tuned for more!
 
 If you wish to use this service in old (ie) browsers, you may need to use the following polyfills:
 - es5shim & es5sham, https://github.com/kriskowal/es5-shim, some parts of the service use es5 methods.
-- xhr-polyfill, git://github.com/LuvDaSun/xhr-polyfill.git, if you want to make cross domain requests in ie8 / ie9.
+- xhr-polyfill, https://github.com/LuvDaSun/xhr-polyfill, if you want to make cross domain requests in ie8 / ie9.
 
