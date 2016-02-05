@@ -1,5 +1,6 @@
 {
     "undef": true,
     "sub": true,
-    "expr": true
+    "expr": true,
+    "jasmine": true
 }
