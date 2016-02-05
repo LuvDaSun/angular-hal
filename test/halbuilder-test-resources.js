@@ -541,5 +541,116 @@ describe('halbuilder test resources', function () {
         $httpBackend.flush();
     });
 
+    it('should send valid LINK Request', function () {
+        $httpBackend
+            .expect('LINK', 'https://example.com/api/customer/123456', undefined, function(headers) {
+                expect(headers.Link).toEqual([
+                    '<foo>;rel="bar";rev="baz"',
+                    '<lorem>;ipsum="dolor";sit="amet"',
+                    '<elitr>'
+                ]);
+                return true;
+            })
+            .respond(null);
+
+        halClient.$link("https://example.com/api/customer/123456", {}, [
+            new halClient.LinkHeader('foo', {rel: 'bar', rev: 'baz'}),
+            new halClient.LinkHeader('lorem', {ipsum: 'dolor', sit: 'amet'}),
+            new halClient.LinkHeader('elitr'),
+        ]).then(function (response) {});
+
+        $httpBackend.flush();
+    });
+
+    it('should send valid UNLINK Request', function () {
+        $httpBackend
+            .expect('UNLINK', 'https://example.com/api/customer/123456', undefined, function(headers) {
+                expect(headers.Link).toEqual([
+                    '<foo>;rel="bar";rev="baz"',
+                    '<lorem>;ipsum="dolor";sit="amet"',
+                    '<elitr>'
+                ]);
+                return true;
+            })
+            .respond(null);
+
+        halClient.$unlink("https://example.com/api/customer/123456", {}, [
+            new halClient.LinkHeader('foo', {rel: 'bar', rev: 'baz'}),
+            new halClient.LinkHeader('lorem', {ipsum: 'dolor', sit: 'amet'}),
+            new halClient.LinkHeader('elitr'),
+        ]).then(function (response) {});
+
+        $httpBackend.flush();
+    });
+
+    it('should send valid LINK Request on Resource', function () {
+        $httpBackend
+            .when('GET', 'https://example.com/api/customer/123456')
+            .respond({
+                foo: 'bar',
+                _links: {
+                    self: {
+                        href: 'https://example.com/api/customer/123456'
+                    },
+                },
+            });
+        $httpBackend
+            .expect('LINK', 'https://example.com/api/customer/123456', undefined, function(headers) {
+                expect(headers.Link).toEqual([
+                    '<foo>;rel="bar";rev="baz"',
+                    '<lorem>;ipsum="dolor";sit="amet"',
+                    '<elitr>'
+                ]);
+                return true;
+            })
+            .respond(null);
+
+        halClient.$get("https://example.com/api/customer/123456")
+            .then(function (resource) {
+                return resource.$link('self', {}, [
+                    new halClient.LinkHeader('foo', {rel: 'bar', rev: 'baz'}),
+                    new halClient.LinkHeader('lorem', {ipsum: 'dolor', sit: 'amet'}),
+                    new halClient.LinkHeader('elitr'),
+                ]);
+            })
+            .then(function (result) {});
+
+        $httpBackend.flush();
+    });
+
+    it('should send valid UNLINK Request on Resource', function () {
+        $httpBackend
+            .when('GET', 'https://example.com/api/customer/123456')
+            .respond({
+                foo: 'bar',
+                _links: {
+                    self: {
+                        href: 'https://example.com/api/customer/123456'
+                    },
+                },
+            });
+        $httpBackend
+            .expect('UNLINK', 'https://example.com/api/customer/123456', undefined, function(headers) {
+                expect(headers.Link).toEqual([
+                    '<foo>;rel="bar";rev="baz"',
+                    '<lorem>;ipsum="dolor";sit="amet"',
+                    '<elitr>'
+                ]);
+                return true;
+            })
+            .respond(null);
+
+        halClient.$get("https://example.com/api/customer/123456")
+            .then(function (resource) {
+                return resource.$unlink('self', {}, [
+                    new halClient.LinkHeader('foo', {rel: 'bar', rev: 'baz'}),
+                    new halClient.LinkHeader('lorem', {ipsum: 'dolor', sit: 'amet'}),
+                    new halClient.LinkHeader('elitr'),
+                ]);
+            })
+            .then(function (result) {});
+
+        $httpBackend.flush();
+    });
 
 });

@@ -29,6 +29,15 @@ angular.module('angular-hal', [])
             return callService('DELETE', href, options);
         }; //del
 
+        this.$link = function (href, options, linkHeaders) {
+            return callService('LINK', href, options, linkHeaders);
+        }; // link
+
+        this.$unlink = function (href, options, linkHeaders) {
+            return callService('UNLINK', href, options, linkHeaders);
+        }; // unlink
+
+        this.LinkHeader = LinkHeader;
 
         function Resource(href, options, data, response) {
             var linksAttribute = options.linksAttribute || '_links';
@@ -69,6 +78,14 @@ angular.module('angular-hal', [])
             });
             defineHiddenProperty(this, '$response', function () {
                 return response;
+            });
+            defineHiddenProperty(this, '$link', function (rel, params, linkHeaders) {
+                var link = links[rel];
+                return callLink('LINK', link, params, linkHeaders);
+            });
+            defineHiddenProperty(this, '$unlink', function (rel, params, linkHeaders) {
+                var link = links[rel];
+                return callLink('UNLINK', link, params, linkHeaders);
             });
 
 
@@ -212,6 +229,15 @@ angular.module('angular-hal', [])
             if (!options.headers['Content-Type']) options.headers['Content-Type'] = 'application/json';
             if (!options.headers.Accept) options.headers.Accept = 'application/hal+json,application/json';
 
+            if(method === 'LINK' || method === 'UNLINK') {
+                if (!options.headers.Link) {
+                    options.headers.Link = [];
+                }
+                angular.forEach(data, function(link) {
+                    options.headers.Link.push(link.toString());
+                });
+            }
+
             var config = {
                  method: method,
                  url: options.transformUrl ? options.transformUrl(href) : href,
@@ -259,6 +285,69 @@ angular.module('angular-hal', [])
 
             return resultHref;
         } //resolveUrl
+
+        /**
+         * Link Header
+         *
+         * @param {String} uriReference The Link Value
+         * @param {Object} linkParams   The Link Params
+         * @constructor
+         */
+        function LinkHeader(uriReference, linkParams) {
+            var self = this;
+
+            /**
+             * Initialize the LinkHeader
+             *
+             * @return void
+             */
+            (function init() {
+                angular.merge(self, {
+                    uriReference: uriReference,
+                    linkParams: angular.merge(
+                        {
+                            rel: null,
+                            anchor: null,
+                            rev: null,
+                            hreflang: null,
+                            media: null,
+                            title: null,
+                            type: null,
+                        },
+                        linkParams
+                    ),
+                });
+            })();
+
+            /**
+             * Convert LinkHeader to String
+             *
+             * @return {String}
+             */
+            self.toString = function toString() {
+                var result = '<' + self.uriReference + '>',
+                    params = [];
+
+                angular.forEach(
+                    self.linkParams,
+                    function(paramValue, paramName) {
+                        if(paramValue) {
+                            params.push(paramName + '="' + paramValue + '"');
+                        }
+                    }
+                );
+
+                if(params.length < 1) {
+                    return result;
+                }
+
+                result = result + ';' + params.join(';');
+
+                return result;
+            };
+
+            return this;
+        }
 
     }
 
