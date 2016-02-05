@@ -30,7 +30,7 @@ angular.module('angular-hal', [])
         }; //del
 
 
-        function Resource(href, options, data) {
+        function Resource(href, options, data, response) {
             var linksAttribute = options.linksAttribute || '_links';
             var embeddedAttribute = options.embeddedAttribute || '_embedded';
             var ignoreAttributePrefixes = options.ignoreAttributePrefixes || ['_', '$'];
@@ -47,25 +47,28 @@ angular.module('angular-hal', [])
             defineHiddenProperty(this, '$has', function (rel) {
                 return rel in links;
             });
-            defineHiddenProperty(this, '$get', function (rel, params) {
+            defineHiddenProperty(this, '$get', function (rel, params, options) {
                 var link = links[rel];
-                return callLink('GET', link, params);
+                return callLink('GET', link, params, options);
             });
-            defineHiddenProperty(this, '$post', function (rel, params, data) {
+            defineHiddenProperty(this, '$post', function (rel, params, data, options) {
                 var link = links[rel];
-                return callLink('POST', link, params, data);
+                return callLink('POST', link, params, data, options);
             });
-            defineHiddenProperty(this, '$put', function (rel, params, data) {
+            defineHiddenProperty(this, '$put', function (rel, params, data, options) {
                 var link = links[rel];
-                return callLink('PUT', link, params, data);
+                return callLink('PUT', link, params, data, options);
             });
-            defineHiddenProperty(this, '$patch', function (rel, params, data) {
+            defineHiddenProperty(this, '$patch', function (rel, params, data, options) {
                 var link = links[rel];
-                return callLink('PATCH', link, params, data);
+                return callLink('PATCH', link, params, data, options);
             });
-            defineHiddenProperty(this, '$del', function (rel, params) {
+            defineHiddenProperty(this, '$del', function (rel, params, options) {
                 var link = links[rel];
-                return callLink('DELETE', link, params);
+                return callLink('DELETE', link, params, options);
+            });
+            defineHiddenProperty(this, '$response', function () {
+                return response;
             });
 
 
@@ -77,7 +80,8 @@ angular.module('angular-hal', [])
                     Object.defineProperty(this, key, {
                         configurable: false,
                         enumerable: true,
-                        value: data[key]
+                        value: data[key],
+                        writable: true
                     });
                 }, this);
 
@@ -101,7 +105,7 @@ angular.module('angular-hal', [])
                         links[rel] = link;
                         //console.log(link)
 
-                        var resource = createResource(href, options, embedded);
+                        var resource = createResource(href, options, embedded, response);
 
                         embedResource(resource);
 
@@ -133,7 +137,7 @@ angular.module('angular-hal', [])
                 return href;
             } //hrefLink
 
-            function callLink(method, link, params, data) {
+            function callLink(method, link, params, data, extraOptions) {
                 var linkHref;
 
                 if (Array.isArray(link)) {
@@ -146,12 +150,14 @@ angular.module('angular-hal', [])
 
                 linkHref = hrefLink(link, params);
 
+                var callOptions = angular.extend({}, options, extraOptions);
+
                 if (method === 'GET') {
                     if (linkHref in embedded) return embedded[linkHref];
 
-                    return callService(method, linkHref, options, data);
+                    return callService(method, linkHref, callOptions, data);
                 } else {
-                    return callService(method, linkHref, options, data);
+                    return callService(method, linkHref, callOptions, data);
                 }
 
             } //callLink
@@ -168,12 +174,12 @@ angular.module('angular-hal', [])
         } //Resource
 
 
-        function createResource(href, options, data) {
+        function createResource(href, options, data, response) {
             if (Array.isArray(data)) return data.map(function (data) {
-                return createResource(href, options, data);
+                return createResource(href, options, data, response);
             });
 
-            var resource = new Resource(href, options, data);
+            var resource = new Resource(href, options, data, response);
 
             return resource;
 
@@ -206,18 +212,25 @@ angular.module('angular-hal', [])
             if (!options.headers['Content-Type']) options.headers['Content-Type'] = 'application/json';
             if (!options.headers.Accept) options.headers.Accept = 'application/hal+json,application/json';
 
+            var config = {
+                 method: method,
+                 url: options.transformUrl ? options.transformUrl(href) : href,
+                 headers: options.headers,
+                 data: data
+            };
+            if (options.httpConfig) {
+              config = angular.extend(config, options.httpConfig);
+            }
+
             var resource = (
-                $http({
-                    method: method,
-                    url: options.transformUrl ? options.transformUrl(href) : href,
-                    headers: options.headers,
-                    data: data
-                })
+                $http(config)
                 .then(function (res) {
 
                     switch (Math.floor(res.status / 100)) {
                     case 2:
-                        if (res.data) return createResource(href, options, res.data);
+                        if (res.data) {
+                            if (res.data) return createResource(href, options, res.data, res);
+                        }
                         if (res.headers('Content-Location')) return res.headers('Content-Location');
                         if (res.headers('Location')) return res.headers('Location');
                         return null;
