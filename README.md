@@ -2,10 +2,16 @@
 
 [![Build Status](https://travis-ci.org/LuvDaSun/angular-hal.svg)](https://travis-ci.org/LuvDaSun/angular-hal)
 
+
+## Help wanted!
+
+If you feel like helping out, plese contact me!
+
+
 ## use it in your project!
 
 Easy installation using bower
-	
+
 	bower install angular-hal
 
 
@@ -16,7 +22,7 @@ then, reference the js files in your html page
 
 
 You may use it like this:
-	
+
 	angular
 	.module('app', ['angular-hal'])
 	.run([
@@ -33,7 +39,7 @@ You may use it like this:
 			$rootScope.apiRoot = halClient.$get('https://api.example.com/', {
 				authorization: token && 'Bearer ' + token + ''
 			});
-		
+
 			$rootScope.$watch('apiRoot', function(apiRoot){
 				$rootScope.authenticatedUser = apiRoot.$get('http://example.com/authenticated-user');
 			});
