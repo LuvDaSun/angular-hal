@@ -54,6 +54,7 @@ stay tuned for more!
 ## check this out!
 - [A blog post by Yuan Ji about Angular-HAL](https://www.jiwhiz.com/post/2014/4/Consume_RESTful_API_With_Angular_HAL)
 - [Role-based SPAs with AngularJS and Spring HATEOAS](https://paulcwarren.wordpress.com/2015/04/03/role-based-spas-with-angularjs-and-spring-hateoas/)
+- [Hypermedia REST API client for AngularJS applications](https://github.com/jcassee/angular-hypermedia)
 
 ## compatibility
 
