@@ -5,7 +5,7 @@
   "repository": "git@github.com:elmerbulthuis/angular-hal.git",
   "author": "elmerbulthuis <elmerbulthuis@gmail.com>",
   "license": "WTFPL",
-  "main": "",
+  "main": "angular-hal.js",
   "devDependencies": {
     "bower": "~1",
     "connect": "^2.14.4",
