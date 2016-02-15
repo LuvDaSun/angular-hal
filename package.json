@@ -6,6 +6,9 @@
   "author": "elmerbulthuis <elmerbulthuis@gmail.com>",
   "license": "WTFPL",
   "main": "angular-hal.js",
+  "dependencies": {
+    "rfc6570": "0.1.8"
+  },
   "devDependencies": {
     "bower": "~1",
     "connect": "^2.14.4",
