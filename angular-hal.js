@@ -55,6 +55,26 @@ angular.module('angular-hal', [])
 
                 return hrefLink(links[rel], params);
             });
+            /**
+             * Fetch Meta Contents
+             * @param  {String} name the meta key name without the _ in front
+             * @return {mixed} the meta content
+             */
+            defineHiddenProperty(this, '$meta', function $meta(name) {
+                for(var i = 0; i < ignoreAttributePrefixes.length; i++) {
+                    var fullName = ignoreAttributePrefixes[i] + name;
+
+                    if(
+                        embeddedAttribute !== fullName &&
+                        linksAttribute !== fullName &&
+                        data.hasOwnProperty(fullName)
+                    ) {
+                        return data[fullName];
+                    }
+                }
+
+                return null;
+            });
             defineHiddenProperty(this, '$has', function (rel) {
                 return rel in links;
             });
