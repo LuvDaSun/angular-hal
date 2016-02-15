@@ -49,7 +49,7 @@ angular.module('angular-hal', [])
             });
             defineHiddenProperty(this, '$get', function (rel, params, options) {
                 var link = links[rel];
-                return callLink('GET', link, params, options);
+                return callLink('GET', link, params, undefined, options);
             });
             defineHiddenProperty(this, '$post', function (rel, params, data, options) {
                 var link = links[rel];
@@ -65,7 +65,7 @@ angular.module('angular-hal', [])
             });
             defineHiddenProperty(this, '$del', function (rel, params, options) {
                 var link = links[rel];
-                return callLink('DELETE', link, params, options);
+                return callLink('DELETE', link, params, undefined, options);
             });
             defineHiddenProperty(this, '$response', function () {
                 return response;
@@ -144,7 +144,7 @@ angular.module('angular-hal', [])
                     return $q.all(link.map(function (link) {
                         if (method !== 'GET') throw 'method is not supported for arrays';
 
-                        return callLink(method, link, params, data);
+                        return callLink(method, link, params, data, extraOptions);
                     }));
                 }
 
