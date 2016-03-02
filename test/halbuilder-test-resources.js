@@ -653,8 +653,6 @@ describe('halbuilder test resources', function () {
         $httpBackend.flush();
     });
 
-
-
     it('should resolve promise to error with invalid rel', function () {
         $httpBackend
             .expect('GET', 'https://example.com/api/customer/123456')
@@ -675,5 +673,27 @@ describe('halbuilder test resources', function () {
             );
 
         $httpBackend.flush();
+    });
+
+    it('should read meta from the resource except _embedded & _links', function () {
+      $httpBackend
+          .expect('GET', 'https://example.com/api/customer/123456')
+          .respond({
+              _links: {},
+              _embedded: {},
+              _someMeta: 'some value',
+              property: 'value',
+          });
+
+      var resource = halClient.$get("https://example.com/api/customer/123456", {}).then(function (resource) {
+          expect(resource).toEqual({
+            property: 'value',
+          });
+          expect(resource.$meta('links')).toEqual(null);
+          expect(resource.$meta('embedded')).toEqual(null);
+          expect(resource.$meta('someMeta')).toEqual('some value');
+      });
+
+      $httpBackend.flush();
     });
 });
