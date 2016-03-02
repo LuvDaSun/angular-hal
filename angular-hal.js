@@ -49,6 +49,9 @@ angular.module('angular-hal', [])
 
             href = getSelfLink(href, data).href;
 
+            defineHiddenProperty(this, '$links', function () {
+                return links;
+            });
             defineHiddenProperty(this, '$href', function (rel, params) {
                 if (!this.$has(rel)) {
                     return null;
