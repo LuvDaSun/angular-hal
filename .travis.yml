@@ -1,15 +1,14 @@
 language: node_js
-node_js: '0.10'
+node_js:
+- node
 before_install:
 - export DISPLAY=:99.0
 - sh -e /etc/init.d/xvfb start
 install:
-- npm install bower jshint karma-cli --global --quiet
 - npm install --quiet
-- bower install --quiet
 script:
 - jshint . -e .json
-- karma start --browsers=PhantomJS,Firefox
+- npm test
 deploy:
   provider: npm
   email: elmerbulthuis@gmail.com
