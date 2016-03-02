@@ -6,9 +6,9 @@ module.exports = function(config) {
 		basePath: '.',
 		frameworks: ['jasmine'],
 		files: [
-			'bower_components/angular/angular.js',
-			'bower_components/angular-mocks/angular-mocks.js',
-			'bower_components/rfc6570/rfc6570.js',
+			'node_modules/angular/angular.js',
+			'node_modules/angular-mocks/angular-mocks.js',
+			'node_modules/rfc6570/rfc6570.js',
 			'angular-hal.js',
 			'test/**.js'
 		],
