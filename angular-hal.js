@@ -121,13 +121,13 @@ angular.module('angular-hal', [])
             defineHiddenProperty(this, '$response', function () {
                 return response;
             });
-            defineHiddenProperty(this, '$link', function (rel, params, linkHeaders) {
+            defineHiddenProperty(this, '$link', function (rel, params, linkHeaders, options) {
                 var link = links[rel];
-                return callLink('LINK', link, params, linkHeaders);
+                return callLink('LINK', link, params, linkHeaders, options);
             });
-            defineHiddenProperty(this, '$unlink', function (rel, params, linkHeaders) {
+            defineHiddenProperty(this, '$unlink', function (rel, params, linkHeaders, options) {
                 var link = links[rel];
-                return callLink('UNLINK', link, params, linkHeaders);
+                return callLink('UNLINK', link, params, linkHeaders, options);
             });
 
 
