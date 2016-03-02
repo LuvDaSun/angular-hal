@@ -653,4 +653,27 @@ describe('halbuilder test resources', function () {
         $httpBackend.flush();
     });
 
+
+
+    it('should resolve promise to error with invalid rel', function () {
+        $httpBackend
+            .expect('GET', 'https://example.com/api/customer/123456')
+            .respond({});
+
+        halClient
+            .$get('https://example.com/api/customer/123456')
+            .then(function (resource) {
+                return resource.$get('invalid-rel');
+            })
+            .then(
+                function() {
+                    fail('Should not be successfull');
+                },
+                function(error) {
+                    expect(error.message).toEqual('link "invalid-rel" is undefined');
+                }
+            );
+
+        $httpBackend.flush();
+    });
 });

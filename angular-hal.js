@@ -49,7 +49,9 @@ angular.module('angular-hal', [])
             href = getSelfLink(href, data).href;
 
             defineHiddenProperty(this, '$href', function (rel, params) {
-                if (!(rel in links)) return null;
+                if (!this.$has(rel)) {
+                    return null;
+                }
 
                 return hrefLink(links[rel], params);
             });
@@ -57,22 +59,42 @@ angular.module('angular-hal', [])
                 return rel in links;
             });
             defineHiddenProperty(this, '$get', function (rel, params, options) {
+                if(!this.$has(rel)) {
+                    return missingLink(rel);
+                }
+
                 var link = links[rel];
                 return callLink('GET', link, params, options);
             });
             defineHiddenProperty(this, '$post', function (rel, params, data, options) {
+                if(!this.$has(rel)) {
+                    return missingLink(rel);
+                }
+
                 var link = links[rel];
                 return callLink('POST', link, params, data, options);
             });
             defineHiddenProperty(this, '$put', function (rel, params, data, options) {
+                if(!this.$has(rel)) {
+                    return missingLink(rel);
+                }
+
                 var link = links[rel];
                 return callLink('PUT', link, params, data, options);
             });
             defineHiddenProperty(this, '$patch', function (rel, params, data, options) {
+                if(!this.$has(rel)) {
+                    return missingLink(rel);
+                }
+
                 var link = links[rel];
                 return callLink('PATCH', link, params, data, options);
             });
             defineHiddenProperty(this, '$del', function (rel, params, options) {
+                if(!this.$has(rel)) {
+                    return missingLink(rel);
+                }
+
                 var link = links[rel];
                 return callLink('DELETE', link, params, options);
             });
@@ -127,6 +149,17 @@ angular.module('angular-hal', [])
                         embedResource(resource);
 
                     }, this);
+            }
+
+            /**
+             * Return Missing Link Promise
+             * @param  {String} rel Missing rel name
+             * @return {Promise}
+             */
+            function missingLink(rel) {
+                return $q(function(undefined, reject) {
+                    reject(new Error('link "' + rel + '" is undefined'));
+                });
             }
 
             function defineHiddenProperty(target, name, value) {
