@@ -7,11 +7,11 @@
   "license": "WTFPL",
   "main": "angular-hal.js",
   "dependencies": {
-    "angular": ">1.5",
+    "angular": ">=1.4",
     "rfc6570": "0.1.8"
   },
   "devDependencies": {
-    "angular-mocks": ">1.5",
+    "angular-mocks": ">=1.4",
     "bower": "~1",
     "connect": "^2.14.4",
     "karma": "^0.12.16",
