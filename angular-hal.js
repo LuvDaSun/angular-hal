@@ -211,6 +211,11 @@ angular.module('angular-hal', [])
             } //embedResource
 
             function hrefLink(link, params) {
+                if (Array.isArray(link)) {
+                    return link.map(function (link) {
+                        return hrefLink(link, params);
+                    });
+                }
                 var href = link.templated ? new rfc6570.UriTemplate(link.href).stringify(params) : link.href;
 
                 return href;
