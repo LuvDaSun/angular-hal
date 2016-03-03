@@ -292,9 +292,7 @@ angular.module('angular-hal', [])
             if (!options.headers.Accept) options.headers.Accept = 'application/hal+json,application/json';
 
             if(method === 'LINK' || method === 'UNLINK') {
-                if (!options.headers.Link) {
-                    options.headers.Link = [];
-                }
+                options.headers.Link = [];
                 angular.forEach(data, function(link) {
                     options.headers.Link.push(link.toString());
                 });
