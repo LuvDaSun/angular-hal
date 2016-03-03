@@ -2,6 +2,21 @@
 
 [![Build Status](https://travis-ci.org/LuvDaSun/angular-hal.svg)](https://travis-ci.org/LuvDaSun/angular-hal)
 
+## 0.1.7
+
+### npm
+
+```shell
+npm install angular-hal
+```
+
+You can `require` angular-hal:
+
+```js
+angular.module('myMod', [
+  require('angular-hal'),
+]);
+```
 
 ## Help wanted!
 
@@ -61,4 +76,3 @@ stay tuned for more!
 If you wish to use this service in old (ie) browsers, you may need to use the following polyfills:
 - es5shim & es5sham, https://github.com/kriskowal/es5-shim, some parts of the service use es5 methods.
 - xhr-polyfill, https://github.com/LuvDaSun/xhr-polyfill, if you want to make cross domain requests in ie8 / ie9.
-
