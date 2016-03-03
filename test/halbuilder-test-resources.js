@@ -696,4 +696,38 @@ describe('halbuilder test resources', function () {
 
       $httpBackend.flush();
     });
+
+    it('should get link Object when available', function() {
+        $httpBackend
+            .expect('GET', 'https://example.com/api/customer/123456')
+            .respond({
+                _links: {
+                    cart: {
+                        href: 'https://example.com/api/customer/123456/cart',
+                        title: 'Shopping Cart'
+                    },
+                    department: {
+                        href: 'https://example.com/api/customer/123456/department',
+                        title: 'Department'
+                    }
+                }
+            });
+
+        var resource = halClient.$get("https://example.com/api/customer/123456", {})
+            .then(function (resource) {
+                expect(resource.$links('cart')).toEqual({
+                    href: 'https://example.com/api/customer/123456/cart',
+                    title: 'Shopping Cart'
+                });
+
+                expect(resource.$links('department')).toEqual({
+                    href: 'https://example.com/api/customer/123456/department',
+                    title: 'Department'
+                });
+
+                expect(resource.$links('nonExistent')).toBe(null);
+            });
+
+        $httpBackend.flush();
+    });
 });
