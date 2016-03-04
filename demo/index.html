@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>angular-hal demo</title>
+  <link rel="stylesheet" type="text/css" href="style.css" />
+  <script src="../node_modules/angular/angular.js"></script>
+  <script src="../node_modules/angular-mocks/angular-mocks.js"></script>
+  <script src="../node_modules/rfc6570/rfc6570.js"></script>
+  <script src="../angular-hal.js"></script>
+  <script src="mocks.js"></script>
+  <script src="app.js"></script>
+</head>
+<body ng-app="app.mock">
+  <main ng-controller="contacts">
+    <form novalidate>
+      <input type="search" ng-model="search" placeholder="search" /><br />
+    </form>
+    <p ng-if="contacts.count === 0">
+      No contacts found :-(
+    </p>
+    <p ng-if="contacts.count === 1">
+      One contact found :-)
+    </p>
+    <p ng-if="contacts.count > 1">
+      <span ng-bind="contacts.count"></span> contacts found.
+    </p>
+
+    <ul>
+      <li ng-repeat="contactItem in contactItems">
+        <a href data-mailto="{{ contactItem.email }}" ng-bind="contactItem.name"></a>
+        <a href ng-click="deleteContact($index)">X</a>
+      </li>
+    </ul>
+    <form novalidate name="newContactForm" ng-submit="submitNewContactForm()">
+      <input type="name" required ng-model="newContact.name" ng-minlength="2" placeholder="name" /><br />
+      <input type="email" required ng-model="newContact.email" placeholder="email" /><br />
+      <button type="submit">Add contact</button><br />
+    </form>
+  </main>
+</body>
+</html>

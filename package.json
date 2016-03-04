@@ -1,9 +1,20 @@
 {
   "name": "angular-hal",
-  "version": "0.1.6",
+  "version": "2.0.0-alpha.1",
   "description": "Hal client for angularjs",
   "repository": "git@github.com:elmerbulthuis/angular-hal.git",
-  "author": "elmerbulthuis <elmerbulthuis@gmail.com>",
+  "contributors": [
+    {
+      "name": "Elmer Bulthuis",
+      "email": "elmerbulthuis@gmail.com",
+      "homepage": "https://github.com/elmerbulthuis"
+    },
+    {
+      "name": "Jonatan Männchen",
+      "email": "jonatan@maennchen.ch",
+      "homepage": "https://commanders.ch"
+    }
+  ],
   "license": "WTFPL",
   "main": "angular-hal.js",
   "dependencies": {
@@ -14,14 +25,27 @@
     "angular-mocks": "<1.5",
     "bower": "~1",
     "connect": "^2.14.4",
+    "gulp": "^3.9.1",
+    "gulp-angular-filesort": "^1.1.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-jshint": "^2.0.0",
+    "gulp-uglify": "^1.5.3",
+    "gulp-util": "^3.0.7",
+    "gulp-watch": "^4.3.5",
     "jshint": "^2.9.1",
-    "karma": "^0.12.16",
+    "jshint-stylish": "^2.1.0",
+    "karma": "^0.13.21",
     "karma-coverage": "0.2",
     "karma-firefox-launcher": "0.1",
     "karma-jasmine": "^0.1.5",
     "karma-phantomjs-launcher": "0.1"
   },
   "scripts": {
-    "test": "./node_modules/karma/bin/karma start && ./node_modules/jshint/bin/jshint . -e .json"
+    "install": "./node_modules/gulp/bin/gulp.js",
+    "compile": "./node_modules/gulp/bin/gulp.js",
+    "watch": "./node_modules/gulp/bin/gulp.js watch",
+    "jshint": "./node_modules/gulp/bin/gulp.js jshint",
+    "karma": "./node_modules/gulp/bin/gulp.js karma",
+    "test": "./node_modules/gulp/bin/gulp.js test"
   }
 }

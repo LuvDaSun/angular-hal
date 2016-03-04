@@ -9,16 +9,17 @@ module.exports = function(config) {
 			'node_modules/angular/angular.js',
 			'node_modules/angular-mocks/angular-mocks.js',
 			'node_modules/rfc6570/rfc6570.js',
-			'angular-hal.js',
-			'test/**.js'
+			'src/**/*.module.js',
+      'src/**/*.js',
+			'test/integration/**/*.spec.js',
 		],
 
 
 		reporters: ['dots', 'coverage'],
 		preprocessors: {
-			'angular-hal.js': 'coverage'
+			'src/**/*.js': 'coverage'
 		},
- 
+
 		coverageReporter: {
 			reporters: [{
 				type: 'html',

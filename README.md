@@ -2,59 +2,74 @@
 
 [![Build Status](https://travis-ci.org/LuvDaSun/angular-hal.svg?branch=master)](https://travis-ci.org/LuvDaSun/angular-hal)
 
+## Upgrade to Version 2.0
 
-## Help wanted!
+### Methods
 
-If you feel like helping out, plese contact me!
+| **old**              | **new**                       |
+|----------------------|-------------------------------|
+| halClient.$*         | $http()                       |
+| halClient.LinkHeader | LinkHeader                    |
+| resource.$[method]   | resource.$request().$[method] |
 
+## Get It!
 
-## use it in your project!
+### NPM
 
-Easy installation using bower
+```bash
+npm install angular-hal --save
+```
 
-	bower install angular-hal
+### Bower
 
+```bash
+bower install angular-hal
+```
 
-then, reference the js files in your html page
+## Installation
 
-	<script src="bower_components/rfc6570/rfc6570.js"></script>
-	<script src="bower_components/angular-hal/angular-hal.js"></script>
+Reference the js files in your html page
+
+```html
+<script src="bower_components/rfc6570/rfc6570.js"></script>
+<script src="bower_components/angular-hal/angular-hal(.min).js"></script>
+```
 
 
 You may use it like this:
 
-	angular
-	.module('app', ['angular-hal'])
-	.run([
-		'$rootScope'
-		, '$window'
-		, 'halClient'
-		, function(
-			$rootScope
-			, $window
-			, halClient
-		) {
-			var token = $window.sessionStorage.getItem('token');
+```js
+angular
+  .module('app', ['angular-hal'])
+  .run(function($rootScope) {
+    $rootScope.apiRoot = $http({url: 'https://api.example.com/'});
 
-			$rootScope.apiRoot = halClient.$get('https://api.example.com/', {
-				authorization: token && 'Bearer ' + token + ''
-			});
+    $rootScope.$watch('apiRoot', function(apiRoot){
+      $rootScope.authenticatedUser = apiRoot.$request().$get('http://example.com/authenticated-user');
+    });
 
-			$rootScope.$watch('apiRoot', function(apiRoot){
-				$rootScope.authenticatedUser = apiRoot.$get('http://example.com/authenticated-user');
-			});
-
-		}
-	])//run
+  }]);
+```
 
 stay tuned for more!
 
+## Configuration
 
+Use the provider `$halConfigurationProvider` to configure the module.
+
+### Options
+ - `setLinksAttribute` - Set links attribute name. (default: `_links`)
+ - `setEmbeddedAttribute` - Set embedded attribute name. (default: `_embedded`)
+ - `setIgnoreAttributePrefixes` - Set prefix for meta (hidden) properties. (default: `[ '_', '$' ]`)
+ - `addIgnoreAttributePrefix` - Add a prefix.
+ - `setSelfLink` - Set name of self link. (default: `self`)
+ - `setForceJSONResource` - Force transformation of JSON response into HAL resource. (default: `false`, **!this may break other modules!**)
+ - `setUrlTransformer` - Set a function to change urls. (deprecated)
 
 ## check this out!
-- [A blog post by Yuan Ji about Angular-HAL](https://www.jiwhiz.com/post/2014/4/Consume_RESTful_API_With_Angular_HAL)
-- [Role-based SPAs with AngularJS and Spring HATEOAS](https://paulcwarren.wordpress.com/2015/04/03/role-based-spas-with-angularjs-and-spring-hateoas/)
-- [Hypermedia REST API client for AngularJS applications](https://github.com/jcassee/angular-hypermedia)
+ - [A blog post by Yuan Ji about Angular-HAL](https://www.jiwhiz.com/post/2014/4/Consume_RESTful_API_With_Angular_HAL)
+ - [Role-based SPAs with AngularJS and Spring HATEOAS](https://paulcwarren.wordpress.com/2015/04/03/role-based-spas-with-angularjs-and-spring-hateoas/)
+ - [Hypermedia REST API client for AngularJS applications](https://github.com/jcassee/angular-hypermedia)
 
 ## compatibility
 
