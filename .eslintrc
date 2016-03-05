@@ -1,0 +1,19 @@
+{
+  "extends": "eslint:recommended",
+  "globals": {
+    "angular": false,
+    "module": false,
+    "inject": false,
+    "describe": false,
+    "beforeEach": false,
+    "afterEach": false,
+    "expect": false,
+    "fail": false,
+    "it": false,
+    "require": false,
+    "toObject": false
+  },
+  "rules":{
+    "comma-dangle": [ 0, "always-multiline" ]
+  }
+}

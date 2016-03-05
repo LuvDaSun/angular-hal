@@ -1,6 +1,5 @@
 (function(
-  module,
-  isArray
+  module
 ) {
   'use strict';
 
@@ -27,6 +26,5 @@
     }
   }
 })(
-  angular.module('angular-hal.http-interception'),
-  angular.isArray
+  angular.module('angular-hal.http-interception')
 );

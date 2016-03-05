@@ -5,7 +5,8 @@ var gulp = require('gulp')
   , jshint = require('gulp-jshint')
   , gulpUtil = require('gulp-util')
   , angularFilesort = require('gulp-angular-filesort')
-  , karma = require('karma');
+  , karma = require('karma')
+  , eslint = require('gulp-eslint');
 
 gulp.task('default', [
   'compress',
@@ -26,6 +27,7 @@ gulp.task('watch', function() {
 gulp.task('test', [
   'karma',
   'jshint',
+  'eslint',
 ]);
 
 gulp.task('compress', [
@@ -53,6 +55,12 @@ gulp.task('jshint', function() {
   return gulp.src([__dirname + '/src/**/*.js', __dirname + '/test/**/*.js'])
     .pipe(jshint(__dirname + '/.jshintrc'))
     .pipe(jshint.reporter('jshint-stylish'));
+});
+
+gulp.task('eslint', function() {
+  return gulp.src([__dirname + '/src/**/*.js', __dirname + '/test/**/*.js'])
+    .pipe(eslint())
+    .pipe(eslint.format());
 });
 
 gulp.task(

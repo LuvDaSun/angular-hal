@@ -9,21 +9,12 @@
   module.factory('LinkHeader', LinkHeaderFactory);
 
   // Inject Dependencies
-  LinkHeaderFactory.$inject = [
-    '$q',
-    '$extendReadOnly',
-    '$injector',
-    '$halConfiguration',
-  ];
+  LinkHeaderFactory.$inject = [];
 
   /**
    * Factory for LinkHeader
-   * @param {Q}        $q
-   * @param {Function} $extendReadOnly
-   * @param {Injector} $injector Prevent Circular Dependency by injecting $injector instead of $http
-   * @param {Object}   $halConfiguration
    */
-  function LinkHeaderFactory($q, $extendReadOnly, $injector, $halConfiguration) {
+  function LinkHeaderFactory() {
     return LinkHeader;
 
     /**

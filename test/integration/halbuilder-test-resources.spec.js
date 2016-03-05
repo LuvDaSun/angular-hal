@@ -550,7 +550,7 @@ describe('halbuilder test resources', function () {
       new halClient.LinkHeader('foo', {rel: 'bar', rev: 'baz'}),
       new halClient.LinkHeader('lorem', {ipsum: 'dolor', sit: 'amet'}),
       new halClient.LinkHeader('elitr'),
-      ]).then(function (response) {});
+    ]).then(function () {});
 
     $httpBackend.flush();
   });
@@ -571,7 +571,7 @@ describe('halbuilder test resources', function () {
       new halClient.LinkHeader('foo', {rel: 'bar', rev: 'baz'}),
       new halClient.LinkHeader('lorem', {ipsum: 'dolor', sit: 'amet'}),
       new halClient.LinkHeader('elitr'),
-      ]).then(function (response) {});
+    ]).then(function () {});
 
     $httpBackend.flush();
   });
@@ -606,7 +606,7 @@ describe('halbuilder test resources', function () {
           new halClient.LinkHeader('elitr'),
           ]);
       })
-      .then(function (result) {});
+      .then(function () {});
 
     $httpBackend.flush();
   });
@@ -641,7 +641,7 @@ describe('halbuilder test resources', function () {
           new halClient.LinkHeader('elitr'),
           ]);
       })
-      .then(function (result) {});
+      .then(function () {});
 
     $httpBackend.flush();
   });

@@ -23,6 +23,11 @@
       , forceJSONResource = false
       , urlTransformer = noopUrlTransformer;
 
+    // Inject Dependencies
+    $get.$inject = [
+      '$log',
+    ];
+
     return {
       setLinksAttribute: setLinksAttribute,
       setEmbeddedAttribute: setEmbeddedAttribute,
@@ -92,11 +97,6 @@
     function noopUrlTransformer(url) {
       return url;
     }
-
-    // Inject Dependencies
-    $get.$inject = [
-      '$log',
-    ];
 
     /**
      * @return {Object}

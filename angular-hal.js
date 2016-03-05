@@ -272,8 +272,7 @@
 );
 
 (function(
-  module,
-  isArray
+  module
 ) {
   'use strict';
 
@@ -454,7 +453,7 @@
        * @return {Boolean}
        */
       function $has(rel) {
-        return $hasLink || $hasEmbedded;
+        return $hasLink(rel) || $hasEmbedded(rel);
       }
 
       /**
@@ -549,8 +548,7 @@
     }
   }
 })(
-  angular.module('angular-hal.resource'),
-  angular.isArray
+  angular.module('angular-hal.resource')
 );
 
 (function(
@@ -784,6 +782,282 @@
 ) {
   'use strict';
 
+  // Add module for http interception
+  angular.module('angular-hal.http-interception', [
+    'angular-hal.resource',
+    'angular-hal.configuration',
+  ]);
+
+})(
+  angular
+);
+
+(function(
+  module
+) {
+  'use strict';
+
+  // Add factory for $transformResponseToResource
+  module.factory('$transformResponseToResource', ResponseToResourceTransformerFactory);
+
+  // Inject Dependencies
+  ResponseToResourceTransformerFactory.$inject = [
+    'Resource',
+  ];
+
+  /**
+   * @param {Function} Resource
+   */
+  function ResponseToResourceTransformerFactory(Resource) {
+    return transform;
+
+    /**
+     * @param {Response}
+     * @return {Resource}
+     */
+    function transform(response) {
+      return new Resource(response.data, response);
+    }
+  }
+})(
+  angular.module('angular-hal.http-interception')
+);
+
+(function(
+  module
+) {
+  'use strict';
+
+  // Add Factory for ResourceHttpInterceptorFactory
+  module.factory('ResourceHttpInterceptor', ResourceHttpInterceptorFactory);
+
+  // Inject Dependencies
+  ResourceHttpInterceptorFactory.$inject = [
+    '$transformResponseToResource',
+    '$halConfiguration',
+  ];
+
+  /**
+   * @param {Function} $transformResponseToResource
+   * @return {Object}
+   */
+  function ResourceHttpInterceptorFactory($transformResponseToResource, $halConfiguration) {
+    var CONTENT_TYPE = 'application/hal+json';
+
+    return {
+      request: transformRequest,
+      response: transformResponse,
+    };
+
+    /**
+     * Add Hal Json As an accepted format
+     * @param {Request} request
+     * @return {Request}
+     */
+    function transformRequest(request) {
+      if(typeof request.headers.Accept === 'undefined') {
+        request.headers.Accept = CONTENT_TYPE;
+      } else {
+        request.headers.Accept = [
+          CONTENT_TYPE,
+          request.headers.Accept
+        ].join(', ');
+      }
+
+      return request;
+    }
+
+    /**
+     * Transform Response
+     * 
+     * @param {Response} response
+     * @return {Response|Resource}
+     */
+    function transformResponse(response) {
+      if(response.headers('Content-Type') === CONTENT_TYPE) {
+        return $transformResponseToResource(response);
+      }
+      if(response.config.forceHal) {
+        return $transformResponseToResource(response);
+      }
+      if((
+          response.headers('Content-Type') === 'application/json' ||
+          response.headers('Content-Type') === null
+        ) &&
+        $halConfiguration.forceJSONResource) {
+        return $transformResponseToResource(response);
+      }
+      
+      return response;
+    }
+  }
+})(
+  angular.module('angular-hal.http-interception')
+);
+
+(function(
+  module
+) {
+  'use strict';
+
+  // Configure Http Interception
+  module.config(HttpInterceptorConfiguration);
+
+  // Inject Dependencies
+  HttpInterceptorConfiguration.$inject = [
+    '$httpProvider',
+  ];
+
+  /**
+   * @param {HttpProvider} $httpProvider
+   */
+  function HttpInterceptorConfiguration($httpProvider) {
+    $httpProvider.interceptors.push('ResourceHttpInterceptor');
+  }
+
+})(
+  angular.module('angular-hal.http-interception')
+);
+
+(function(
+  angular
+) {
+  'use strict';
+
+  // Add module for configuration
+  angular.module('angular-hal.configuration', []);
+
+})(
+  angular
+);
+
+(function(
+  module
+) {
+  'use strict';
+
+  // Add Factory for ResourceHttpInterceptorFactory
+  module.provider('$halConfiguration', HalConfigurationProvider);
+
+  // Inject Dependencies
+  HalConfigurationProvider.$inject = [];
+
+  /**
+   * @return {Object}
+   */
+  function HalConfigurationProvider() {
+    var linksAttribute = '_links'
+      , embeddedAttribute = '_embedded'
+      , ignoreAttributePrefixes = [
+          '_',
+          '$',
+        ]
+      , selfLink = 'self'
+      , forceJSONResource = false
+      , urlTransformer = noopUrlTransformer;
+
+    // Inject Dependencies
+    $get.$inject = [
+      '$log',
+    ];
+
+    return {
+      setLinksAttribute: setLinksAttribute,
+      setEmbeddedAttribute: setEmbeddedAttribute,
+      setIgnoreAttributePrefixes: setIgnoreAttributePrefixes,
+      addIgnoreAttributePrefix: addIgnoreAttributePrefix,
+      setSelfLink: setSelfLink,
+      setForceJSONResource: setForceJSONResource,
+      setUrlTransformer: setUrlTransformer,
+      $get: $get,
+    };
+
+    /**
+     * @param {String} newLinksAttribute
+     */
+    function setLinksAttribute(newLinksAttribute) {
+      linksAttribute = newLinksAttribute;
+    }
+
+    /**
+     * @param {String} newEmbeddedAttribute
+     */
+    function setEmbeddedAttribute(newEmbeddedAttribute) {
+      embeddedAttribute = newEmbeddedAttribute;
+    }
+
+    /**
+     * @param {String[]} newIgnoreAttributePrefixes
+     */
+    function setIgnoreAttributePrefixes(newIgnoreAttributePrefixes) {
+      ignoreAttributePrefixes = newIgnoreAttributePrefixes;
+    }
+
+    /**
+     * @param {String} ignoreAttributePrefix
+     */
+    function addIgnoreAttributePrefix(ignoreAttributePrefix) {
+      ignoreAttributePrefixes.push(ignoreAttributePrefix);
+    }
+
+    /**
+     * @param {String} newSelfLink
+     */
+    function setSelfLink(newSelfLink) {
+      selfLink = newSelfLink;
+    }
+
+    /**
+     * @param {Boolean} newForceJSONResource
+     */
+    function setForceJSONResource(newForceJSONResource) {
+      forceJSONResource = newForceJSONResource;
+    }
+
+    /**
+     * @param {Function}
+     * @deprecated $halConfigurationProvider.setUrlTransformer is deprecated. Please write a http interceptor instead.
+     * @see https://docs.angularjs.org/api/ng/service/$http#interceptors
+     */
+    function setUrlTransformer(newUrlTransformer) {
+      urlTransformer = newUrlTransformer;
+    }
+
+    /**
+     * @param {String}
+     * @return {String}
+     */
+    function noopUrlTransformer(url) {
+      return url;
+    }
+
+    /**
+     * @return {Object}
+     */
+    function $get($log) {
+      if(urlTransformer !== noopUrlTransformer) {
+        $log.log('$halConfigurationProvider.setUrlTransformer is deprecated. Please write a http interceptor instead.');
+      }
+
+      return Object.freeze({
+        linksAttribute: linksAttribute,
+        embeddedAttribute: embeddedAttribute,
+        ignoreAttributePrefixes: ignoreAttributePrefixes,
+        selfLink: selfLink,
+        forceJSONResource: forceJSONResource,
+        urlTransformer: urlTransformer,
+      });
+    }
+  }
+})(
+  angular.module('angular-hal.configuration')
+);
+
+(function(
+  angular
+) {
+  'use strict';
+
   // Add module for client
   angular.module('angular-hal.client', [
     'angular-hal.utility',
@@ -804,21 +1078,12 @@
   module.factory('LinkHeader', LinkHeaderFactory);
 
   // Inject Dependencies
-  LinkHeaderFactory.$inject = [
-    '$q',
-    '$extendReadOnly',
-    '$injector',
-    '$halConfiguration',
-  ];
+  LinkHeaderFactory.$inject = [];
 
   /**
    * Factory for LinkHeader
-   * @param {Q}        $q
-   * @param {Function} $extendReadOnly
-   * @param {Injector} $injector Prevent Circular Dependency by injecting $injector instead of $http
-   * @param {Object}   $halConfiguration
    */
-  function LinkHeaderFactory($q, $extendReadOnly, $injector, $halConfiguration) {
+  function LinkHeaderFactory() {
     return LinkHeader;
 
     /**
@@ -985,284 +1250,6 @@
   angular.module('angular-hal.client'),
   angular.extend,
   angular.merge
-);
-
-(function(
-  angular
-) {
-  'use strict';
-
-  // Add module for http interception
-  angular.module('angular-hal.http-interception', [
-    'angular-hal.resource',
-    'angular-hal.configuration',
-  ]);
-
-})(
-  angular
-);
-
-(function(
-  module,
-  isArray
-) {
-  'use strict';
-
-  // Add factory for $transformResponseToResource
-  module.factory('$transformResponseToResource', ResponseToResourceTransformerFactory);
-
-  // Inject Dependencies
-  ResponseToResourceTransformerFactory.$inject = [
-    'Resource',
-  ];
-
-  /**
-   * @param {Function} Resource
-   */
-  function ResponseToResourceTransformerFactory(Resource) {
-    return transform;
-
-    /**
-     * @param {Response}
-     * @return {Resource}
-     */
-    function transform(response) {
-      return new Resource(response.data, response);
-    }
-  }
-})(
-  angular.module('angular-hal.http-interception'),
-  angular.isArray
-);
-
-(function(
-  module
-) {
-  'use strict';
-
-  // Add Factory for ResourceHttpInterceptorFactory
-  module.factory('ResourceHttpInterceptor', ResourceHttpInterceptorFactory);
-
-  // Inject Dependencies
-  ResourceHttpInterceptorFactory.$inject = [
-    '$transformResponseToResource',
-    '$halConfiguration',
-  ];
-
-  /**
-   * @param {Function} $transformResponseToResource
-   * @return {Object}
-   */
-  function ResourceHttpInterceptorFactory($transformResponseToResource, $halConfiguration) {
-    var CONTENT_TYPE = 'application/hal+json';
-
-    return {
-      request: transformRequest,
-      response: transformResponse,
-    };
-
-    /**
-     * Add Hal Json As an accepted format
-     * @param {Request} request
-     * @return {Request}
-     */
-    function transformRequest(request) {
-      if(typeof request.headers.Accept === 'undefined') {
-        request.headers.Accept = CONTENT_TYPE;
-      } else {
-        request.headers.Accept = [
-          CONTENT_TYPE,
-          request.headers.Accept
-        ].join(', ');
-      }
-
-      return request;
-    }
-
-    /**
-     * Transform Response
-     * 
-     * @param {Response} response
-     * @return {Response|Resource}
-     */
-    function transformResponse(response) {
-      if(response.headers('Content-Type') === CONTENT_TYPE) {
-        return $transformResponseToResource(response);
-      }
-      if(response.config.forceHal) {
-        return $transformResponseToResource(response);
-      }
-      if((
-          response.headers('Content-Type') === 'application/json' ||
-          response.headers('Content-Type') === null
-        ) &&
-        $halConfiguration.forceJSONResource) {
-        return $transformResponseToResource(response);
-      }
-      
-      return response;
-    }
-  }
-})(
-  angular.module('angular-hal.http-interception')
-);
-
-(function(
-  module
-) {
-  'use strict';
-
-  // Configure Http Interception
-  module.config(HttpInterceptorConfiguration);
-
-  // Inject Dependencies
-  HttpInterceptorConfiguration.$inject = [
-    '$httpProvider',
-  ];
-
-  /**
-   * @param {HttpProvider} $httpProvider
-   */
-  function HttpInterceptorConfiguration($httpProvider) {
-    $httpProvider.interceptors.push('ResourceHttpInterceptor');
-  }
-
-})(
-  angular.module('angular-hal.http-interception')
-);
-
-(function(
-  angular
-) {
-  'use strict';
-
-  // Add module for configuration
-  angular.module('angular-hal.configuration', []);
-
-})(
-  angular
-);
-
-(function(
-  module
-) {
-  'use strict';
-
-  // Add Factory for ResourceHttpInterceptorFactory
-  module.provider('$halConfiguration', HalConfigurationProvider);
-
-  // Inject Dependencies
-  HalConfigurationProvider.$inject = [];
-
-  /**
-   * @return {Object}
-   */
-  function HalConfigurationProvider() {
-    var linksAttribute = '_links'
-      , embeddedAttribute = '_embedded'
-      , ignoreAttributePrefixes = [
-          '_',
-          '$',
-        ]
-      , selfLink = 'self'
-      , forceJSONResource = false
-      , urlTransformer = noopUrlTransformer;
-
-    return {
-      setLinksAttribute: setLinksAttribute,
-      setEmbeddedAttribute: setEmbeddedAttribute,
-      setIgnoreAttributePrefixes: setIgnoreAttributePrefixes,
-      addIgnoreAttributePrefix: addIgnoreAttributePrefix,
-      setSelfLink: setSelfLink,
-      setForceJSONResource: setForceJSONResource,
-      setUrlTransformer: setUrlTransformer,
-      $get: $get,
-    };
-
-    /**
-     * @param {String} newLinksAttribute
-     */
-    function setLinksAttribute(newLinksAttribute) {
-      linksAttribute = newLinksAttribute;
-    }
-
-    /**
-     * @param {String} newEmbeddedAttribute
-     */
-    function setEmbeddedAttribute(newEmbeddedAttribute) {
-      embeddedAttribute = newEmbeddedAttribute;
-    }
-
-    /**
-     * @param {String[]} newIgnoreAttributePrefixes
-     */
-    function setIgnoreAttributePrefixes(newIgnoreAttributePrefixes) {
-      ignoreAttributePrefixes = newIgnoreAttributePrefixes;
-    }
-
-    /**
-     * @param {String} ignoreAttributePrefix
-     */
-    function addIgnoreAttributePrefix(ignoreAttributePrefix) {
-      ignoreAttributePrefixes.push(ignoreAttributePrefix);
-    }
-
-    /**
-     * @param {String} newSelfLink
-     */
-    function setSelfLink(newSelfLink) {
-      selfLink = newSelfLink;
-    }
-
-    /**
-     * @param {Boolean} newForceJSONResource
-     */
-    function setForceJSONResource(newForceJSONResource) {
-      forceJSONResource = newForceJSONResource;
-    }
-
-    /**
-     * @param {Function}
-     * @deprecated $halConfigurationProvider.setUrlTransformer is deprecated. Please write a http interceptor instead.
-     * @see https://docs.angularjs.org/api/ng/service/$http#interceptors
-     */
-    function setUrlTransformer(newUrlTransformer) {
-      urlTransformer = newUrlTransformer;
-    }
-
-    /**
-     * @param {String}
-     * @return {String}
-     */
-    function noopUrlTransformer(url) {
-      return url;
-    }
-
-    // Inject Dependencies
-    $get.$inject = [
-      '$log',
-    ];
-
-    /**
-     * @return {Object}
-     */
-    function $get($log) {
-      if(urlTransformer !== noopUrlTransformer) {
-        $log.log('$halConfigurationProvider.setUrlTransformer is deprecated. Please write a http interceptor instead.');
-      }
-
-      return Object.freeze({
-        linksAttribute: linksAttribute,
-        embeddedAttribute: embeddedAttribute,
-        ignoreAttributePrefixes: ignoreAttributePrefixes,
-        selfLink: selfLink,
-        forceJSONResource: forceJSONResource,
-        urlTransformer: urlTransformer,
-      });
-    }
-  }
-})(
-  angular.module('angular-hal.configuration')
 );
 
 (function(

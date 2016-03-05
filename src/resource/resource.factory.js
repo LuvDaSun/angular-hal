@@ -1,6 +1,5 @@
 (function(
-  module,
-  isArray
+  module
 ) {
   'use strict';
 
@@ -181,7 +180,7 @@
        * @return {Boolean}
        */
       function $has(rel) {
-        return $hasLink || $hasEmbedded;
+        return $hasLink(rel) || $hasEmbedded(rel);
       }
 
       /**
@@ -276,6 +275,5 @@
     }
   }
 })(
-  angular.module('angular-hal.resource'),
-  angular.isArray
+  angular.module('angular-hal.resource')
 );
