@@ -25,7 +25,7 @@ describe('simple', function () {
       });
 
     halClient.$get('/').then(function (resource) {
-      expect(resource).toEqual({});
+      expect(toObject(resource)).toEqual({});
     });
 
     $httpBackend.flush();
@@ -43,7 +43,7 @@ describe('simple', function () {
       });
 
     halClient.$get('/').then(function (resource) {
-      expect(resource).toEqual({
+      expect(toObject(resource)).toEqual({
         test: true
       });
     });
@@ -75,14 +75,14 @@ describe('simple', function () {
       });
 
     halClient.$get('http://example.com/').then(function (resource) {
-      expect(resource).toEqual({
+      expect(toObject(resource)).toEqual({
         root: true
       });
 
       resource.$request().$get('item', {
         id: 1
       }).then(function (resource) {
-        expect(resource).toEqual({
+        expect(toObject(resource)).toEqual({
           id: 1
         });
       });
@@ -124,18 +124,18 @@ describe('simple', function () {
       });
 
     halClient.$get('http://example.com/').then(function (resource) {
-      expect(resource).toEqual({
+      expect(toObject(resource)).toEqual({
         root: true
       });
 
       resource.$request().$get('item').then(function (resource) {
-        expect(resource[0]).toEqual({
+        expect(toObject(resource[0])).toEqual({
           id: 1
         });
-        expect(resource[1]).toEqual({
+        expect(toObject(resource[1])).toEqual({
           id: 2
         });
-        expect(resource[2]).toEqual({
+        expect(toObject(resource[2])).toEqual({
           id: 3
         });
       });
@@ -159,7 +159,7 @@ describe('simple', function () {
       });
 
     halClient.$get('https://example.com/').then(function (resource) {
-      expect(resource).toEqual({
+      expect(toObject(resource)).toEqual({
         root: true
       });
 
@@ -187,7 +187,7 @@ describe('simple', function () {
       });
 
     halClient.$get('https://example.com/').then(function (resource) {
-      expect(resource).toEqual({
+      expect(toObject(resource)).toEqual({
         id: 1
       });
 

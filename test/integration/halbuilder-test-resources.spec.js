@@ -23,7 +23,7 @@ describe('halbuilder test resources', function () {
       });
 
       halClient.$get('/exampleWithoutHref').then(function (resource) {
-        expect(resource).toEqual({
+        expect(toObject(resource)).toEqual({
           name: 'Example Resource'
         });
       });
@@ -41,7 +41,7 @@ describe('halbuilder test resources', function () {
       });
 
     halClient.$get('/exampleWithArray').then(function (resource) {
-      expect(resource).toEqual({
+      expect(toObject(resource)).toEqual({
         array: ['one', 'two', 'three'],
         name: 'Example Resource'
       });
@@ -84,7 +84,7 @@ describe('halbuilder test resources', function () {
       });
 
     halClient.$get('https://example.com/api/customer/123456').then(function (resource) {
-      expect(resource).toEqual({
+      expect(toObject(resource)).toEqual({
         age: 33,
         expired: false,
         id: 123456,
@@ -131,7 +131,7 @@ describe('halbuilder test resources', function () {
       });
 
     halClient.$get('https://example.com/api/customer/123456').then(function (resource) {
-      expect(resource).toEqual({
+      expect(toObject(resource)).toEqual({
         age: 33,
         expired: false,
         id: 123456,
@@ -174,7 +174,7 @@ describe('halbuilder test resources', function () {
       });
 
     halClient.$get('https://example.com/api/customer').then(function (resource) {
-      expect(resource).toEqual({});
+      expect(toObject(resource)).toEqual({});
     });
 
     $httpBackend.flush();
@@ -215,7 +215,7 @@ describe('halbuilder test resources', function () {
       });
 
     halClient.$get('https://example.com/api/customer/123456').then(function (resource) {
-      expect(resource).toEqual({
+      expect(toObject(resource)).toEqual({
         age: 33,
         expired: false,
         id: 123456,
@@ -271,10 +271,10 @@ describe('halbuilder test resources', function () {
       });
 
     halClient.$get('https://example.com/api/customer/123456').then(function (resource) {
-      expect(resource).toEqual({});
+      expect(toObject(resource)).toEqual({});
 
       resource.$request().$get('ns:user').then(function (resource) {
-        expect(resource).toEqual({
+        expect(toObject(resource)).toEqual({
           age: 32,
           expired: false,
           id: 11,
@@ -334,10 +334,10 @@ describe('halbuilder test resources', function () {
       });
 
     halClient.$get('https://example.com/api/customer/123456').then(function (resource) {
-      expect(resource).toEqual({});
+      expect(toObject(resource)).toEqual({});
 
       resource.$request().$get('ns:user').then(function (resource) {
-        expect(resource).toEqual({
+        expect(toObject(resource)).toEqual({
           age: 32,
           expired: false,
           id: 11,
@@ -405,10 +405,10 @@ describe('halbuilder test resources', function () {
       });
 
   halClient.$get('https://example.com/api/customer/123456').then(function (resource) {
-    expect(resource).toEqual({});
+    expect(toObject(resource)).toEqual({});
 
     resource.$request().$get('ns:user').then(function (resource) {
-      expect(resource[0]).toEqual({
+      expect(toObject(resource[0])).toEqual({
         age: 32,
         expired: false,
         id: 11,
@@ -416,7 +416,7 @@ describe('halbuilder test resources', function () {
         optional: true
       });
 
-      expect(resource[1]).toEqual({
+      expect(toObject(resource[1])).toEqual({
         age: 32,
         expired: false,
         id: 12,
@@ -499,10 +499,10 @@ describe('halbuilder test resources', function () {
       });
 
     halClient.$get('https://example.com/api/customer/123456').then(function (resource) {
-      expect(resource).toEqual({});
+      expect(toObject(resource)).toEqual({});
 
       resource.$request().$get('ns:user').then(function (resource) {
-        expect(resource[0]).toEqual({
+        expect(toObject(resource[0])).toEqual({
           age: 32,
           expired: false,
           id: 11,
@@ -510,7 +510,7 @@ describe('halbuilder test resources', function () {
           optional: true
         });
 
-        expect(resource[1]).toEqual({
+        expect(toObject(resource[1])).toEqual({
           age: 32,
           expired: false,
           id: 12,
@@ -520,7 +520,7 @@ describe('halbuilder test resources', function () {
 
 
         resource[0].$request().$get('phone:cell').then(function (resource) {
-          expect(resource).toEqual({
+          expect(toObject(resource)).toEqual({
             id: 1,
             number: '555-666-7890'
           });
@@ -678,7 +678,7 @@ describe('halbuilder test resources', function () {
       });
 
     halClient.$get('https://example.com/api/customer/123456').then(function (resource) {
-      expect(resource).toEqual({
+      expect(toObject(resource)).toEqual({
         property: 'value',
       });
       expect(resource.$meta('someMeta')).toEqual('some value');

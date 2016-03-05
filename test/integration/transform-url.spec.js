@@ -50,14 +50,14 @@ describe('simple', function () {
       });
 
     $http({ url: 'http://example.com/api/' }).then(function (resource) {
-      expect(resource).toEqual({
+      expect(toObject(resource)).toEqual({
         root: true
       });
 
       resource.$request().$get('item', {
         id: 1
       }).then(function (resource) {
-        expect(resource).toEqual({
+        expect(toObject(resource)).toEqual({
           id: 1
         });
       });

@@ -36,12 +36,12 @@ describe('special attribute names', function () {
 
     halClient.$get('/')
       .then(function (resource) {
-        expect(resource).toEqual({});
+        expect(toObject(resource)).toEqual({});
 
         return resource.$request()
           .$get('testing')
           .then(function (resource) {
-            expect(resource).toEqual({
+            expect(toObject(resource)).toEqual({
               id: 'one!'
             });
           });
@@ -71,11 +71,11 @@ describe('special attribute names', function () {
 
     halClient.$get('/')
       .then(function (resource) {
-        expect(resource).toEqual({});
+        expect(toObject(resource)).toEqual({});
 
         return resource.$request()
           .$get('testing').then(function (resource) {
-            expect(resource).toEqual({
+            expect(toObject(resource)).toEqual({
               id: 'one!'
             });
           });

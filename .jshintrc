@@ -8,6 +8,7 @@
   "globals": {
     "angular": false,
     "module": false,
-    "inject": false
+    "inject": false,
+    "toObject": false
   }
 }
