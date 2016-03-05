@@ -1,6 +1,6 @@
 # angular-hal
 
-[![Build Status](https://travis-ci.org/LuvDaSun/angular-hal.svg)](https://travis-ci.org/LuvDaSun/angular-hal)
+[![Build Status](https://travis-ci.org/LuvDaSun/angular-hal.svg?branch=master)](https://travis-ci.org/LuvDaSun/angular-hal)
 
 
 ## Help wanted!
