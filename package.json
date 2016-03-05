@@ -18,7 +18,8 @@
   "license": "WTFPL",
   "main": "angular-hal.js",
   "dependencies": {
-    "angular": "<1.5",
+    "angular": "^1.4.9",
+    "angular-mocks": "^1.5.0",
     "rfc6570": "0.1.8"
   },
   "devDependencies": {
