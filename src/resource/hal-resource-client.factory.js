@@ -63,6 +63,8 @@
        * @return {Promise}
        */
       function $request(method, rel, urlParams, body, options) {
+        var promises;
+
         method = method || 'GET';
         rel = rel || $halConfiguration.selfLink;
         urlParams = urlParams || {};
@@ -76,7 +78,7 @@
 
         if(resource.$hasEmbedded(rel) &&
           Array.isArray(embedded[rel])) {
-          var promises = [];
+          promises = [];
           for(var i = 0; i < embedded[rel].length; i++) {
             promises.push(embedded[rel][i].$request().$request(method, 'self', urlParams, body, options));
           }
@@ -96,7 +98,7 @@
           });
 
           if(Array.isArray(url)) {
-            var promises = [];
+            promises = [];
             for(var j = 0; j < url.length; j++) {
               promises.push($http(merge(options, {url: url[j]})));
             }
