@@ -1268,3 +1268,5 @@
 })(
   angular
 );
+
+//# sourceMappingURL=angular-hal.js.map

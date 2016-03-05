@@ -6,7 +6,8 @@ var gulp = require('gulp')
   , gulpUtil = require('gulp-util')
   , angularFilesort = require('gulp-angular-filesort')
   , karma = require('karma')
-  , eslint = require('gulp-eslint');
+  , eslint = require('gulp-eslint')
+  , sourcemaps = require('gulp-sourcemaps');
 
 gulp.task('default', [
   'compress',
@@ -37,17 +38,21 @@ gulp.task('compress', [
 
 gulp.task('compress:unminified', function() {
   return gulp.src(__dirname + '/src/**/*.js')
+    .pipe(sourcemaps.init())
     .pipe(angularFilesort())
     .pipe(concat('angular-hal.js'))
+    .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(__dirname));
 });
 
 gulp.task('compress:minified', function() {
   return gulp.src(__dirname + '/src/**/*.js')
+    .pipe(sourcemaps.init())
     .pipe(angularFilesort())
     .pipe(uglify())
     .on('error', gulpUtil.log)
     .pipe(concat('angular-hal.min.js'))
+    .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(__dirname));
 });
 
