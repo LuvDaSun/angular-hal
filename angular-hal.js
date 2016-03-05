@@ -235,7 +235,7 @@
       
       if(!rfc6570 &&
         typeof require !== 'undefined') {
-        return require('rfc5670');
+        return require('rfc6570/src/main');
       }
 
       throw new Error('Could not find rfc6570 library.');
@@ -784,6 +784,214 @@
 ) {
   'use strict';
 
+  // Add module for client
+  angular.module('angular-hal.client', [
+    'angular-hal.utility',
+  ]);
+
+})(
+  angular
+);
+
+(function(
+  module,
+  merge,
+  forEach
+) {
+  'use strict';
+
+  // Add factory for LinkHeader
+  module.factory('LinkHeader', LinkHeaderFactory);
+
+  // Inject Dependencies
+  LinkHeaderFactory.$inject = [
+    '$q',
+    '$extendReadOnly',
+    '$injector',
+    '$halConfiguration',
+  ];
+
+  /**
+   * Factory for LinkHeader
+   * @param {Q}        $q
+   * @param {Function} $extendReadOnly
+   * @param {Injector} $injector Prevent Circular Dependency by injecting $injector instead of $http
+   * @param {Object}   $halConfiguration
+   */
+  function LinkHeaderFactory($q, $extendReadOnly, $injector, $halConfiguration) {
+    return LinkHeader;
+
+    /**
+     * Link Header
+     *
+     * @param {String} uriReference The Link Value
+     * @param {Object} linkParams   The Link Params
+     * @constructor
+     */
+    function LinkHeader(uriReference, linkParams) {
+      var self = this;
+
+      /**
+       * Initialize the LinkHeader
+       *
+       * @return void
+       */
+      (function init() {
+        merge(self, {
+          uriReference: uriReference,
+          linkParams: angular.merge(
+            {
+              rel: null,
+              anchor: null,
+              rev: null,
+              hreflang: null,
+              media: null,
+              title: null,
+              type: null,
+            },
+            linkParams
+          ),
+        });
+      })();
+
+      /**
+       * Convert LinkHeader to String
+       *
+       * @return {String}
+       */
+      self.toString = function toString() {
+        var result = '<' + self.uriReference + '>'
+          , params = [];
+
+        forEach(
+          self.linkParams,
+          function(paramValue, paramName) {
+            if(paramValue) {
+              params.push(paramName + '="' + paramValue + '"');
+            }
+          }
+        );
+
+        if(params.length < 1) {
+          return result;
+        }
+
+        result = result + ';' + params.join(';');
+
+        return result;
+      };
+
+      return this;
+    }
+  }
+})(
+  angular.module('angular-hal.client'),
+  angular.merge,
+  angular.forEach
+);
+
+(function(
+  module,
+  extend,
+  merge
+) {
+  'use strict';
+
+  // Add halCLient service
+  module.service('halClient', HalClientService);
+  module.service('$halClient', HalClientService);
+
+  // Inject Dependencies
+  HalClientService.$inject = [
+    '$log',
+    '$http',
+    'LinkHeader',
+    '$halConfiguration',
+  ];
+
+  /**
+   * @param {Log}      $log
+   * @param {Http}     $http
+   * @param {Function} LinkHeader
+   * @param {Object}   $halConfiguration
+   * @deprecated The halClient service is deprecated. Please use $http directly instead.
+   */
+  function HalClientService($log, $http, LinkHeader, $halConfiguration) {
+    var self = this;
+
+    /**
+     * @return Initialize halClient
+     */
+     (function init() {
+        extend(self, {
+          $get: $get,
+          $post: $post,
+          $put: $put,
+          $patch: $patch,
+          $delete: $delete,
+          $del: $delete,
+          $link: $link,
+          $unlink: $unlink,
+          LinkHeader: LinkHeader,
+        });
+     })();
+
+    /* @ngNoInject */
+    function $get(href, options) {
+      return $request('GET', href, options);
+    }
+
+    function $post(href, options, data) {
+      return $request('POST', href, options, data);
+    }
+
+    function $put(href, options, data) {
+      return $request('PUT', href, options, data);
+    }
+
+    function $patch(href, options, data) {
+      return $request('PATCH', href, options, data);
+    }
+
+    function $delete(href, options) {
+      return $request('DELETE', href, options);
+    }
+
+    function $link(href, options, linkHeaders) {
+      options = options || {};
+      options.headers = options.headers || {};
+      options.headers.Link = linkHeaders.map(function(link) { return link.toString(); });
+      return $request('LINK', href, options);
+    }
+
+    function $unlink(href, options, linkHeaders) {
+      options = options || {};
+      options.headers = options.headers || {};
+      options.headers.Link = linkHeaders.map(function(link) { return link.toString(); });
+      return $request('UNLINK', href, options);
+    }
+
+    function $request(method, href, options, data) {
+      options = options || {};
+      $log.log('The halClient service is deprecated. Please use $http directly instead.');
+      return $http(merge(options, {
+        method: method,
+        url: $halConfiguration.urlTransformer(href),
+        data: data,
+      }));
+    }
+  }
+})(
+  angular.module('angular-hal.client'),
+  angular.extend,
+  angular.merge
+);
+
+(function(
+  angular
+) {
+  'use strict';
+
   // Add module for http interception
   angular.module('angular-hal.http-interception', [
     'angular-hal.resource',
@@ -1055,214 +1263,6 @@
   }
 })(
   angular.module('angular-hal.configuration')
-);
-
-(function(
-  angular
-) {
-  'use strict';
-
-  // Add module for client
-  angular.module('angular-hal.client', [
-    'angular-hal.utility',
-  ]);
-
-})(
-  angular
-);
-
-(function(
-  module,
-  merge,
-  forEach
-) {
-  'use strict';
-
-  // Add factory for LinkHeader
-  module.factory('LinkHeader', LinkHeaderFactory);
-
-  // Inject Dependencies
-  LinkHeaderFactory.$inject = [
-    '$q',
-    '$extendReadOnly',
-    '$injector',
-    '$halConfiguration',
-  ];
-
-  /**
-   * Factory for LinkHeader
-   * @param {Q}        $q
-   * @param {Function} $extendReadOnly
-   * @param {Injector} $injector Prevent Circular Dependency by injecting $injector instead of $http
-   * @param {Object}   $halConfiguration
-   */
-  function LinkHeaderFactory($q, $extendReadOnly, $injector, $halConfiguration) {
-    return LinkHeader;
-
-    /**
-     * Link Header
-     *
-     * @param {String} uriReference The Link Value
-     * @param {Object} linkParams   The Link Params
-     * @constructor
-     */
-    function LinkHeader(uriReference, linkParams) {
-      var self = this;
-
-      /**
-       * Initialize the LinkHeader
-       *
-       * @return void
-       */
-      (function init() {
-        merge(self, {
-          uriReference: uriReference,
-          linkParams: angular.merge(
-            {
-              rel: null,
-              anchor: null,
-              rev: null,
-              hreflang: null,
-              media: null,
-              title: null,
-              type: null,
-            },
-            linkParams
-          ),
-        });
-      })();
-
-      /**
-       * Convert LinkHeader to String
-       *
-       * @return {String}
-       */
-      self.toString = function toString() {
-        var result = '<' + self.uriReference + '>'
-          , params = [];
-
-        forEach(
-          self.linkParams,
-          function(paramValue, paramName) {
-            if(paramValue) {
-              params.push(paramName + '="' + paramValue + '"');
-            }
-          }
-        );
-
-        if(params.length < 1) {
-          return result;
-        }
-
-        result = result + ';' + params.join(';');
-
-        return result;
-      };
-
-      return this;
-    }
-  }
-})(
-  angular.module('angular-hal.client'),
-  angular.merge,
-  angular.forEach
-);
-
-(function(
-  module,
-  extend,
-  merge
-) {
-  'use strict';
-
-  // Add halCLient service
-  module.service('halClient', HalClientService);
-  module.service('$halClient', HalClientService);
-
-  // Inject Dependencies
-  HalClientService.$inject = [
-    '$log',
-    '$http',
-    'LinkHeader',
-    '$halConfiguration',
-  ];
-
-  /**
-   * @param {Log}      $log
-   * @param {Http}     $http
-   * @param {Function} LinkHeader
-   * @param {Object}   $halConfiguration
-   * @deprecated The halClient service is deprecated. Please use $http directly instead.
-   */
-  function HalClientService($log, $http, LinkHeader, $halConfiguration) {
-    var self = this;
-
-    /**
-     * @return Initialize halClient
-     */
-     (function init() {
-        extend(self, {
-          $get: $get,
-          $post: $post,
-          $put: $put,
-          $patch: $patch,
-          $delete: $delete,
-          $del: $delete,
-          $link: $link,
-          $unlink: $unlink,
-          LinkHeader: LinkHeader,
-        });
-     })();
-
-    /* @ngNoInject */
-    function $get(href, options) {
-      return $request('GET', href, options);
-    }
-
-    function $post(href, options, data) {
-      return $request('POST', href, options, data);
-    }
-
-    function $put(href, options, data) {
-      return $request('PUT', href, options, data);
-    }
-
-    function $patch(href, options, data) {
-      return $request('PATCH', href, options, data);
-    }
-
-    function $delete(href, options) {
-      return $request('DELETE', href, options);
-    }
-
-    function $link(href, options, linkHeaders) {
-      options = options || {};
-      options.headers = options.headers || {};
-      options.headers.Link = linkHeaders.map(function(link) { return link.toString(); });
-      return $request('LINK', href, options);
-    }
-
-    function $unlink(href, options, linkHeaders) {
-      options = options || {};
-      options.headers = options.headers || {};
-      options.headers.Link = linkHeaders.map(function(link) { return link.toString(); });
-      return $request('UNLINK', href, options);
-    }
-
-    function $request(method, href, options, data) {
-      options = options || {};
-      $log.log('The halClient service is deprecated. Please use $http directly instead.');
-      return $http(merge(options, {
-        method: method,
-        url: $halConfiguration.urlTransformer(href),
-        data: data,
-      }));
-    }
-  }
-})(
-  angular.module('angular-hal.client'),
-  angular.extend,
-  angular.merge
 );
 
 (function(

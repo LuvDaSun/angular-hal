@@ -16,7 +16,7 @@
     }
   ],
   "license": "WTFPL",
-  "main": "angular-hal.js",
+  "main": "index.js",
   "dependencies": {
     "angular": "~1",
     "rfc6570": "0.1.8"

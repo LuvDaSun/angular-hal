@@ -36,7 +36,7 @@
       
       if(!rfc6570 &&
         typeof require !== 'undefined') {
-        return require('rfc5670');
+        return require('rfc6570/src/main');
       }
 
       throw new Error('Could not find rfc6570 library.');
