@@ -1,5 +1,6 @@
 (function(
-  module
+  module,
+  extend
 ) {
   'use strict';
 
@@ -32,16 +33,25 @@
         return {
           href: $resolveUrl(baseUrl, link),
         };
-      } else if(typeof link.href === 'string') {
+      }
+      if(typeof link.href === 'string') {
         link.href = $resolveUrl(baseUrl, link.href);
         return link;
-      } else {
-        return {
-          href: baseUrl,
-        };
       }
+      if(Array.isArray(link.href)) {
+        return link.href.map(function (href) {
+          var newLink = extend({}, link, {
+            href: href,
+          });
+          return normalizeLink(baseUrl, newLink);
+        });
+      }
+      return {
+        href: baseUrl,
+      };
     }
   }
 })(
-  angular.module('angular-hal.utility')
+  angular.module('angular-hal.utility'),
+  angular.extend
 );

@@ -1,6 +1,7 @@
 (function(
   module,
-  merge
+  merge,
+  extend
 ) {
   'use strict';
 
@@ -87,10 +88,23 @@
         }
 
         if(resource.$hasLink(rel)) {
-          return $http(merge(options, {
+          var url = resource.$href(rel, urlParams);
+
+          extend(options, {
             method: method,
-            url: resource.$href(rel, urlParams),
             data: body,
+          });
+
+          if(Array.isArray(url)) {
+            var promises = [];
+            for(var j = 0; j < url.length; j++) {
+              promises.push($http(merge(options, {url: url[j]})));
+            }
+            return $q.all(promises);
+          }
+
+          return $http(merge(options, {
+            url: resource.$href(rel, urlParams),
           }));
         }
 
@@ -204,5 +218,6 @@
   }
 })(
   angular.module('angular-hal.resource'),
-  angular.merge
+  angular.merge,
+  angular.extend
 );

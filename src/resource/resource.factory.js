@@ -199,12 +199,26 @@
         var link = links[rel]
           , href = link.href;
 
-        if(typeof link.templated !== 'undefined' &&
-          link.templated) {
-          href = $generateUrl(link.href, parameters);
-        }
+        if(Array.isArray(link)) {
+          href = [];
+          for(var i = 0; i < link.length; i++) {
+            var subLink = link[i]
+              , subHref = subLink.href;
+            if(typeof subLink.templated !== 'undefined' &&
+              subLink.templated) {
+              subHref = $generateUrl(subLink.href, parameters);
+            }
+            subHref = $halConfiguration.urlTransformer(subHref);
+            href.push(subHref);
+          }
+        } else {
+          if(typeof link.templated !== 'undefined' &&
+            link.templated) {
+            href = $generateUrl(link.href, parameters);
+          }
 
-        href = $halConfiguration.urlTransformer(href);
+          href = $halConfiguration.urlTransformer(href);
+        }
 
         return href;
       }

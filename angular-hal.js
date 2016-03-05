@@ -56,7 +56,8 @@
 );
 
 (function(
-  module
+  module,
+  extend
 ) {
   'use strict';
 
@@ -89,18 +90,27 @@
         return {
           href: $resolveUrl(baseUrl, link),
         };
-      } else if(typeof link.href === 'string') {
+      }
+      if(typeof link.href === 'string') {
         link.href = $resolveUrl(baseUrl, link.href);
         return link;
-      } else {
-        return {
-          href: baseUrl,
-        };
       }
+      if(Array.isArray(link.href)) {
+        return link.href.map(function (href) {
+          var newLink = extend({}, link, {
+            href: href,
+          });
+          return normalizeLink(baseUrl, newLink);
+        });
+      }
+      return {
+        href: baseUrl,
+      };
     }
   }
 })(
-  angular.module('angular-hal.utility')
+  angular.module('angular-hal.utility'),
+  angular.extend
 );
 
 (function(
@@ -462,12 +472,26 @@
         var link = links[rel]
           , href = link.href;
 
-        if(typeof link.templated !== 'undefined' &&
-          link.templated) {
-          href = $generateUrl(link.href, parameters);
-        }
+        if(Array.isArray(link)) {
+          href = [];
+          for(var i = 0; i < link.length; i++) {
+            var subLink = link[i]
+              , subHref = subLink.href;
+            if(typeof subLink.templated !== 'undefined' &&
+              subLink.templated) {
+              subHref = $generateUrl(subLink.href, parameters);
+            }
+            subHref = $halConfiguration.urlTransformer(subHref);
+            href.push(subHref);
+          }
+        } else {
+          if(typeof link.templated !== 'undefined' &&
+            link.templated) {
+            href = $generateUrl(link.href, parameters);
+          }
 
-        href = $halConfiguration.urlTransformer(href);
+          href = $halConfiguration.urlTransformer(href);
+        }
 
         return href;
       }
@@ -531,7 +555,8 @@
 
 (function(
   module,
-  merge
+  merge,
+  extend
 ) {
   'use strict';
 
@@ -618,10 +643,23 @@
         }
 
         if(resource.$hasLink(rel)) {
-          return $http(merge(options, {
+          var url = resource.$href(rel, urlParams);
+
+          extend(options, {
             method: method,
-            url: resource.$href(rel, urlParams),
             data: body,
+          });
+
+          if(Array.isArray(url)) {
+            var promises = [];
+            for(var j = 0; j < url.length; j++) {
+              promises.push($http(merge(options, {url: url[j]})));
+            }
+            return $q.all(promises);
+          }
+
+          return $http(merge(options, {
+            url: resource.$href(rel, urlParams),
           }));
         }
 
@@ -735,7 +773,8 @@
   }
 })(
   angular.module('angular-hal.resource'),
-  angular.merge
+  angular.merge,
+  angular.extend
 );
 
 (function(
@@ -880,140 +919,6 @@
 
 })(
   angular.module('angular-hal.http-interception')
-);
-
-(function(
-  angular
-) {
-  'use strict';
-
-  // Add module for configuration
-  angular.module('angular-hal.configuration', []);
-
-})(
-  angular
-);
-
-(function(
-  module
-) {
-  'use strict';
-
-  // Add Factory for ResourceHttpInterceptorFactory
-  module.provider('$halConfiguration', HalConfigurationProvider);
-
-  // Inject Dependencies
-  HalConfigurationProvider.$inject = [];
-
-  /**
-   * @return {Object}
-   */
-  function HalConfigurationProvider() {
-    var linksAttribute = '_links'
-      , embeddedAttribute = '_embedded'
-      , ignoreAttributePrefixes = [
-          '_',
-          '$',
-        ]
-      , selfLink = 'self'
-      , forceJSONResource = false
-      , urlTransformer = noopUrlTransformer;
-
-    return {
-      setLinksAttribute: setLinksAttribute,
-      setEmbeddedAttribute: setEmbeddedAttribute,
-      setIgnoreAttributePrefixes: setIgnoreAttributePrefixes,
-      addIgnoreAttributePrefix: addIgnoreAttributePrefix,
-      setSelfLink: setSelfLink,
-      setForceJSONResource: setForceJSONResource,
-      setUrlTransformer: setUrlTransformer,
-      $get: $get,
-    };
-
-    /**
-     * @param {String} newLinksAttribute
-     */
-    function setLinksAttribute(newLinksAttribute) {
-      linksAttribute = newLinksAttribute;
-    }
-
-    /**
-     * @param {String} newEmbeddedAttribute
-     */
-    function setEmbeddedAttribute(newEmbeddedAttribute) {
-      embeddedAttribute = newEmbeddedAttribute;
-    }
-
-    /**
-     * @param {String[]} newIgnoreAttributePrefixes
-     */
-    function setIgnoreAttributePrefixes(newIgnoreAttributePrefixes) {
-      ignoreAttributePrefixes = newIgnoreAttributePrefixes;
-    }
-
-    /**
-     * @param {String} ignoreAttributePrefix
-     */
-    function addIgnoreAttributePrefix(ignoreAttributePrefix) {
-      ignoreAttributePrefixes.push(ignoreAttributePrefix);
-    }
-
-    /**
-     * @param {String} newSelfLink
-     */
-    function setSelfLink(newSelfLink) {
-      selfLink = newSelfLink;
-    }
-
-    /**
-     * @param {Boolean} newForceJSONResource
-     */
-    function setForceJSONResource(newForceJSONResource) {
-      forceJSONResource = newForceJSONResource;
-    }
-
-    /**
-     * @param {Function}
-     * @deprecated $halConfigurationProvider.setUrlTransformer is deprecated. Please write a http interceptor instead.
-     * @see https://docs.angularjs.org/api/ng/service/$http#interceptors
-     */
-    function setUrlTransformer(newUrlTransformer) {
-      urlTransformer = newUrlTransformer;
-    }
-
-    /**
-     * @param {String}
-     * @return {String}
-     */
-    function noopUrlTransformer(url) {
-      return url;
-    }
-
-    // Inject Dependencies
-    $get.$inject = [
-      '$log',
-    ];
-
-    /**
-     * @return {Object}
-     */
-    function $get($log) {
-      if(urlTransformer !== noopUrlTransformer) {
-        $log.log('$halConfigurationProvider.setUrlTransformer is deprecated. Please write a http interceptor instead.');
-      }
-
-      return Object.freeze({
-        linksAttribute: linksAttribute,
-        embeddedAttribute: embeddedAttribute,
-        ignoreAttributePrefixes: ignoreAttributePrefixes,
-        selfLink: selfLink,
-        forceJSONResource: forceJSONResource,
-        urlTransformer: urlTransformer,
-      });
-    }
-  }
-})(
-  angular.module('angular-hal.configuration')
 );
 
 (function(
@@ -1222,6 +1127,140 @@
   angular.module('angular-hal.client'),
   angular.extend,
   angular.merge
+);
+
+(function(
+  angular
+) {
+  'use strict';
+
+  // Add module for configuration
+  angular.module('angular-hal.configuration', []);
+
+})(
+  angular
+);
+
+(function(
+  module
+) {
+  'use strict';
+
+  // Add Factory for ResourceHttpInterceptorFactory
+  module.provider('$halConfiguration', HalConfigurationProvider);
+
+  // Inject Dependencies
+  HalConfigurationProvider.$inject = [];
+
+  /**
+   * @return {Object}
+   */
+  function HalConfigurationProvider() {
+    var linksAttribute = '_links'
+      , embeddedAttribute = '_embedded'
+      , ignoreAttributePrefixes = [
+          '_',
+          '$',
+        ]
+      , selfLink = 'self'
+      , forceJSONResource = false
+      , urlTransformer = noopUrlTransformer;
+
+    return {
+      setLinksAttribute: setLinksAttribute,
+      setEmbeddedAttribute: setEmbeddedAttribute,
+      setIgnoreAttributePrefixes: setIgnoreAttributePrefixes,
+      addIgnoreAttributePrefix: addIgnoreAttributePrefix,
+      setSelfLink: setSelfLink,
+      setForceJSONResource: setForceJSONResource,
+      setUrlTransformer: setUrlTransformer,
+      $get: $get,
+    };
+
+    /**
+     * @param {String} newLinksAttribute
+     */
+    function setLinksAttribute(newLinksAttribute) {
+      linksAttribute = newLinksAttribute;
+    }
+
+    /**
+     * @param {String} newEmbeddedAttribute
+     */
+    function setEmbeddedAttribute(newEmbeddedAttribute) {
+      embeddedAttribute = newEmbeddedAttribute;
+    }
+
+    /**
+     * @param {String[]} newIgnoreAttributePrefixes
+     */
+    function setIgnoreAttributePrefixes(newIgnoreAttributePrefixes) {
+      ignoreAttributePrefixes = newIgnoreAttributePrefixes;
+    }
+
+    /**
+     * @param {String} ignoreAttributePrefix
+     */
+    function addIgnoreAttributePrefix(ignoreAttributePrefix) {
+      ignoreAttributePrefixes.push(ignoreAttributePrefix);
+    }
+
+    /**
+     * @param {String} newSelfLink
+     */
+    function setSelfLink(newSelfLink) {
+      selfLink = newSelfLink;
+    }
+
+    /**
+     * @param {Boolean} newForceJSONResource
+     */
+    function setForceJSONResource(newForceJSONResource) {
+      forceJSONResource = newForceJSONResource;
+    }
+
+    /**
+     * @param {Function}
+     * @deprecated $halConfigurationProvider.setUrlTransformer is deprecated. Please write a http interceptor instead.
+     * @see https://docs.angularjs.org/api/ng/service/$http#interceptors
+     */
+    function setUrlTransformer(newUrlTransformer) {
+      urlTransformer = newUrlTransformer;
+    }
+
+    /**
+     * @param {String}
+     * @return {String}
+     */
+    function noopUrlTransformer(url) {
+      return url;
+    }
+
+    // Inject Dependencies
+    $get.$inject = [
+      '$log',
+    ];
+
+    /**
+     * @return {Object}
+     */
+    function $get($log) {
+      if(urlTransformer !== noopUrlTransformer) {
+        $log.log('$halConfigurationProvider.setUrlTransformer is deprecated. Please write a http interceptor instead.');
+      }
+
+      return Object.freeze({
+        linksAttribute: linksAttribute,
+        embeddedAttribute: embeddedAttribute,
+        ignoreAttributePrefixes: ignoreAttributePrefixes,
+        selfLink: selfLink,
+        forceJSONResource: forceJSONResource,
+        urlTransformer: urlTransformer,
+      });
+    }
+  }
+})(
+  angular.module('angular-hal.configuration')
 );
 
 (function(
