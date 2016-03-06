@@ -10,6 +10,7 @@ script:
 - npm test
 deploy:
   provider: npm
+  email: elmerbulthuis@gmail.com
   api_key:
     secure: "Ch5gvu6cSLZGAbHOeT8BZs6MXyL2QV6WYVuPoJ2EZtg0ahrxojHslQMI/cRuv00oG/N7ABStFMAlgsk31z8M8g+qEsqm3FwrvxpPVaNsJ8QVtYcnLSlyDOEcVuG6AG61rbVHFH0EA9D1QC2jv6ZFFcFn0iS4Nl3y6YbpxX7Q2HQ="
   on:
