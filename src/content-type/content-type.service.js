@@ -2,7 +2,7 @@
 	'use strict';
 
 	// Regirster ContentType
-	module.factory('$contentType', ContentType);
+	module.service('$contentType', ContentType);
 
 	// Inject Dependencies
 	ContentType.$inject = ['$window'];
@@ -11,27 +11,26 @@
 	 * Factory for Content-Type parser
 	 */
 	function ContentType($window) {
-		var contentType;
+		var self = this
+			, contentTypeLibrary;
 
 		/**
 		 * Initialize Everything
 		 */
 		(function init() {
-			contentType = searchContentType();
+			contentTypeLibrary = searchContentType();
+			self.match = match;
 		})();
-
-		return match;
 
 		/**
 		 * Search for content-type lib
 		 */
 		function searchContentType() {
-			if (typeof $window.contentType != 'undefined') {
+			if (typeof $window.contentType !== 'undefined') {
 				return $window.contentType;
 			}
 
-			if (!contentType &&
-				typeof require !== 'undefined') {
+			if (typeof require !== 'undefined') {
 				return require('content-type');
 			}
 
@@ -46,9 +45,10 @@
 		 * @return {Boolean}
 		 */
 		function match(contentType, type) {
-			return contentType.parse(contentType).type === type;
+			if(typeof contentType !== 'string') {
+				return false;
+			}
+			return contentTypeLibrary.parse(contentType).type === type;
 		}
-
-		// @TODO: Add parse and format methods (?)
 	}
 })(angular.module('angular-hal.content-type'));

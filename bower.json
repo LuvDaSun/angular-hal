@@ -9,7 +9,7 @@
   "dependencies": {
     "rfc6570": "~0.1",
     "angular": "~1",
-    "content-type": "jshttp/content-type#^1.0.1"
+    "content-type": "maennchen/content-type#^1.0.1"
   },
   "devDependencies": {
     "angular-mocks": "*"

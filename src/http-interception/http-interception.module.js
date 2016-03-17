@@ -7,6 +7,7 @@
   angular.module('angular-hal.http-interception', [
     'angular-hal.resource',
     'angular-hal.configuration',
+    'angular-hal.content-type',
   ]);
 
 })(

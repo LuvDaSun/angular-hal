@@ -19,7 +19,7 @@
   "main": "index.js",
   "dependencies": {
     "angular": "~1",
-    "content-type": "^1.0.1",
+    "content-type": "git+https://github.com/maennchen/content-type.git",
     "rfc6570": "0.1.8"
   },
   "devDependencies": {

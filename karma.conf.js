@@ -7,10 +7,11 @@ module.exports = function(config) {
       'node_modules/angular/angular.js',
       'node_modules/angular-mocks/angular-mocks.js',
       'node_modules/rfc6570/rfc6570.js',
+      'node_modules/content-type/index.js',
       'src/**/*.module.js',
       'src/**/*.js',
       'test/helpers.js',
-      'test/integration/**/*.spec.js',
+      'test/**/*.spec.js',
     ],
 
 

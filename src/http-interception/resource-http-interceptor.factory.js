@@ -45,7 +45,7 @@
 
     /**
      * Transform Response
-     * 
+     *
      * @param {Response} response
      * @return {Response|Resource}
      */
@@ -63,7 +63,7 @@
         $halConfiguration.forceJSONResource) {
         return $transformResponseToResource(response);
       }
-      
+
       return response;
     }
   }
