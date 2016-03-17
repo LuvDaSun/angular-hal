@@ -10,13 +10,14 @@
   ResourceHttpInterceptorFactory.$inject = [
     '$transformResponseToResource',
     '$halConfiguration',
+	'$contentType'
   ];
 
   /**
    * @param {Function} $transformResponseToResource
    * @return {Object}
    */
-  function ResourceHttpInterceptorFactory($transformResponseToResource, $halConfiguration) {
+  function ResourceHttpInterceptorFactory($transformResponseToResource, $halConfiguration, $contentType) {
     var CONTENT_TYPE = 'application/hal+json';
 
     return {
@@ -49,7 +50,7 @@
      * @return {Response|Resource}
      */
     function transformResponse(response) {
-      if(response.headers('Content-Type') === CONTENT_TYPE) {
+      if($contentType.match(response.headers('Content-Type'), CONTENT_TYPE)) {
         return $transformResponseToResource(response);
       }
       if(response.config.forceHal) {
