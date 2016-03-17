@@ -42,7 +42,15 @@ You may use it like this:
 angular
   .module('app', ['angular-hal'])
   .run(function($rootScope) {
-    $rootScope.apiRoot = $http({url: 'https://api.example.com/'});
+    $http({url: 'https://api.example.com/'})
+      .then(
+        function success(apiRoot) {
+          $rootScope.apiRoot = apiRoot;
+        },
+        function failure(error) {
+          console.error(error);
+        }
+      );
 
     $rootScope.$watch('apiRoot', function(apiRoot){
       $rootScope.authenticatedUser = apiRoot.$request().$get('http://example.com/authenticated-user');
@@ -76,4 +84,3 @@ Use the provider `$halConfigurationProvider` to configure the module.
 If you wish to use this service in old (ie) browsers, you may need to use the following polyfills:
 - es5shim & es5sham, https://github.com/kriskowal/es5-shim, some parts of the service use es5 methods.
 - xhr-polyfill, https://github.com/LuvDaSun/xhr-polyfill, if you want to make cross domain requests in ie8 / ie9.
-
