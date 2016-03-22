@@ -28,34 +28,63 @@ bower install angular-hal
 
 ## Installation
 
+### Bower
+
 Reference the js files in your html page
 
 ```html
 <script src="bower_components/rfc6570/rfc6570.js"></script>
+<script src="bower_components/content-type/index.js"></script>
 <script src="bower_components/angular-hal/angular-hal(.min).js"></script>
 ```
 
+### NPM
+
+Reference the js files in your html page
+
+```html
+<script src="node_modules/rfc6570/rfc6570.js"></script>
+<script src="node_modules/content-type/index.js"></script>
+<script src="node_modules/angular-hal/angular-hal(.min).js"></script>
+```
+
+### Webpack / Browserify
+
+```js
+var angular = require('angular');
+
+angular
+  .module('my-app', [
+    '...',
+    require('angular-hal'),
+    '...',
+  ])
+;
+```
+
+## Usage
 
 You may use it like this:
 
 ```js
 angular
   .module('app', ['angular-hal'])
-  .run(function($rootScope) {
+  .run(function() {
+    function error(error) {
+      console.error(error);
+    }
+
     $http({url: 'https://api.example.com/'})
       .then(
-        function success(apiRoot) {
-          $rootScope.apiRoot = apiRoot;
+        function successApiRoot(apiRoot) {
+          return apiRoot.$request().$get('users');
         },
-        function failure(error) {
-          console.error(error);
-        }
-      );
-
-    $rootScope.$watch('apiRoot', function(apiRoot){
-      $rootScope.authenticatedUser = apiRoot.$request().$get('http://example.com/authenticated-user');
-    });
-
+        error
+      )
+      .then(function successUsers(users) {
+        console.log('Those are my users:');
+        console.log(users);
+      }, error);
   }]);
 ```
 
