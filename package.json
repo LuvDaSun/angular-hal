@@ -2,7 +2,7 @@
   "name": "angular-hal",
   "version": "2.0.0",
   "description": "Hal client for angularjs",
-  "repository": "git@github.com:elmerbulthuis/angular-hal.git",
+  "repository": "git@github.com:LuvDaSun/angular-hal.git",
   "contributors": [
     {
       "name": "Elmer Bulthuis",
