@@ -10,7 +10,9 @@ script:
 - npm test
 deploy:
   provider: npm
+  email: elmerbulthuis@gmail.com
   api_key:
-    secure: kMfjk1qOwdJO0miyMVuAbHTTDtsfxdns2RhcE8QTBClHIJ/fgJVwys50MBS+yzAzhtAQ0NwcRsfkXhzXSNlKPBGuutxPyIU6JPqchEIyMntuu1vfa/tLY2L+k1lGhNgr+TFVSYl+BxZaLYGu9WIuvlg0tR5/8S3MTQHr50BgB8c=
+    secure: gRSj8pgTUFXu7m78H3fMupNV1QGo22Z1CEpPCNX0+GCAjKAtgkv7EyE8kkd8eTctUoxBoAuk0QZdbi3aE8mqX4ozqaYKq+rB1d/9JQw/RrQY00qUQ8rTYFbtkJsWvd4qHQJpSCGWauxg/LwUXg/zcqVIyDu8ysPpiTW1Ebb9VIo=
   on:
     tags: true
+    repo: LuvDaSun/angular-hal
