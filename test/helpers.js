@@ -1,3 +1,5 @@
-function toObject(resource) {  //eslint-disable-line no-unused-vars
+'use strict';
+
+export function toObject(resource) {
   return angular.extend({}, resource);
 }

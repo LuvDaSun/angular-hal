@@ -1,11 +1,15 @@
+'use strict';
+
+import angularHal from '../../src';
+
 describe('special attribute names', function () {
   var $http
     , $httpBackend;
 
-  beforeEach(module('angular-hal', function($halConfigurationProvider) {
+  beforeEach(angular.mock.module(angularHal, function($halConfigurationProvider) {
     $halConfigurationProvider.setForceJSONResource(true);
   }));
-  beforeEach(inject(function ($injector) {
+  beforeEach(angular.mock.inject(function ($injector) {
     $httpBackend = $injector.get('$httpBackend');
     $http = $injector.get('$http');
   }));

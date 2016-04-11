@@ -1,8 +1,13 @@
+'use strict';
+
+import angularHal from '../../src';
+import { toObject } from '../helpers';
+
 describe('simple', function () {
   var $http
     , $httpBackend;
 
-  beforeEach(module('angular-hal', function($halConfigurationProvider) {
+  beforeEach(angular.mock.module(angularHal, function($halConfigurationProvider) {
     $halConfigurationProvider.setForceJSONResource(true);
     $halConfigurationProvider.setUrlTransformer(transformUrl);
 
@@ -17,7 +22,7 @@ describe('simple', function () {
       return url;
     }
   }));
-  beforeEach(inject(function ($injector) {
+  beforeEach(angular.mock.inject(function ($injector) {
     $httpBackend = $injector.get('$httpBackend');
     $http = $injector.get('$http');
   }));

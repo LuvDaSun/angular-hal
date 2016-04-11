@@ -1,23 +1,13 @@
-(function(
-  module
-) {
-  'use strict';
+'use strict';
 
-  // Configure Http Interception
-  module.config(HttpInterceptorConfiguration);
+/**
+ * @param {HttpProvider} $httpProvider
+ */
+export default function HttpInterceptorConfiguration($httpProvider) {
+  $httpProvider.interceptors.push('ResourceHttpInterceptor');
+}
 
-  // Inject Dependencies
-  HttpInterceptorConfiguration.$inject = [
-    '$httpProvider',
-  ];
-
-  /**
-   * @param {HttpProvider} $httpProvider
-   */
-  function HttpInterceptorConfiguration($httpProvider) {
-    $httpProvider.interceptors.push('ResourceHttpInterceptor');
-  }
-
-})(
-  angular.module('angular-hal.http-interception')
-);
+// Inject Dependencies
+HttpInterceptorConfiguration.$inject = [
+  '$httpProvider',
+];

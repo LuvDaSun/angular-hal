@@ -1,87 +1,72 @@
-(function(
-  module,
-  merge,
-  forEach
-) {
-  'use strict';
+'use strict';
 
-  // Add factory for LinkHeader
-  module.factory('LinkHeader', LinkHeaderFactory);
-
-  // Inject Dependencies
-  LinkHeaderFactory.$inject = [];
+/**
+ * Factory for LinkHeader
+ */
+export default function LinkHeaderFactory() {
+  return LinkHeader;
 
   /**
-   * Factory for LinkHeader
+   * Link Header
+   *
+   * @param {String} uriReference The Link Value
+   * @param {Object} linkParams   The Link Params
+   * @constructor
    */
-  function LinkHeaderFactory() {
-    return LinkHeader;
+  function LinkHeader(uriReference, linkParams) {
+    var self = this;
 
     /**
-     * Link Header
+     * Initialize the LinkHeader
      *
-     * @param {String} uriReference The Link Value
-     * @param {Object} linkParams   The Link Params
-     * @constructor
+     * @return void
      */
-    function LinkHeader(uriReference, linkParams) {
-      var self = this;
+    (function init() {
+      angular.extend(self, {
+        uriReference: uriReference,
+        linkParams: angular.extend(
+          {
+            rel: null,
+            anchor: null,
+            rev: null,
+            hreflang: null,
+            media: null,
+            title: null,
+            type: null,
+          },
+          linkParams
+        ),
+      });
+    })();
 
-      /**
-       * Initialize the LinkHeader
-       *
-       * @return void
-       */
-      (function init() {
-        merge(self, {
-          uriReference: uriReference,
-          linkParams: angular.merge(
-            {
-              rel: null,
-              anchor: null,
-              rev: null,
-              hreflang: null,
-              media: null,
-              title: null,
-              type: null,
-            },
-            linkParams
-          ),
-        });
-      })();
+    /**
+     * Convert LinkHeader to String
+     *
+     * @return {String}
+     */
+    self.toString = function toString() {
+      var result = '<' + self.uriReference + '>'
+        , params = [];
 
-      /**
-       * Convert LinkHeader to String
-       *
-       * @return {String}
-       */
-      self.toString = function toString() {
-        var result = '<' + self.uriReference + '>'
-          , params = [];
-
-        forEach(
-          self.linkParams,
-          function(paramValue, paramName) {
-            if(paramValue) {
-              params.push(paramName + '="' + paramValue + '"');
-            }
-          }
-        );
-
-        if(params.length < 1) {
-          return result;
+      for(let paramName in self.linkParams) {
+        let paramValue = self.linkParams[paramName];
+        if(paramValue) {
+          params.push(paramName + '="' + paramValue + '"');
         }
+      }
 
-        result = result + ';' + params.join(';');
-
+      if(params.length < 1) {
         return result;
-      };
+      }
 
-      return this;
-    }
+      result = result + ';' + params.join(';');
+
+      return result;
+    };
+
+    return this;
   }
-})(
-  angular.module('angular-hal.client'),
-  angular.merge,
-  angular.forEach
-);
+}
+
+// Inject Dependencies
+LinkHeaderFactory.$inject = [];

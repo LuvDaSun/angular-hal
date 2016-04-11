@@ -1,23 +1,45 @@
-module.exports = function(config) {
+/* globals module: true */
 
+'use strict';
+
+module.exports = function(config) {
   config.set({
     basePath: '.',
-    frameworks: ['jasmine'],
+    frameworks: ['browserify', 'jasmine'],
     files: [
       'node_modules/angular/angular.js',
       'node_modules/angular-mocks/angular-mocks.js',
-      'node_modules/rfc6570/rfc6570.js',
-      'node_modules/content-type/index.js',
-      'src/**/*.module.js',
-      'src/**/*.js',
-      'test/helpers.js',
       'test/**/*.spec.js',
     ],
 
 
-    reporters: ['dots', 'coverage'],
+    reporters: [
+      'dots',
+      'coverage',
+    ],
     preprocessors: {
-      'src/**/*.js': 'coverage'
+      'src/**/*.js': [
+        'coverage',
+      ],
+      'test/**/*.js': [
+        'browserify',
+      ],
+    },
+
+    browserify: {
+      debug: true,
+      transform: [
+        [
+          'babelify',
+          {presets: ['es2015']}
+        ],
+      ],
+
+      /*configure: function browserify(bundle) {
+        bundle.once('prebundle', function prebundle() {
+          bundle.transform('babelify', {presets: ['es2015']});
+        });
+      },*/
     },
 
     coverageReporter: {

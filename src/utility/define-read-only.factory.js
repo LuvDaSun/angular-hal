@@ -1,35 +1,26 @@
-(function(
-  module
-) {
-  'use strict';
+'use strict';
 
-  // Regirster DefineReadOnlyFactory
-  module.factory('$defineReadOnly', DefineReadOnlyFactory);
-
-  // Inject Dependencies
-  DefineReadOnlyFactory.$inject = [];
+/**
+ * Factory for Define Read Only
+ */
+export default function DefineReadOnlyFactory() {
+  return defineReadOnly;
 
   /**
-   * Factory for Define Read Only
+   * Define read-only property in target
+   * @param {Object} target
+   * @param {String} key
+   * @param {mixed}  value
    */
-  function DefineReadOnlyFactory() {
-    return defineReadOnly;
-
-    /**
-     * Define read-only property in target
-     * @param {Object} target
-     * @param {String} key
-     * @param {mixed}  value
-     */
-    function defineReadOnly(target, key, value) {
-      Object.defineProperty(target, key, {
-        configurable: false,
-        enumerable: true,
-        value: value,
-        writable: true,
-      });
-    }
+  function defineReadOnly(target, key, value) {
+    Object.defineProperty(target, key, {
+      configurable: false,
+      enumerable: true,
+      value: value,
+      writable: true,
+    });
   }
-})(
-  angular.module('angular-hal.utility')
-);
+}
+
+// Inject Dependencies
+DefineReadOnlyFactory.$inject = [];
