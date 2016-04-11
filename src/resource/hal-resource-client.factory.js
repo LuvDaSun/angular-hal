@@ -1,13 +1,14 @@
 'use strict';
 
+import extendReadOnly from '../utility/extend-read-only';
+
 /**
  * Factory for HalResourceClient
  * @param {Q}        $q
- * @param {Function} $extendReadOnly
  * @param {Injector} $injector Prevent Circular Dependency by injecting $injector instead of $http
  * @param {Object}   $halConfiguration
  */
-export default function HalResourceClientFactory($q, $extendReadOnly, $injector, $halConfiguration) {
+export default function HalResourceClientFactory($q, $injector, $halConfiguration) {
   return HalResourceClient;
 
   /**
@@ -23,7 +24,7 @@ export default function HalResourceClientFactory($q, $extendReadOnly, $injector,
      * Initialize the client
      */
     (function init() {
-      $extendReadOnly(self, {
+      extendReadOnly(self, {
         $request: $request,
         $get: $get,
         $post: $post,
@@ -202,11 +203,3 @@ export default function HalResourceClientFactory($q, $extendReadOnly, $injector,
     }
   }
 }
-
-// Inject Dependencies
-HalResourceClientFactory.$inject = [
-  '$q',
-  '$extendReadOnly',
-  '$injector',
-  '$halConfiguration',
-];

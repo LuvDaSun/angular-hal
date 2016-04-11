@@ -52,17 +52,7 @@ Reference the js files in your html page
 ### Webpack / Browserify
 
 #### Non-ES6
-```js
-var angular = require('angular');
-
-angular
-  .module('my-app', [
-    '...',
-    require('angular-hal'),
-    '...',
-  ])
-;
-```
+This package is written in ES6. Please either use the built file or import the source in an ES6 enabled builder.
 
 #### ES6 (Babel)
 ```js

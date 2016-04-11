@@ -1,112 +1,94 @@
 'use strict';
 
 /**
- * @return {Object}
+ * @param {String}
+ * @return {String}
  */
-export default function HalConfigurationProvider() {
-  var linksAttribute = '_links'
-    , embeddedAttribute = '_embedded'
-    , ignoreAttributePrefixes = [
-        '_',
-        '$',
-      ]
-    , selfLink = 'self'
-    , forceJSONResource = false
-    , urlTransformer = noopUrlTransformer;
+export function noopUrlTransformer(url) {
+  return url;
+}
 
-  // Inject Dependencies
-  $get.$inject = [
-    '$log',
-  ];
-
-  return {
-    setLinksAttribute: setLinksAttribute,
-    setEmbeddedAttribute: setEmbeddedAttribute,
-    setIgnoreAttributePrefixes: setIgnoreAttributePrefixes,
-    addIgnoreAttributePrefix: addIgnoreAttributePrefix,
-    setSelfLink: setSelfLink,
-    setForceJSONResource: setForceJSONResource,
-    setUrlTransformer: setUrlTransformer,
-    $get: $get,
-  };
-
-  /**
-   * @param {String} newLinksAttribute
-   */
-  function setLinksAttribute(newLinksAttribute) {
-    linksAttribute = newLinksAttribute;
+export default class HalConfigurationProvider {
+  constructor() {
+    this._linksAttribute = '_links';
+    this._embeddedAttribute = '_embedded';
+    this._ignoreAttributePrefixes = [
+      '_',
+      '$',
+    ];
+    this._selfLink = 'self';
+    this._forceJSONResource = false;
+    this._urlTransformer = noopUrlTransformer;
   }
 
   /**
-   * @param {String} newEmbeddedAttribute
+   * @param {String} linksAttribute
    */
-  function setEmbeddedAttribute(newEmbeddedAttribute) {
-    embeddedAttribute = newEmbeddedAttribute;
+  setLinksAttribute(linksAttribute) {
+    this._linksAttribute = linksAttribute;
   }
 
   /**
-   * @param {String[]} newIgnoreAttributePrefixes
+   * @param {String} embeddedAttribute
    */
-  function setIgnoreAttributePrefixes(newIgnoreAttributePrefixes) {
-    ignoreAttributePrefixes = newIgnoreAttributePrefixes;
+  setEmbeddedAttribute(embeddedAttribute) {
+    this._embeddedAttribute = embeddedAttribute;
+  }
+
+  /**
+   * @param {String[]} ignoreAttributePrefixes
+   */
+  setIgnoreAttributePrefixes(ignoreAttributePrefixes) {
+    this._ignoreAttributePrefixes = ignoreAttributePrefixes;
   }
 
   /**
    * @param {String} ignoreAttributePrefix
    */
-  function addIgnoreAttributePrefix(ignoreAttributePrefix) {
-    ignoreAttributePrefixes.push(ignoreAttributePrefix);
+  addIgnoreAttributePrefix(ignoreAttributePrefix) {
+    this._ignoreAttributePrefixes.push(ignoreAttributePrefix);
   }
 
   /**
-   * @param {String} newSelfLink
+   * @param {String} selfLink
    */
-  function setSelfLink(newSelfLink) {
-    selfLink = newSelfLink;
+  setSelfLink(selfLink) {
+    this._selfLink = selfLink;
   }
 
   /**
-   * @param {Boolean} newForceJSONResource
+   * @param {Boolean} forceJSONResource
    */
-  function setForceJSONResource(newForceJSONResource) {
-    forceJSONResource = newForceJSONResource;
+  setForceJSONResource(forceJSONResource) {
+    this._forceJSONResource = forceJSONResource;
   }
 
   /**
-   * @param {Function}
+   * @param {Function} urlTransformer
    * @deprecated $halConfigurationProvider.setUrlTransformer is deprecated. Please write a http interceptor instead.
    * @see https://docs.angularjs.org/api/ng/service/$http#interceptors
    */
-  function setUrlTransformer(newUrlTransformer) {
-    urlTransformer = newUrlTransformer;
+  setUrlTransformer(urlTransformer) {
+    this._urlTransformer = urlTransformer;
   }
 
   /**
-   * @param {String}
-   * @return {String}
-   */
-  function noopUrlTransformer(url) {
-    return url;
-  }
-
-  /**
+   * Get Configuration
+   * @param  {Log} $log logger
    * @return {Object}
    */
-  function $get($log) {
-    if(urlTransformer !== noopUrlTransformer) {
+  $get($log) {
+    if(this._urlTransformer !== noopUrlTransformer) {
       $log.log('$halConfigurationProvider.setUrlTransformer is deprecated. Please write a http interceptor instead.');
     }
 
     return Object.freeze({
-      linksAttribute: linksAttribute,
-      embeddedAttribute: embeddedAttribute,
-      ignoreAttributePrefixes: ignoreAttributePrefixes,
-      selfLink: selfLink,
-      forceJSONResource: forceJSONResource,
-      urlTransformer: urlTransformer,
+      linksAttribute: this._linksAttribute,
+      embeddedAttribute: this._embeddedAttribute,
+      ignoreAttributePrefixes: this._ignoreAttributePrefixes,
+      selfLink: this._selfLink,
+      forceJSONResource: this._forceJSONResource,
+      urlTransformer: this._urlTransformer,
     });
   }
 }
-
-// Inject Dependencies
-HalConfigurationProvider.$inject = [];

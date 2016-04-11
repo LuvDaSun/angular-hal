@@ -576,89 +576,96 @@ module.exports = {
 'use strict';
 
 /**
- * @param {Log}      $log
- * @param {Http}     $http
- * @param {Function} LinkHeader
- * @param {Object}   $halConfiguration
  * @deprecated The halClient service is deprecated. Please use $http directly instead.
  */
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = HalClientService;
-function HalClientService($log, $http, LinkHeader, $halConfiguration) {
-  var self = this;
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var HalClient = function () {
   /**
-   * @return Initialize halClient
+   * @param {Log}      $log
+   * @param {Http}     $http
+   * @param {Function} LinkHeader
+   * @param {Object}   $halConfiguration
    */
-  (function init() {
-    angular.extend(self, {
-      $get: $get,
-      $post: $post,
-      $put: $put,
-      $patch: $patch,
-      $delete: $delete,
-      $del: $delete,
-      $link: $link,
-      $unlink: $unlink,
-      LinkHeader: LinkHeader
-    });
-  })();
 
-  /* @ngNoInject */
-  function $get(href, options) {
-    return $request('GET', href, options);
+  function HalClient($log, $http, LinkHeader, $halConfiguration) {
+    _classCallCheck(this, HalClient);
+
+    this._$log = $log;
+    this._$http = $http;
+    this._$halConfiguration = $halConfiguration;
+    this.LinkHeader = LinkHeader;
   }
 
-  function $post(href, options, data) {
-    return $request('POST', href, options, data);
-  }
+  _createClass(HalClient, [{
+    key: '$get',
+    value: function $get(href, options) {
+      return this.$request('GET', href, options);
+    }
+  }, {
+    key: '$post',
+    value: function $post(href, options, data) {
+      return this.$request('POST', href, options, data);
+    }
+  }, {
+    key: '$put',
+    value: function $put(href, options, data) {
+      return this.$request('PUT', href, options, data);
+    }
+  }, {
+    key: '$patch',
+    value: function $patch(href, options, data) {
+      return this.$request('PATCH', href, options, data);
+    }
+  }, {
+    key: '$delete',
+    value: function $delete(href, options) {
+      return this.$request('DELETE', href, options);
+    }
+  }, {
+    key: '$link',
+    value: function $link(href, options, linkHeaders) {
+      options = options || {};
+      options.headers = options.headers || {};
+      options.headers.Link = linkHeaders.map(function (link) {
+        return link.toString();
+      });
+      return this.$request('LINK', href, options);
+    }
+  }, {
+    key: '$unlink',
+    value: function $unlink(href, options, linkHeaders) {
+      options = options || {};
+      options.headers = options.headers || {};
+      options.headers.Link = linkHeaders.map(function (link) {
+        return link.toString();
+      });
+      return this.$request('UNLINK', href, options);
+    }
+  }, {
+    key: '$request',
+    value: function $request(method, href, options, data) {
+      options = options || {};
+      this._$log.log('The halClient service is deprecated. Please use $http directly instead.');
+      return this._$http(angular.extend({}, options, {
+        method: method,
+        url: this._$halConfiguration.urlTransformer(href),
+        data: data
+      }));
+    }
+  }]);
 
-  function $put(href, options, data) {
-    return $request('PUT', href, options, data);
-  }
+  return HalClient;
+}();
 
-  function $patch(href, options, data) {
-    return $request('PATCH', href, options, data);
-  }
-
-  function $delete(href, options) {
-    return $request('DELETE', href, options);
-  }
-
-  function $link(href, options, linkHeaders) {
-    options = options || {};
-    options.headers = options.headers || {};
-    options.headers.Link = linkHeaders.map(function (link) {
-      return link.toString();
-    });
-    return $request('LINK', href, options);
-  }
-
-  function $unlink(href, options, linkHeaders) {
-    options = options || {};
-    options.headers = options.headers || {};
-    options.headers.Link = linkHeaders.map(function (link) {
-      return link.toString();
-    });
-    return $request('UNLINK', href, options);
-  }
-
-  function $request(method, href, options, data) {
-    options = options || {};
-    $log.log('The halClient service is deprecated. Please use $http directly instead.');
-    return $http(angular.extend({}, options, {
-      method: method,
-      url: $halConfiguration.urlTransformer(href),
-      data: data
-    }));
-  }
-}
-
-// Inject Dependencies
-HalClientService.$inject = ['$log', '$http', 'LinkHeader', '$halConfiguration'];
+exports.default = HalClient;
 
 },{}],6:[function(require,module,exports){
 'use strict';
@@ -667,15 +674,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _utility = require('../utility');
-
-var _utility2 = _interopRequireDefault(_utility);
-
-var _halClient = require('./hal-client.service');
+var _halClient = require('./hal-client');
 
 var _halClient2 = _interopRequireDefault(_halClient);
 
-var _linkHeader = require('./link-header.factory');
+var _linkHeader = require('./link-header');
 
 var _linkHeader2 = _interopRequireDefault(_linkHeader);
 
@@ -684,65 +687,58 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var MODULE_NAME = 'angular-hal.client';
 
 // Add module for client
-angular.module(MODULE_NAME, [_utility2.default]).service('halClient', _halClient2.default).service('$halClient', _halClient2.default).factory('LinkHeader', _linkHeader2.default);
+angular.module(MODULE_NAME, []).service('halClient', _halClient2.default).service('$halClient', _halClient2.default).value('LinkHeader', _linkHeader2.default);
 
 exports.default = MODULE_NAME;
 
-},{"../utility":22,"./hal-client.service":5,"./link-header.factory":7}],7:[function(require,module,exports){
+},{"./hal-client":5,"./link-header":7}],7:[function(require,module,exports){
 'use strict';
 
 /**
- * Factory for LinkHeader
+ * Link Header
  */
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = LinkHeaderFactory;
-function LinkHeaderFactory() {
-  return LinkHeader;
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var LinkHeader = function () {
   /**
-   * Link Header
-   *
    * @param {String} uriReference The Link Value
    * @param {Object} linkParams   The Link Params
-   * @constructor
    */
+
   function LinkHeader(uriReference, linkParams) {
-    var self = this;
+    _classCallCheck(this, LinkHeader);
 
-    /**
-     * Initialize the LinkHeader
-     *
-     * @return void
-     */
-    (function init() {
-      angular.extend(self, {
-        uriReference: uriReference,
-        linkParams: angular.extend({
-          rel: null,
-          anchor: null,
-          rev: null,
-          hreflang: null,
-          media: null,
-          title: null,
-          type: null
-        }, linkParams)
-      });
-    })();
+    this.uriReference = uriReference;
+    this.linkParams = angular.extend({
+      rel: null,
+      anchor: null,
+      rev: null,
+      hreflang: null,
+      media: null,
+      title: null,
+      type: null
+    }, linkParams);
+  }
+  /**
+   * @return {String}
+   */
 
-    /**
-     * Convert LinkHeader to String
-     *
-     * @return {String}
-     */
-    self.toString = function toString() {
-      var result = '<' + self.uriReference + '>',
+
+  _createClass(LinkHeader, [{
+    key: 'toString',
+    value: function toString() {
+      var result = '<' + this.uriReference + '>',
           params = [];
 
-      for (var paramName in self.linkParams) {
-        var paramValue = self.linkParams[paramName];
+      for (var paramName in this.linkParams) {
+        var paramValue = this.linkParams[paramName];
         if (paramValue) {
           params.push(paramName + '="' + paramValue + '"');
         }
@@ -755,128 +751,149 @@ function LinkHeaderFactory() {
       result = result + ';' + params.join(';');
 
       return result;
-    };
+    }
+  }]);
 
-    return this;
-  }
-}
+  return LinkHeader;
+}();
 
-// Inject Dependencies
-LinkHeaderFactory.$inject = [];
+exports.default = LinkHeader;
 
 },{}],8:[function(require,module,exports){
 'use strict';
 
 /**
- * @return {Object}
+ * @param {String}
+ * @return {String}
  */
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = HalConfigurationProvider;
-function HalConfigurationProvider() {
-  var linksAttribute = '_links',
-      embeddedAttribute = '_embedded',
-      ignoreAttributePrefixes = ['_', '$'],
-      selfLink = 'self',
-      forceJSONResource = false,
-      urlTransformer = noopUrlTransformer;
 
-  // Inject Dependencies
-  $get.$inject = ['$log'];
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-  return {
-    setLinksAttribute: setLinksAttribute,
-    setEmbeddedAttribute: setEmbeddedAttribute,
-    setIgnoreAttributePrefixes: setIgnoreAttributePrefixes,
-    addIgnoreAttributePrefix: addIgnoreAttributePrefix,
-    setSelfLink: setSelfLink,
-    setForceJSONResource: setForceJSONResource,
-    setUrlTransformer: setUrlTransformer,
-    $get: $get
-  };
+exports.noopUrlTransformer = noopUrlTransformer;
 
-  /**
-   * @param {String} newLinksAttribute
-   */
-  function setLinksAttribute(newLinksAttribute) {
-    linksAttribute = newLinksAttribute;
-  }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-  /**
-   * @param {String} newEmbeddedAttribute
-   */
-  function setEmbeddedAttribute(newEmbeddedAttribute) {
-    embeddedAttribute = newEmbeddedAttribute;
-  }
-
-  /**
-   * @param {String[]} newIgnoreAttributePrefixes
-   */
-  function setIgnoreAttributePrefixes(newIgnoreAttributePrefixes) {
-    ignoreAttributePrefixes = newIgnoreAttributePrefixes;
-  }
-
-  /**
-   * @param {String} ignoreAttributePrefix
-   */
-  function addIgnoreAttributePrefix(ignoreAttributePrefix) {
-    ignoreAttributePrefixes.push(ignoreAttributePrefix);
-  }
-
-  /**
-   * @param {String} newSelfLink
-   */
-  function setSelfLink(newSelfLink) {
-    selfLink = newSelfLink;
-  }
-
-  /**
-   * @param {Boolean} newForceJSONResource
-   */
-  function setForceJSONResource(newForceJSONResource) {
-    forceJSONResource = newForceJSONResource;
-  }
-
-  /**
-   * @param {Function}
-   * @deprecated $halConfigurationProvider.setUrlTransformer is deprecated. Please write a http interceptor instead.
-   * @see https://docs.angularjs.org/api/ng/service/$http#interceptors
-   */
-  function setUrlTransformer(newUrlTransformer) {
-    urlTransformer = newUrlTransformer;
-  }
-
-  /**
-   * @param {String}
-   * @return {String}
-   */
-  function noopUrlTransformer(url) {
-    return url;
-  }
-
-  /**
-   * @return {Object}
-   */
-  function $get($log) {
-    if (urlTransformer !== noopUrlTransformer) {
-      $log.log('$halConfigurationProvider.setUrlTransformer is deprecated. Please write a http interceptor instead.');
-    }
-
-    return Object.freeze({
-      linksAttribute: linksAttribute,
-      embeddedAttribute: embeddedAttribute,
-      ignoreAttributePrefixes: ignoreAttributePrefixes,
-      selfLink: selfLink,
-      forceJSONResource: forceJSONResource,
-      urlTransformer: urlTransformer
-    });
-  }
+function noopUrlTransformer(url) {
+  return url;
 }
 
-// Inject Dependencies
-HalConfigurationProvider.$inject = [];
+var HalConfigurationProvider = function () {
+  function HalConfigurationProvider() {
+    _classCallCheck(this, HalConfigurationProvider);
+
+    this._linksAttribute = '_links';
+    this._embeddedAttribute = '_embedded';
+    this._ignoreAttributePrefixes = ['_', '$'];
+    this._selfLink = 'self';
+    this._forceJSONResource = false;
+    this._urlTransformer = noopUrlTransformer;
+  }
+
+  /**
+   * @param {String} linksAttribute
+   */
+
+
+  _createClass(HalConfigurationProvider, [{
+    key: 'setLinksAttribute',
+    value: function setLinksAttribute(linksAttribute) {
+      this._linksAttribute = linksAttribute;
+    }
+
+    /**
+     * @param {String} embeddedAttribute
+     */
+
+  }, {
+    key: 'setEmbeddedAttribute',
+    value: function setEmbeddedAttribute(embeddedAttribute) {
+      this._embeddedAttribute = embeddedAttribute;
+    }
+
+    /**
+     * @param {String[]} ignoreAttributePrefixes
+     */
+
+  }, {
+    key: 'setIgnoreAttributePrefixes',
+    value: function setIgnoreAttributePrefixes(ignoreAttributePrefixes) {
+      this._ignoreAttributePrefixes = ignoreAttributePrefixes;
+    }
+
+    /**
+     * @param {String} ignoreAttributePrefix
+     */
+
+  }, {
+    key: 'addIgnoreAttributePrefix',
+    value: function addIgnoreAttributePrefix(ignoreAttributePrefix) {
+      this._ignoreAttributePrefixes.push(ignoreAttributePrefix);
+    }
+
+    /**
+     * @param {String} selfLink
+     */
+
+  }, {
+    key: 'setSelfLink',
+    value: function setSelfLink(selfLink) {
+      this._selfLink = selfLink;
+    }
+
+    /**
+     * @param {Boolean} forceJSONResource
+     */
+
+  }, {
+    key: 'setForceJSONResource',
+    value: function setForceJSONResource(forceJSONResource) {
+      this._forceJSONResource = forceJSONResource;
+    }
+
+    /**
+     * @param {Function} urlTransformer
+     * @deprecated $halConfigurationProvider.setUrlTransformer is deprecated. Please write a http interceptor instead.
+     * @see https://docs.angularjs.org/api/ng/service/$http#interceptors
+     */
+
+  }, {
+    key: 'setUrlTransformer',
+    value: function setUrlTransformer(urlTransformer) {
+      this._urlTransformer = urlTransformer;
+    }
+
+    /**
+     * Get Configuration
+     * @param  {Log} $log logger
+     * @return {Object}
+     */
+
+  }, {
+    key: '$get',
+    value: function $get($log) {
+      if (this._urlTransformer !== noopUrlTransformer) {
+        $log.log('$halConfigurationProvider.setUrlTransformer is deprecated. Please write a http interceptor instead.');
+      }
+
+      return Object.freeze({
+        linksAttribute: this._linksAttribute,
+        embeddedAttribute: this._embeddedAttribute,
+        ignoreAttributePrefixes: this._ignoreAttributePrefixes,
+        selfLink: this._selfLink,
+        forceJSONResource: this._forceJSONResource,
+        urlTransformer: this._urlTransformer
+      });
+    }
+  }]);
+
+  return HalConfigurationProvider;
+}();
+
+exports.default = HalConfigurationProvider;
 
 },{}],9:[function(require,module,exports){
 'use strict';
@@ -913,9 +930,6 @@ function HttpInterceptorConfiguration($httpProvider) {
   $httpProvider.interceptors.push('ResourceHttpInterceptor');
 }
 
-// Inject Dependencies
-HttpInterceptorConfiguration.$inject = ['$httpProvider'];
-
 },{}],11:[function(require,module,exports){
 'use strict';
 
@@ -939,20 +953,16 @@ var _httpInterception = require('./http-interception.config');
 
 var _httpInterception2 = _interopRequireDefault(_httpInterception);
 
-var _responseTransformer = require('./response-transformer.service');
-
-var _responseTransformer2 = _interopRequireDefault(_responseTransformer);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var MODULE_NAME = 'angular-hal.http-interception';
 
 // Add module for http interception
-angular.module(MODULE_NAME, [_resource2.default, _configuration2.default]).config(_httpInterception2.default).factory('ResourceHttpInterceptor', _resourceHttpInterceptor2.default).factory('$transformResponseToResource', _responseTransformer2.default);
+angular.module(MODULE_NAME, [_resource2.default, _configuration2.default]).config(_httpInterception2.default).factory('ResourceHttpInterceptor', _resourceHttpInterceptor2.default);
 
 exports.default = MODULE_NAME;
 
-},{"../configuration":9,"../resource":16,"./http-interception.config":10,"./resource-http-interceptor.factory":12,"./response-transformer.service":13}],12:[function(require,module,exports){
+},{"../configuration":9,"../resource":16,"./http-interception.config":10,"./resource-http-interceptor.factory":12}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -962,13 +972,9 @@ exports.default = ResourceHttpInterceptorFactory;
 
 var _contentType = require('content-type');
 
-/**
- * @param {Function} $transformResponseToResource
- * @return {Object}
- */
-function ResourceHttpInterceptorFactory($transformResponseToResource, $halConfiguration) {
-  var CONTENT_TYPE = 'application/hal+json';
+var CONTENT_TYPE = 'application/hal+json';
 
+function ResourceHttpInterceptorFactory($halConfiguration, Resource) {
   return {
     request: transformRequest,
     response: transformResponse
@@ -998,61 +1004,31 @@ function ResourceHttpInterceptorFactory($transformResponseToResource, $halConfig
   function transformResponse(response) {
     try {
       if ((0, _contentType.parse)(response.headers('Content-Type')).type === CONTENT_TYPE) {
-        return $transformResponseToResource(response);
+        return transformResponseToResource(response);
       }
     } catch (e) {
       // The parse function could throw an error, we do not want that.
     }
     if (response.config.forceHal) {
-      return $transformResponseToResource(response);
+      return transformResponseToResource(response);
     }
     if ((response.headers('Content-Type') === 'application/json' || response.headers('Content-Type') === null) && $halConfiguration.forceJSONResource) {
-      return $transformResponseToResource(response);
+      return transformResponseToResource(response);
     }
 
     return response;
   }
-}
-
-// Inject Dependencies
-ResourceHttpInterceptorFactory.$inject = ['$transformResponseToResource', '$halConfiguration'];
-
-},{"content-type":1}],13:[function(require,module,exports){
-'use strict';
-
-/**
- * @param {Function} Resource
- */
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = ResponseToResourceTransformerFactory;
-function ResponseToResourceTransformerFactory(Resource) {
-  return transform;
-
-  /**
-   * @param {Response}
-   * @return {Resource}
-   */
-  function transform(response) {
+  function transformResponseToResource(response) {
     return new Resource(response.data, response);
   }
 }
 
-// Inject Dependencies
-ResponseToResourceTransformerFactory.$inject = ['Resource'];
-
-},{}],14:[function(require,module,exports){
+},{"content-type":1}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-
-var _urlGenerator = require('./url-generator');
-
-var _urlGenerator2 = _interopRequireDefault(_urlGenerator);
 
 var _httpInterception = require('./http-interception');
 
@@ -1067,26 +1043,56 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var MODULE_NAME = 'angular-hal';
 
 // Combine needed Modules
-angular.module(MODULE_NAME, [_urlGenerator2.default, _httpInterception2.default, _client2.default, 'ng']);
+angular.module(MODULE_NAME, [_httpInterception2.default, _client2.default]);
 
 exports.default = MODULE_NAME;
 
-},{"./client":6,"./http-interception":11,"./url-generator":18}],15:[function(require,module,exports){
+},{"./client":6,"./http-interception":11}],14:[function(require,module,exports){
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = generateUrl;
+
+var _main = require('rfc6570/src/main');
+
+var _main2 = _interopRequireDefault(_main);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 /**
- * Factory for HalResourceClient
- * @param {Q}        $q
- * @param {Function} $extendReadOnly
- * @param {Injector} $injector Prevent Circular Dependency by injecting $injector instead of $http
- * @param {Object}   $halConfiguration
+ * Generate url from template
+ *
+ * @param  {String} template
+ * @param  {Object} parameters
+ * @return {String}
  */
+function generateUrl(template, parameters) {
+  return new _main2.default.UriTemplate(template).stringify(parameters);
+}
+
+},{"rfc6570/src/main":4}],15:[function(require,module,exports){
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = HalResourceClientFactory;
-function HalResourceClientFactory($q, $extendReadOnly, $injector, $halConfiguration) {
+
+var _extendReadOnly = require('../utility/extend-read-only');
+
+var _extendReadOnly2 = _interopRequireDefault(_extendReadOnly);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Factory for HalResourceClient
+ * @param {Q}        $q
+ * @param {Injector} $injector Prevent Circular Dependency by injecting $injector instead of $http
+ * @param {Object}   $halConfiguration
+ */
+function HalResourceClientFactory($q, $injector, $halConfiguration) {
   return HalResourceClient;
 
   /**
@@ -1102,7 +1108,7 @@ function HalResourceClientFactory($q, $extendReadOnly, $injector, $halConfigurat
      * Initialize the client
      */
     (function init() {
-      $extendReadOnly(self, {
+      (0, _extendReadOnly2.default)(self, {
         $request: $request,
         $get: $get,
         $post: $post,
@@ -1280,19 +1286,12 @@ function HalResourceClientFactory($q, $extendReadOnly, $injector, $halConfigurat
   }
 }
 
-// Inject Dependencies
-HalResourceClientFactory.$inject = ['$q', '$extendReadOnly', '$injector', '$halConfiguration'];
-
-},{}],16:[function(require,module,exports){
+},{"../utility/extend-read-only":19}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-
-var _utility = require('../utility');
-
-var _utility2 = _interopRequireDefault(_utility);
 
 var _configuration = require('../configuration');
 
@@ -1311,14 +1310,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var MODULE_NAME = 'angular-hal.resource';
 
 // Add module for resource
-angular.module(MODULE_NAME, [_utility2.default, _configuration2.default]).factory('Resource', _resource2.default).factory('HalResourceClient', _halResourceClient2.default);
+angular.module(MODULE_NAME, [_configuration2.default]).factory('Resource', _resource2.default).factory('HalResourceClient', _halResourceClient2.default);
 
 exports.default = MODULE_NAME;
 
-},{"../configuration":9,"../utility":22,"./hal-resource-client.factory":15,"./resource.factory":17}],17:[function(require,module,exports){
+},{"../configuration":9,"./hal-resource-client.factory":15,"./resource.factory":17}],17:[function(require,module,exports){
 'use strict';
-
-// Inject Dependencies
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -1327,19 +1324,32 @@ Object.defineProperty(exports, "__esModule", {
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 exports.default = ResourceFactory;
-ResourceFactory.$inject = ['HalResourceClient', '$generateUrl', '$extendReadOnly', '$defineReadOnly', '$normalizeLink', '$halConfiguration'];
+
+var _extendReadOnly = require('../utility/extend-read-only');
+
+var _extendReadOnly2 = _interopRequireDefault(_extendReadOnly);
+
+var _defineReadOnly = require('../utility/define-read-only');
+
+var _defineReadOnly2 = _interopRequireDefault(_defineReadOnly);
+
+var _generateUrl = require('./generate-url');
+
+var _generateUrl2 = _interopRequireDefault(_generateUrl);
+
+var _normalizeLink = require('../utility/normalize-link');
+
+var _normalizeLink2 = _interopRequireDefault(_normalizeLink);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
  * Factory for Resource
  *
  * @param {Function} HalResourceClient
- * @param {Function} $generateUrl
- * @param {Function} $extendReadOnly
- * @param {Function} $defineReadOnly
- * @param {Function} $normalizeLink
  * @param {Object}   $halConfiguration
  */
-function ResourceFactory(HalResourceClient, $generateUrl, $extendReadOnly, $defineReadOnly, $normalizeLink, $halConfiguration) {
+function ResourceFactory(HalResourceClient, $halConfiguration) {
   return Resource;
 
   /**
@@ -1364,7 +1374,7 @@ function ResourceFactory(HalResourceClient, $generateUrl, $extendReadOnly, $defi
       initializeLinks();
       inititalizeClient();
 
-      $extendReadOnly(self, {
+      (0, _extendReadOnly2.default)(self, {
         $hasLink: $hasLink,
         $hasEmbedded: $hasEmbedded,
         $has: $has,
@@ -1387,7 +1397,7 @@ function ResourceFactory(HalResourceClient, $generateUrl, $extendReadOnly, $defi
         if (isMetaProperty(propertyName)) {
           continue;
         }
-        $defineReadOnly(self, propertyName, data[propertyName]);
+        (0, _defineReadOnly2.default)(self, propertyName, data[propertyName]);
       }
     }
 
@@ -1401,7 +1411,7 @@ function ResourceFactory(HalResourceClient, $generateUrl, $extendReadOnly, $defi
 
       Object.keys(data[$halConfiguration.linksAttribute]).forEach(function (rel) {
         var link = data[$halConfiguration.linksAttribute][rel];
-        links[rel] = $normalizeLink(response.config.url, link);
+        links[rel] = (0, _normalizeLink2.default)(response.config.url, link);
       });
     }
 
@@ -1504,14 +1514,14 @@ function ResourceFactory(HalResourceClient, $generateUrl, $extendReadOnly, $defi
           var subLink = link[i],
               subHref = subLink.href;
           if (typeof subLink.templated !== 'undefined' && subLink.templated) {
-            subHref = $generateUrl(subLink.href, parameters);
+            subHref = (0, _generateUrl2.default)(subLink.href, parameters);
           }
           subHref = $halConfiguration.urlTransformer(subHref);
           href.push(subHref);
         }
       } else {
         if (typeof link.templated !== 'undefined' && link.templated) {
-          href = $generateUrl(link.href, parameters);
+          href = (0, _generateUrl2.default)(link.href, parameters);
         }
 
         href = $halConfiguration.urlTransformer(href);
@@ -1573,251 +1583,130 @@ function ResourceFactory(HalResourceClient, $generateUrl, $extendReadOnly, $defi
   }
 }
 
-},{}],18:[function(require,module,exports){
+},{"../utility/define-read-only":18,"../utility/extend-read-only":19,"../utility/normalize-link":20,"./generate-url":14}],18:[function(require,module,exports){
 'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _urlGenerator = require('./url-generator.service');
-
-var _urlGenerator2 = _interopRequireDefault(_urlGenerator);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var MODULE_NAME = 'angular-hal.url-generator';
-
-// Add module for url generator
-angular.module(MODULE_NAME, []).factory('$generateUrl', _urlGenerator2.default);
-
-exports.default = MODULE_NAME;
-
-},{"./url-generator.service":19}],19:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = UrlGeneratorFactory;
-
-var _main = require('rfc6570/src/main');
-
-var _main2 = _interopRequireDefault(_main);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
- * Factory for URL Generator
+ * Define read-only property in target
+ * @param {Object} target
+ * @param {String} key
+ * @param {mixed}  value
  */
-function UrlGeneratorFactory() {
-  return generate;
 
-  /**
-   * Generate url from template
-   *
-   * @param  {String} template
-   * @param  {Object} parameters
-   * @return {String}
-   */
-  function generate(template, parameters) {
-    return new _main2.default.UriTemplate(template).stringify(parameters);
-  }
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = defineReadOnly;
+function defineReadOnly(target, key, value) {
+  Object.defineProperty(target, key, {
+    configurable: false,
+    enumerable: true,
+    value: value,
+    writable: true
+  });
 }
 
-// Inject Dependencies
-UrlGeneratorFactory.$inject = [];
-
-},{"rfc6570/src/main":4}],20:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 'use strict';
 
 /**
- * Factory for Define Read Only
+ * Extend properties from copy read-only to target
+ * @param {Object} target
+ * @param {Object} copy
  */
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = DefineReadOnlyFactory;
-function DefineReadOnlyFactory() {
-  return defineReadOnly;
-
-  /**
-   * Define read-only property in target
-   * @param {Object} target
-   * @param {String} key
-   * @param {mixed}  value
-   */
-  function defineReadOnly(target, key, value) {
+exports.default = extendReadOnly;
+function extendReadOnly(target, copy) {
+  for (var key in copy) {
     Object.defineProperty(target, key, {
       configurable: false,
-      enumerable: true,
-      value: value,
-      writable: true
+      enumerable: false,
+      value: copy[key]
     });
   }
 }
 
-// Inject Dependencies
-DefineReadOnlyFactory.$inject = [];
-
-},{}],21:[function(require,module,exports){
-'use strict';
-
-/**
- * Factory for Extend Read Only
- */
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = ExtendReadOnlyFactory;
-function ExtendReadOnlyFactory() {
-  return extendReadOnly;
-
-  /**
-   * Extend properties from copy read-only to target
-   * @param {Object} target
-   * @param {Object} copy
-   */
-  function extendReadOnly(target, copy) {
-    for (var key in copy) {
-      Object.defineProperty(target, key, {
-        configurable: false,
-        enumerable: false,
-        value: copy[key]
-      });
-    }
-  }
-}
-
-// Inject Dependencies
-ExtendReadOnlyFactory.$inject = [];
-
-},{}],22:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.default = normalizeLink;
 
-var _defineReadOnly = require('./define-read-only.factory');
-
-var _defineReadOnly2 = _interopRequireDefault(_defineReadOnly);
-
-var _extendReadOnly = require('./extend-read-only.factory');
-
-var _extendReadOnly2 = _interopRequireDefault(_extendReadOnly);
-
-var _normalizeLink = require('./normalize-link.factory');
-
-var _normalizeLink2 = _interopRequireDefault(_normalizeLink);
-
-var _resolveUrl = require('./resolve-url.factory');
+var _resolveUrl = require('../utility/resolve-url');
 
 var _resolveUrl2 = _interopRequireDefault(_resolveUrl);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var MODULE_NAME = 'angular-hal.utility';
-
-// Add new module for utilities
-angular.module(MODULE_NAME, []).factory('$defineReadOnly', _defineReadOnly2.default).factory('$extendReadOnly', _extendReadOnly2.default).factory('$normalizeLink', _normalizeLink2.default).factory('$resolveUrl', _resolveUrl2.default);
-
-exports.default = MODULE_NAME;
-
-},{"./define-read-only.factory":20,"./extend-read-only.factory":21,"./normalize-link.factory":23,"./resolve-url.factory":24}],23:[function(require,module,exports){
-'use strict';
-
 /**
- * Factory for Link Normalizer
+ * @param {String} baseUrl
+ * @param {mixed}  link
+ * @return {Object}
  */
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = NormalizeLinkFactory;
-function NormalizeLinkFactory($resolveUrl) {
-  return normalizeLink;
-
-  /**
-   * @param {String} baseUrl
-   * @param {mixed}  link
-   * @return {Object}
-   */
-  function normalizeLink(baseUrl, link) {
-    if (Array.isArray(link)) {
-      return link.map(function (item) {
-        return normalizeLink(baseUrl, item);
-      });
-    }
-    if (typeof link === 'string') {
-      return {
-        href: $resolveUrl(baseUrl, link)
-      };
-    }
-    if (typeof link.href === 'string') {
-      link.href = $resolveUrl(baseUrl, link.href);
-      return link;
-    }
-    if (Array.isArray(link.href)) {
-      return link.href.map(function (href) {
-        var newLink = angular.extend({}, link, {
-          href: href
-        });
-        return normalizeLink(baseUrl, newLink);
-      });
-    }
+function normalizeLink(baseUrl, link) {
+  if (Array.isArray(link)) {
+    return link.map(function (item) {
+      return normalizeLink(baseUrl, item);
+    });
+  }
+  if (typeof link === 'string') {
     return {
-      href: baseUrl
+      href: (0, _resolveUrl2.default)(baseUrl, link)
     };
   }
+  if (typeof link.href === 'string') {
+    link.href = (0, _resolveUrl2.default)(baseUrl, link.href);
+    return link;
+  }
+  if (Array.isArray(link.href)) {
+    return link.href.map(function (href) {
+      var newLink = angular.extend({}, link, {
+        href: href
+      });
+      return normalizeLink(baseUrl, newLink);
+    });
+  }
+  return {
+    href: baseUrl
+  };
 }
 
-// Inject Dependencies
-NormalizeLinkFactory.$inject = ['$resolveUrl'];
-
-},{}],24:[function(require,module,exports){
+},{"../utility/resolve-url":21}],21:[function(require,module,exports){
 'use strict';
 
 /**
- * Factory for Url Resolver
+ * Resolve whole URL
+ *
+ * @param {String} baseUrl
+ * @param {String} path
+ * @return {String}
  */
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = ResolveUrlFactory;
-function ResolveUrlFactory() {
-  return resolveUrl;
+exports.default = resolveUrl;
+function resolveUrl(baseUrl, path) {
+  var resultHref = '',
+      reFullUrl = /^((?:\w+\:)?)((?:\/\/)?)([^\/]*)((?:\/.*)?)$/,
+      baseHrefMatch = reFullUrl.exec(baseUrl),
+      hrefMatch = reFullUrl.exec(path);
 
-  /**
-   * Resolve whole URL
-   *
-   * @param {String} baseUrl
-   * @param {String} path
-   * @return {String}
-   */
-  function resolveUrl(baseUrl, path) {
-    var resultHref = '',
-        reFullUrl = /^((?:\w+\:)?)((?:\/\/)?)([^\/]*)((?:\/.*)?)$/,
-        baseHrefMatch = reFullUrl.exec(baseUrl),
-        hrefMatch = reFullUrl.exec(path);
-
-    for (var partIndex = 1; partIndex < 5; partIndex++) {
-      if (hrefMatch[partIndex]) {
-        resultHref += hrefMatch[partIndex];
-      } else {
-        resultHref += baseHrefMatch[partIndex];
-      }
+  for (var partIndex = 1; partIndex < 5; partIndex++) {
+    if (hrefMatch[partIndex]) {
+      resultHref += hrefMatch[partIndex];
+    } else {
+      resultHref += baseHrefMatch[partIndex];
     }
-
-    return resultHref;
   }
+
+  return resultHref;
 }
 
-// Inject Dependencies
-ResolveUrlFactory.$inject = [];
-
-},{}]},{},[14])(14)
+},{}]},{},[13])(13)
 });

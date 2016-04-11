@@ -6,9 +6,8 @@ const MODULE_NAME = 'angular-hal.http-interception';
 import resource from '../resource';
 import configuration from '../configuration';
 
-import ResourceHttpInterceptorFactory from './resource-http-interceptor.factory';
+import ResourceHttpInterceptor from './resource-http-interceptor.factory';
 import HttpInterceptorConfiguration from './http-interception.config';
-import ResponseToResourceTransformerFactory from './response-transformer.service';
 
 // Add module for http interception
 angular
@@ -19,8 +18,7 @@ angular
 
   .config(HttpInterceptorConfiguration)
 
-  .factory('ResourceHttpInterceptor', ResourceHttpInterceptorFactory)
-  .factory('$transformResponseToResource', ResponseToResourceTransformerFactory)
+  .factory('ResourceHttpInterceptor', ResourceHttpInterceptor)
 ;
 
 export default MODULE_NAME;

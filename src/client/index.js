@@ -2,22 +2,17 @@
 
 const MODULE_NAME = 'angular-hal.client';
 
-
-import utility from '../utility';
-
-import HalClientService from './hal-client.service';
-import LinkHeaderFactory from './link-header.factory';
+import HalClient from './hal-client';
+import LinkHeader from './link-header';
 
 // Add module for client
 angular
-  .module(MODULE_NAME, [
-    utility,
-  ])
+  .module(MODULE_NAME, [])
 
-  .service('halClient', HalClientService)
-  .service('$halClient', HalClientService)
+  .service('halClient', HalClient)
+  .service('$halClient', HalClient)
 
-  .factory('LinkHeader', LinkHeaderFactory)
+  .value('LinkHeader', LinkHeader)
 ;
 
 export default MODULE_NAME;

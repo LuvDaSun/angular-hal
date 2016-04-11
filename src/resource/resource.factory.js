@@ -1,31 +1,18 @@
 'use strict';
 
-// Inject Dependencies
-ResourceFactory.$inject = [
-  'HalResourceClient',
-  '$generateUrl',
-  '$extendReadOnly',
-  '$defineReadOnly',
-  '$normalizeLink',
-  '$halConfiguration',
-];
+import extendReadOnly from '../utility/extend-read-only';
+import defineReadOnly from '../utility/define-read-only';
+import generateUrl from './generate-url';
+import normalizeLink from '../utility/normalize-link';
 
 /**
  * Factory for Resource
  *
  * @param {Function} HalResourceClient
- * @param {Function} $generateUrl
- * @param {Function} $extendReadOnly
- * @param {Function} $defineReadOnly
- * @param {Function} $normalizeLink
  * @param {Object}   $halConfiguration
  */
 export default function ResourceFactory(
   HalResourceClient,
-  $generateUrl,
-  $extendReadOnly,
-  $defineReadOnly,
-  $normalizeLink,
   $halConfiguration
 ) {
   return Resource;
@@ -53,7 +40,7 @@ export default function ResourceFactory(
       initializeLinks();
       inititalizeClient();
 
-      $extendReadOnly(self, {
+      extendReadOnly(self, {
         $hasLink: $hasLink,
         $hasEmbedded: $hasEmbedded,
         $has: $has,
@@ -76,7 +63,7 @@ export default function ResourceFactory(
         if(isMetaProperty(propertyName)) {
           continue;
         }
-        $defineReadOnly(self, propertyName, data[propertyName]);
+        defineReadOnly(self, propertyName, data[propertyName]);
       }
     }
 
@@ -92,7 +79,7 @@ export default function ResourceFactory(
         .keys(data[$halConfiguration.linksAttribute])
         .forEach(function(rel) {
           var link = data[$halConfiguration.linksAttribute][rel];
-          links[rel] = $normalizeLink(response.config.url, link);
+          links[rel] = normalizeLink(response.config.url, link);
         });
     }
 
@@ -199,7 +186,7 @@ export default function ResourceFactory(
             , subHref = subLink.href;
           if(typeof subLink.templated !== 'undefined' &&
             subLink.templated) {
-            subHref = $generateUrl(subLink.href, parameters);
+            subHref = generateUrl(subLink.href, parameters);
           }
           subHref = $halConfiguration.urlTransformer(subHref);
           href.push(subHref);
@@ -207,7 +194,7 @@ export default function ResourceFactory(
       } else {
         if(typeof link.templated !== 'undefined' &&
           link.templated) {
-          href = $generateUrl(link.href, parameters);
+          href = generateUrl(link.href, parameters);
         }
 
         href = $halConfiguration.urlTransformer(href);
