@@ -1,40 +1,42 @@
-module.exports = function(config) {
+/* globals module: true, require: true */
 
+'use strict';
+
+module.exports = function(config) {
   config.set({
     basePath: '.',
-    frameworks: ['jasmine'],
+    frameworks: ['browserify', 'jasmine'],
     files: [
       'node_modules/angular/angular.js',
       'node_modules/angular-mocks/angular-mocks.js',
-      'node_modules/rfc6570/rfc6570.js',
-      'node_modules/content-type/index.js',
-      'src/**/*.module.js',
-      'src/**/*.js',
-      'test/helpers.js',
       'test/**/*.spec.js',
     ],
 
 
-    reporters: ['dots', 'coverage'],
+    reporters: [
+      'dots',
+    ],
     preprocessors: {
-      'src/**/*.js': 'coverage'
+      'test/**/*.js': [
+        'browserify',
+      ],
     },
 
-    coverageReporter: {
-      reporters: [{
-        type: 'lcov',
-        dir: 'coverage/'
-      }, {
-        type: 'text-summary'
-      }]
+    browserify: {
+      debug: true,
+      transform: [
+        [
+          'babelify',
+          {presets: ['es2015']}
+        ],
+      ],
     },
 
     proxies: {
       '/local/': 'http://localhost:8080/'
     },
 
-    autoWatch: false,
-    singleRun: true,
+    autoWatch: true,
     browsers: ['PhantomJS']
   });
 

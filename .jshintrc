@@ -4,11 +4,10 @@
   "expr": true,
   "jasmine": true,
   "laxcomma": true,
-  "node": true,
+  "esnext": true,
+  "globalstrict": true,
   "globals": {
-    "angular": false,
-    "module": false,
-    "inject": false,
-    "toObject": false
+    "toObject": false,
+    "angular": true
   }
 }

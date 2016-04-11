@@ -1,10 +1,14 @@
+'use strict';
+
+import angularHal from '../src';
+
 describe('simple', function () {
   var $http
     , $httpBackend;
 
-  beforeEach(module('angular-hal'));
+  beforeEach(angular.mock.module(angularHal));
 
-  beforeEach(inject(function ($injector) {
+  beforeEach(angular.mock.inject(function ($injector) {
     $httpBackend = $injector.get('$httpBackend');
     $http = $injector.get('$http');
   }));

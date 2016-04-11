@@ -26,7 +26,7 @@ npm install angular-hal --save
 ### Bower
 
 ```bash
-bower install angular-hal
+bower install angular-hal --save
 ```
 
 ## Installation
@@ -36,9 +36,7 @@ bower install angular-hal
 Reference the js files in your html page
 
 ```html
-<script src="bower_components/rfc6570/rfc6570.js"></script>
-<script src="bower_components/content-type/index.js"></script>
-<script src="bower_components/angular-hal/angular-hal(.min).js"></script>
+<script src="bower_components/angular-hal/dist/angular-hal(.min).js"></script>
 ```
 
 ### NPM
@@ -46,49 +44,64 @@ Reference the js files in your html page
 Reference the js files in your html page
 
 ```html
-<script src="node_modules/rfc6570/rfc6570.js"></script>
-<script src="node_modules/content-type/index.js"></script>
-<script src="node_modules/angular-hal/angular-hal(.min).js"></script>
+<script src="node_modules/angular-hal/dist/angular-hal(.min).js"></script>
 ```
+
+## Usage
 
 ### Webpack / Browserify
 
+#### Non-ES6
+This package is written in ES6. Please either use the built file or import the source in an ES6 enabled builder.
+
+#### ES6 (Babel)
 ```js
-var angular = require('angular');
+import angular from 'angular';
+import angularHal from 'angular-hal';
 
 angular
   .module('my-app', [
     '...',
-    require('angular-hal'),
-    '...',
+    angularHal,
+    '...'
   ])
+  .run(function() {
+    $http({url: 'https://api.example.com/'})
+      .then(function successApiRoot(apiRoot) {
+        return apiRoot.$request().$get('users');
+      })
+      .then(function successUsers(users) {
+        console.log('Those are my users:');
+        console.log(users);
+      })
+      .catch(function(error) {
+        console.error(error);
+      });
+  }])
 ;
 ```
 
-## Usage
+## Usage Old School
 
 You may use it like this:
 
 ```js
 angular
-  .module('app', ['angular-hal'])
+  .module('app', [angularHal.default])
   .run(function() {
-    function error(error) {
-      console.error(error);
-    }
-
     $http({url: 'https://api.example.com/'})
-      .then(
-        function successApiRoot(apiRoot) {
-          return apiRoot.$request().$get('users');
-        },
-        error
-      )
+      .then(function successApiRoot(apiRoot) {
+        return apiRoot.$request().$get('users');
+      })
       .then(function successUsers(users) {
         console.log('Those are my users:');
         console.log(users);
-      }, error);
-  }]);
+      })
+      .catch(function(error) {
+        console.error(error);
+      });
+  }])
+;
 ```
 
 stay tuned for more!

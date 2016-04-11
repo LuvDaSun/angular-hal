@@ -1,13 +1,18 @@
+'use strict';
+
+import angularHal from '../../src';
+import { toObject } from '../helpers';
+
 describe('special attribute names', function () {
   var halClient
     , $httpBackend;
 
-  beforeEach(module('angular-hal', function($halConfigurationProvider) {
+  beforeEach(angular.mock.module(angularHal, function($halConfigurationProvider) {
     $halConfigurationProvider.setLinksAttribute('links');
     $halConfigurationProvider.setEmbeddedAttribute('embedded');
     $halConfigurationProvider.setForceJSONResource(true);
   }));
-  beforeEach(inject(function ($injector) {
+  beforeEach(angular.mock.inject(function ($injector) {
     $httpBackend = $injector.get('$httpBackend');
     halClient = $injector.get('halClient');
   }));
