@@ -1,4 +1,4 @@
-/* globals module: true */
+/* globals module: true, require: true */
 
 'use strict';
 
@@ -15,12 +15,8 @@ module.exports = function(config) {
 
     reporters: [
       'dots',
-      'coverage',
     ],
     preprocessors: {
-      'src/**/*.js': [
-        'coverage',
-      ],
       'test/**/*.js': [
         'browserify',
       ],
@@ -34,29 +30,13 @@ module.exports = function(config) {
           {presets: ['es2015']}
         ],
       ],
-
-      /*configure: function browserify(bundle) {
-        bundle.once('prebundle', function prebundle() {
-          bundle.transform('babelify', {presets: ['es2015']});
-        });
-      },*/
-    },
-
-    coverageReporter: {
-      reporters: [{
-        type: 'lcov',
-        dir: 'coverage/'
-      }, {
-        type: 'text-summary'
-      }]
     },
 
     proxies: {
       '/local/': 'http://localhost:8080/'
     },
 
-    autoWatch: false,
-    singleRun: true,
+    autoWatch: true,
     browsers: ['PhantomJS']
   });
 
