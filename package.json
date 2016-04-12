@@ -41,7 +41,7 @@
   },
   "scripts": {
     "build:dev": "./node_modules/.bin/browserify src/index.js -o dist/angular-hal.map.js  -t [ babelify --presets [ es2015 ] ] --s angularHal -d",
-    "build:prod": "./node_modules/.bin/browserify src/index.js -o dist/angular-hal.js  -t [ babelify --presets [ es2015 ] ] -t [ uglifyify --mangle --compress [ --sequences --dead_code --booleans ] ] --s angularHal",
+    "build:prod": "./node_modules/.bin/browserify src/index.js -o dist/angular-hal.min.js  -t [ babelify --presets [ es2015 ] ] -t [ uglifyify --mangle --compress [ --sequences --dead_code --booleans ] ] --s angularHal",
     "build:watch": "./node_modules/.bin/watchify src/index.js -o dist/angular-hal.map.js  -t [ babelify --presets [ es2015 ] ] --s angularHal -d -v",
     "compile": "echo Build Dev; npm run build:dev; echo Build Prod; npm run build:prod;",
     "jshint": "./node_modules/.bin/jshint {src,test}",

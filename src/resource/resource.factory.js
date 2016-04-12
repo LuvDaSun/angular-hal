@@ -11,10 +11,7 @@ import normalizeLink from '../utility/normalize-link';
  * @param {Function} HalResourceClient
  * @param {Object}   $halConfiguration
  */
-export default function ResourceFactory(
-  HalResourceClient,
-  $halConfiguration
-) {
+export default function ResourceFactory(HalResourceClient, $halConfiguration) {
   return Resource;
 
   /**
@@ -255,3 +252,7 @@ export default function ResourceFactory(
     }
   }
 }
+ResourceFactory.$inject = [
+  'HalResourceClient',
+  '$halConfiguration',
+];

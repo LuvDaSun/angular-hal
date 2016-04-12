@@ -19,6 +19,10 @@ export default class HalConfigurationProvider {
     this._selfLink = 'self';
     this._forceJSONResource = false;
     this._urlTransformer = noopUrlTransformer;
+
+    this.$get.$inject = [
+      '$log',
+    ];
   }
 
   /**

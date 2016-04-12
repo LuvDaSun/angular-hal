@@ -53,3 +53,11 @@ export default class HalClient {
     }));
   }
 }
+
+// Inject Dependencies
+HalClient.$inject = [
+  '$log',
+  '$http',
+  'LinkHeader',
+  '$halConfiguration',
+];

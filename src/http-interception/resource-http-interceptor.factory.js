@@ -59,3 +59,8 @@ export default function ResourceHttpInterceptorFactory($halConfiguration, Resour
     return new Resource(response.data, response);
   }
 }
+
+ResourceHttpInterceptorFactory.$inject = [
+  '$halConfiguration',
+  'Resource',
+];

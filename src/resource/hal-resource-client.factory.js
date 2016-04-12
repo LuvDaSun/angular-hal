@@ -203,3 +203,9 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
     }
   }
 }
+
+HalResourceClientFactory.$inject = [
+  '$q',
+  '$injector',
+  '$halConfiguration',
+];
