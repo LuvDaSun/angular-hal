@@ -2,7 +2,7 @@
 
 import extendReadOnly from '../utility/extend-read-only';
 import defineReadOnly from '../utility/define-read-only';
-import generateUrl from './generate-url';
+import generateUrl from '../utility/generate-url';
 import normalizeLink from '../utility/normalize-link';
 
 /**
