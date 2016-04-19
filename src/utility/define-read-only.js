@@ -11,6 +11,6 @@ export default function defineReadOnly(target, key, value) {
     configurable: false,
     enumerable: true,
     value: value,
-    writable: true,
+    writable: false,
   });
 }
