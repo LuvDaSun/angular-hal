@@ -1,6 +1,6 @@
 {
   "name": "angular-hal",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "Hal client for angularjs",
   "repository": "git@github.com:LuvDaSun/angular-hal.git",
   "contributors": [
