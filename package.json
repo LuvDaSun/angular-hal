@@ -53,12 +53,12 @@
     "eslint": "./node_modules/.bin/eslint .",
     "karma:browserify:single": "./node_modules/.bin/karma start karma.browserify.conf.js --single-run",
     "karma:browserify:watch": "./node_modules/.bin/karma start karma.browserify.conf.js",
-    "karma:jspm:single": "./node_modules/.bin/karma start karma.jspm.conf.js --single-run",
-    "karma:jspm:watch": "./node_modules/.bin/karma start karma.jspm.conf.js",
+    "karma:jspm:single": "./node_modules/.bin/jspm install && ./node_modules/.bin/karma start karma.jspm.conf.js --single-run",
+    "karma:jspm:watch": "./node_modules/.bin/jspm install && ./node_modules/.bin/karma start karma.jspm.conf.js",
     "karma:webpack:single": "./node_modules/.bin/karma start karma.webpack.conf.js --single-run",
     "karma:webpack:watch": "./node_modules/.bin/karma start karma.webpack.conf.js",
-    "karma:single": "npm run karma:browserify:single; npm run karma:jspm:single; npm run karma:webpack:single",
-    "test": "echo Running Karma Tests; npm run karma:single; echo Running JSHint; npm run jshint; echo Running Eslint; npm run eslint;"
+    "karma:single": "npm run karma:browserify:single && npm run karma:jspm:single && npm run karma:webpack:single",
+    "test": "npm run karma:single && npm run jshint && npm run eslint"
   },
   "jspm": {
     "dependencies": {
