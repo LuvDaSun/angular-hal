@@ -19,10 +19,10 @@ codeurl: 'https://github.com/LuvDaSun/angular-hal'
 
 # Default categories (in order) to appear in the navigation
 sections: [
-    ['doc', 'Documentation'],
     ['tut', 'Tutorial'],
     ['ref', 'Reference'],
     ['dev', 'Developers'],
+    ['exa', 'Examples'],
     ['post', 'Posts']
 ]
 
