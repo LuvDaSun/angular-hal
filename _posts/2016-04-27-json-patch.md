@@ -12,6 +12,27 @@ npm install rfc6902 --save
 ```js
 'use strict';
 
+import angular from 'angular';
+import angularHalModule from 'angular-hal';
+import PatchService from 'patch.service';
+
+angular
+  .module('my-app', [
+    angularHalModule,
+    '...',
+  ])
+
+  '...'
+
+  .service('$patch', PatchService)
+
+  '...'
+;
+```
+
+```js
+'use strict';
+
 import { createPatch } from 'rfc6902';
 
 export default class PatchService {
