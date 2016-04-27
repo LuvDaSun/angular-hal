@@ -25,10 +25,10 @@ export default class PatchService {
     return createPatch(originalResource, modified);
   }
   /**
-   * Create Patch
+   * Save Patch
    * @param  {Resource} originalResource
    * @param  {Object}   modified
-   * @return {Patch[]}
+   * @return {Promise}
    */
   save(originalResource, modified) {
     return originalResource.$request()
