@@ -3,3 +3,4 @@
 /coverage/
 *.log
 /jspm_packages/
+/config.js

@@ -4,3 +4,4 @@ jspm_packages/**
 coverage/**
 dist/**
 demo/**
+config.js
