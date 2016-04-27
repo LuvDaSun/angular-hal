@@ -46,7 +46,7 @@ export default function ResourceFactory(HalResourceClient, $halConfiguration, $l
         $meta: $meta,
         $link: $link,
         $request: $request,
-        $response: $response,
+        $response: $response
       });
     })();
 
@@ -257,5 +257,5 @@ export default function ResourceFactory(HalResourceClient, $halConfiguration, $l
 ResourceFactory.$inject = [
   'HalResourceClient',
   '$halConfiguration',
-  '$log',
+  '$log'
 ];
