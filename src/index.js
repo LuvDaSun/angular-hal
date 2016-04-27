@@ -2,8 +2,8 @@
 
 const MODULE_NAME = 'angular-hal';
 
-import httpInterception from './http-interception';
-import client from './client';
+import httpInterception from './http-interception/index';
+import client from './client/index';
 
 // Combine needed Modules
 angular

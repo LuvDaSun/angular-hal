@@ -1,7 +1,6 @@
 'use strict';
 
-import angularHal from '../src';
-import { toObject } from './helpers';
+import angularHal from '../src/index';
 
 describe('resource', function () {
   beforeEach(angular.mock.module(angularHal, function($halConfigurationProvider) {
