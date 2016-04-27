@@ -1,6 +1,6 @@
 'use strict';
 
-import angularHal from '../../src';
+import angularHal from '../../src/index';
 import { toObject } from '../helpers';
 
 describe('special attribute names', function () {

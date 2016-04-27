@@ -2,8 +2,8 @@
 
 const MODULE_NAME = 'angular-hal.http-interception';
 
-import resource from '../resource';
-import configuration from '../configuration';
+import resource from '../resource/index';
+import configuration from '../configuration/index';
 
 import HttpInterceptorConfiguration from './http-interception.config';
 

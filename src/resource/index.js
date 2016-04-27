@@ -3,7 +3,7 @@
 const MODULE_NAME = 'angular-hal.resource';
 
 
-import configuration from '../configuration';
+import configuration from '../configuration/index';
 
 import ResourceFactory from './resource.factory';
 import HalResourceClientFactory from './hal-resource-client.factory';

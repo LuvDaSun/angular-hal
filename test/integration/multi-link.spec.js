@@ -1,6 +1,6 @@
 'use strict';
 
-import angularHal from '../../src';
+import angularHal from '../../src/index';
 
 describe('special attribute names', function () {
   var $http
