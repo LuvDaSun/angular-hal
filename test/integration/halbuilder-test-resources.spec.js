@@ -24,17 +24,18 @@ describe('halbuilder test resources', function () {
     $httpBackend
       .expect('GET', '/exampleWithoutHref')
       .respond({
-        name: 'Example Resource'
+        name: 'Example Resource',
       });
 
-      halClient.$get('/exampleWithoutHref').then(function (resource) {
+    halClient.$get('/exampleWithoutHref')
+      .then(function (resource) {
         expect(toObject(resource)).toEqual({
-          name: 'Example Resource'
+          name: 'Example Resource',
         });
       });
 
-      $httpBackend.flush();
-    });
+    $httpBackend.flush();
+  });
 
 
   it('should read exampleWithArray resource', function () {
@@ -42,13 +43,13 @@ describe('halbuilder test resources', function () {
       .expect('GET', '/exampleWithArray')
       .respond({
         array: ['one', 'two', 'three'],
-        name: 'Example Resource'
+        name: 'Example Resource',
       });
 
     halClient.$get('/exampleWithArray').then(function (resource) {
       expect(toObject(resource)).toEqual({
         array: ['one', 'two', 'three'],
-        name: 'Example Resource'
+        name: 'Example Resource',
       });
     });
 
@@ -63,29 +64,29 @@ describe('halbuilder test resources', function () {
         _links: {
           curie: [{
             href: 'https://example.com/apidocs/accounts',
-            name: 'ns'
+            name: 'ns',
           }, {
             href: 'https://example.com/apidocs/roles',
-            name: 'role'
+            name: 'role',
           }],
           self: {
-            href: 'https://example.com/api/customer/123456'
+            href: 'https://example.com/api/customer/123456',
           },
           'ns:parent': {
             href: 'https://example.com/api/customer/1234',
             name: 'bob',
             title: 'The Parent',
-            hreflang: 'en'
+            hreflang: 'en',
           },
           'ns:users': {
-            href: 'https://example.com/api/customer/123456?users'
-          }
+            href: 'https://example.com/api/customer/123456?users',
+          },
         },
         age: 33,
         expired: false,
         id: 123456,
         name: 'Example Resource',
-        optional: true
+        optional: true,
       });
 
     halClient.$get('https://example.com/api/customer/123456').then(function (resource) {
@@ -94,7 +95,7 @@ describe('halbuilder test resources', function () {
         expired: false,
         id: 123456,
         name: 'Example Resource',
-        optional: true
+        optional: true,
       });
     });
 
@@ -107,32 +108,35 @@ describe('halbuilder test resources', function () {
       .expect('GET', 'https://example.com/api/customer/123456')
       .respond({
         _links: {
-          curie: [{
-            href: 'https://example.com/apidocs/accounts',
-            name: 'ns'
-          }, {
-            href: 'https://example.com/apidocs/roles',
-            name: 'role'
-          }],
+          curie: [
+            {
+              href: 'https://example.com/apidocs/accounts',
+              name: 'ns',
+            },
+            {
+              href: 'https://example.com/apidocs/roles',
+              name: 'role',
+            },
+          ],
           self: {
-            href: 'https://example.com/api/customer/123456'
+            href: 'https://example.com/api/customer/123456',
           },
           'ns:parent': {
             href: 'https://example.com/api/customer/1234',
             name: 'bob',
             title: 'The Parent',
-            hreflang: 'en'
+            hreflang: 'en',
           },
           'ns:users': {
-            href: 'https://example.com/api/customer/123456?users'
-          }
+            href: 'https://example.com/api/customer/123456?users',
+          },
         },
         age: 33,
         expired: false,
         id: 123456,
         name: 'Example Resource',
         nullval: 'null',
-        optional: true
+        optional: true,
       });
 
     halClient.$get('https://example.com/api/customer/123456').then(function (resource) {
@@ -142,7 +146,7 @@ describe('halbuilder test resources', function () {
         id: 123456,
         name: 'Example Resource',
         nullval: 'null',
-        optional: true
+        optional: true,
       });
     });
 
@@ -155,27 +159,29 @@ describe('halbuilder test resources', function () {
       .expect('GET', 'https://example.com/api/customer')
       .respond({
         _links: {
-          curie: [{
-            href: 'https://example.com/apidocs/accounts',
-            name: 'ns'
-          }, {
-            href: 'https://example.com/apidocs/roles',
-            name: 'role'
-          }],
+          curie: [
+            {
+              href: 'https://example.com/apidocs/accounts',
+              name: 'ns',
+            }, {
+              href: 'https://example.com/apidocs/roles',
+              name: 'role',
+            },
+          ],
           self: {
-            href: 'https://example.com/api/customer'
+            href: 'https://example.com/api/customer',
           },
           'ns:parent': {
             href: 'https://example.com/api/customer/1234',
             name: 'bob',
             title: 'The Parent',
-            hreflang: 'en'
+            hreflang: 'en',
           },
           'ns:query': {
             href: 'https://example.com/api/customer/search{?queryParam}',
-            templated: true
-          }
-        }
+            templated: true,
+          },
+        },
       });
 
     halClient.$get('https://example.com/api/customer').then(function (resource) {
@@ -191,32 +197,34 @@ describe('halbuilder test resources', function () {
       .expect('GET', 'https://example.com/api/customer/123456')
       .respond({
         _links: {
-          curie: [{
-            href: 'https://example.com/apidocs/accounts',
-            name: 'ns'
-          }, {
-            href: 'https://example.com/apidocs/roles',
-            name: 'role'
-          }],
+          curie: [
+            {
+              href: 'https://example.com/apidocs/accounts',
+              name: 'ns',
+            }, {
+              href: 'https://example.com/apidocs/roles',
+              name: 'role',
+            },
+          ],
           self: {
-            href: 'https://example.com/api/customer/123456'
+            href: 'https://example.com/api/customer/123456',
           },
           'ns:parent': {
             href: 'https://example.com/api/customer/1234',
             name: 'bob',
             title: 'The Parent',
-            hreflang: 'en'
+            hreflang: 'en',
           },
           'ns:users': {
-            href: 'https://example.com/api/customer/123456?users'
-          }
+            href: 'https://example.com/api/customer/123456?users',
+          },
         },
         age: 33,
         expired: false,
         id: 123456,
         name: 'Example Resource',
         nullprop: null,
-        optional: true
+        optional: true,
       });
 
     halClient.$get('https://example.com/api/customer/123456').then(function (resource) {
@@ -226,7 +234,7 @@ describe('halbuilder test resources', function () {
         id: 123456,
         name: 'Example Resource',
         nullprop: null,
-        optional: true
+        optional: true,
       });
     });
 
@@ -239,40 +247,42 @@ describe('halbuilder test resources', function () {
       .expect('GET', 'https://example.com/api/customer/123456')
       .respond({
         _links: {
-          curie: [{
-            href: 'https://example.com/apidocs/accounts',
-            name: 'ns'
-          }, {
-            href: 'https://example.com/apidocs/roles',
-            name: 'role'
-          }],
+          curie: [
+            {
+              href: 'https://example.com/apidocs/accounts',
+              name: 'ns',
+            }, {
+              href: 'https://example.com/apidocs/roles',
+              name: 'role',
+            },
+          ],
           self: {
-            href: 'https://example.com/api/customer/123456'
+            href: 'https://example.com/api/customer/123456',
           },
           'ns:parent': {
             href: 'https://example.com/api/customer/1234',
             name: 'bob',
             title: 'The Parent',
-            hreflang: 'en'
+            hreflang: 'en',
           },
           'ns:users': {
-            href: 'https://example.com/api/customer/123456?users'
-          }
+            href: 'https://example.com/api/customer/123456?users',
+          },
         },
         _embedded: {
           'ns:user': {
             _links: {
               self: {
-                href: 'https://example.com/user/11'
-              }
+                href: 'https://example.com/user/11',
+              },
             },
             age: 32,
             expired: false,
             id: 11,
             name: 'Example User',
-            optional: true
-          }
-        }
+            optional: true,
+          },
+        },
       });
 
     halClient.$get('https://example.com/api/customer/123456').then(function (resource) {
@@ -284,7 +294,7 @@ describe('halbuilder test resources', function () {
           expired: false,
           id: 11,
           name: 'Example User',
-          optional: true
+          optional: true,
         });
       });
 
@@ -299,43 +309,45 @@ describe('halbuilder test resources', function () {
       .expect('GET', 'https://example.com/api/customer/123456')
       .respond({
         _links: {
-          curie: [{
-            href: 'https://example.com/apidocs/accounts',
-            name: 'ns'
-          }, {
-            href: 'https://example.com/apidocs/roles',
-            name: 'role'
-          }],
+          curie: [
+            {
+              href: 'https://example.com/apidocs/accounts',
+              name: 'ns',
+            }, {
+              href: 'https://example.com/apidocs/roles',
+              name: 'role',
+            },
+          ],
           self: {
-            href: 'https://example.com/api/customer/123456'
+            href: 'https://example.com/api/customer/123456',
           },
           'ns:parent': {
             href: 'https://example.com/api/customer/1234',
             name: 'bob',
             title: 'The Parent',
-            hreflang: 'en'
+            hreflang: 'en',
           },
           'ns:users': {
-            href: 'https://example.com/api/customer/123456?users'
-          }
+            href: 'https://example.com/api/customer/123456?users',
+          },
         },
         _embedded: {
           'ns:user': {
             _links: {
               self: {
-                href: 'https://example.com/user/11'
+                href: 'https://example.com/user/11',
               },
               'role:admin': {
-                href: 'https://example.com/user/11'
-              }
+                href: 'https://example.com/user/11',
+              },
             },
             age: 32,
             expired: false,
             id: 11,
             name: 'Example User',
-            optional: true
-          }
-        }
+            optional: true,
+          },
+        },
       });
 
     halClient.$get('https://example.com/api/customer/123456').then(function (resource) {
@@ -347,7 +359,7 @@ describe('halbuilder test resources', function () {
           expired: false,
           id: 11,
           name: 'Example User',
-          optional: true
+          optional: true,
         });
       });
 
@@ -364,76 +376,81 @@ describe('halbuilder test resources', function () {
         _links: {
           curie: [{
             href: 'https://example.com/apidocs/accounts',
-            name: 'ns'
+            name: 'ns',
           }, {
             href: 'https://example.com/apidocs/roles',
-            name: 'role'
+            name: 'role',
           }],
           self: {
-            href: 'https://example.com/api/customer/123456'
+            href: 'https://example.com/api/customer/123456',
           },
           'ns:parent': {
             href: 'https://example.com/api/customer/1234',
             name: 'bob',
             title: 'The Parent',
-            hreflang: 'en'
+            hreflang: 'en',
           },
           'ns:users': {
-            href: 'https://example.com/api/customer/123456?users'
-          }
+            href: 'https://example.com/api/customer/123456?users',
+          },
         },
         _embedded: {
-          'ns:user': [{
-            _links: {
-              self: {
-                href: 'https://example.com/user/11'
-              }
+          'ns:user': [
+            {
+              _links: {
+                self: {
+                  href: 'https://example.com/user/11',
+                },
+              },
+              age: 32,
+              expired: false,
+              id: 11,
+              name: 'Example User',
+              optional: true,
             },
-            age: 32,
-            expired: false,
-            id: 11,
-            name: 'Example User',
-            optional: true
-          }, {
-            _links: {
-              self: {
-                href: 'https://example.com/user/12'
-              }
+            {
+              _links: {
+                self: {
+                  href: 'https://example.com/user/12',
+                },
+              },
+              age: 32,
+              expired: false,
+              id: 12,
+              name: 'Example User',
+              optional: true,
             },
-            age: 32,
-            expired: false,
-            id: 12,
-            name: 'Example User',
-            optional: true
-          }]
-        }
+          ],
+        },
       });
 
-  halClient.$get('https://example.com/api/customer/123456').then(function (resource) {
-    expect(toObject(resource)).toEqual({});
+    halClient
+      .$get('https://example.com/api/customer/123456')
+      .then(function (resource) {
+        expect(toObject(resource)).toEqual({});
 
-    resource.$request().$get('ns:user').then(function (resource) {
-      expect(toObject(resource[0])).toEqual({
-        age: 32,
-        expired: false,
-        id: 11,
-        name: 'Example User',
-        optional: true
+        resource
+          .$request().$get('ns:user')
+          .then(function (resource) {
+            expect(toObject(resource[0])).toEqual({
+              age: 32,
+              expired: false,
+              id: 11,
+              name: 'Example User',
+              optional: true,
+            });
+
+            expect(toObject(resource[1])).toEqual({
+              age: 32,
+              expired: false,
+              id: 12,
+              name: 'Example User',
+              optional: true,
+            });
+          });
       });
 
-      expect(toObject(resource[1])).toEqual({
-        age: 32,
-        expired: false,
-        id: 12,
-        name: 'Example User',
-        optional: true
-      });
-
-    });
-
-  });
-
-  $httpBackend.flush();
+    $httpBackend.flush();
   });
 
 
@@ -442,65 +459,72 @@ describe('halbuilder test resources', function () {
       .expect('GET', 'https://example.com/api/customer/123456')
       .respond({
         _links: {
-          curie: [{
-            href: 'https://example.com/apidocs/accounts',
-            name: 'ns'
-          }, {
-            href: 'https://example.com/apidocs/phones',
-            name: 'phone'
-          }, {
-            href: 'https://example.com/apidocs/roles',
-            name: 'role'
-          }],
+          curie: [
+            {
+              href: 'https://example.com/apidocs/accounts',
+              name: 'ns',
+            },
+            {
+              href: 'https://example.com/apidocs/phones',
+              name: 'phone',
+            },
+            {
+              href: 'https://example.com/apidocs/roles',
+              name: 'role',
+            },
+          ],
           self: {
-            href: 'https://example.com/api/customer/123456'
+            href: 'https://example.com/api/customer/123456',
           },
           'ns:parent': {
             href: 'https://example.com/api/customer/1234',
             name: 'bob',
             title: 'The Parent',
-            hreflang: 'en'
+            hreflang: 'en',
           },
           'ns:users': {
-            href: 'https://example.com/api/customer/123456?users'
-          }
+            href: 'https://example.com/api/customer/123456?users',
+          },
         },
         _embedded: {
-          'ns:user': [{
-            _links: {
-              self: {
-                href: 'https://example.com/user/11'
-              }
-            },
-            age: 32,
-            expired: false,
-            id: 11,
-            name: 'Example User',
-            optional: true,
-            _embedded: {
-              'phone:cell': {
-                _links: {
-                  self: {
-                    href: 'https://example.com/phone/1'
-                  }
+          'ns:user': [
+            {
+              _links: {
+                self: {
+                  href: 'https://example.com/user/11',
                 },
-                id: 1,
-                number: '555-666-7890'
-              }
-            }
-          }, {
-            _links: {
-              self: {
-                href: 'https://example.com/user/12'
-              }
+              },
+              age: 32,
+              expired: false,
+              id: 11,
+              name: 'Example User',
+              optional: true,
+              _embedded: {
+                'phone:cell': {
+                  _links: {
+                    self: {
+                      href: 'https://example.com/phone/1',
+                    },
+                  },
+                  id: 1,
+                  number: '555-666-7890',
+                },
+              },
             },
-            age: 32,
-            expired: false,
-            id: 12,
-            name: 'Example User',
-            optional: true
-          }]
-        }
+            {
+              _links: {
+                self: {
+                  href: 'https://example.com/user/12',
+                },
+              },
+              age: 32,
+              expired: false,
+              id: 12,
+              name: 'Example User',
+              optional: true,
+            },
+          ],
+        },
       });
 
     halClient.$get('https://example.com/api/customer/123456').then(function (resource) {
@@ -512,7 +536,7 @@ describe('halbuilder test resources', function () {
           expired: false,
           id: 11,
           name: 'Example User',
-          optional: true
+          optional: true,
         });
 
         expect(toObject(resource[1])).toEqual({
@@ -520,14 +544,14 @@ describe('halbuilder test resources', function () {
           expired: false,
           id: 12,
           name: 'Example User',
-          optional: true
+          optional: true,
         });
 
 
         resource[0].$request().$get('phone:cell').then(function (resource) {
           expect(toObject(resource)).toEqual({
             id: 1,
-            number: '555-666-7890'
+            number: '555-666-7890',
           });
 
         });
@@ -545,8 +569,8 @@ describe('halbuilder test resources', function () {
         expect(headers.Link).toEqual([
           '<foo>;rel="bar";rev="baz"',
           '<lorem>;ipsum="dolor";sit="amet"',
-          '<elitr>'
-          ]);
+          '<elitr>',
+        ]);
         return true;
       })
       .respond(null);
@@ -566,8 +590,8 @@ describe('halbuilder test resources', function () {
         expect(headers.Link).toEqual([
           '<foo>;rel="bar";rev="baz"',
           '<lorem>;ipsum="dolor";sit="amet"',
-          '<elitr>'
-          ]);
+          '<elitr>',
+        ]);
         return true;
       })
       .respond(null);
@@ -588,7 +612,7 @@ describe('halbuilder test resources', function () {
         foo: 'bar',
         _links: {
           self: {
-            href: 'https://example.com/api/customer/123456'
+            href: 'https://example.com/api/customer/123456',
           },
         },
       });
@@ -597,8 +621,8 @@ describe('halbuilder test resources', function () {
         expect(headers.Link).toEqual([
           '<foo>;rel="bar";rev="baz"',
           '<lorem>;ipsum="dolor";sit="amet"',
-          '<elitr>'
-          ]);
+          '<elitr>',
+        ]);
         return true;
       })
       .respond(null);
@@ -609,7 +633,7 @@ describe('halbuilder test resources', function () {
           new halClient.LinkHeader('foo', {rel: 'bar', rev: 'baz'}),
           new halClient.LinkHeader('lorem', {ipsum: 'dolor', sit: 'amet'}),
           new halClient.LinkHeader('elitr'),
-          ]);
+        ]);
       })
       .then(function () {});
 
@@ -623,7 +647,7 @@ describe('halbuilder test resources', function () {
         foo: 'bar',
         _links: {
           self: {
-            href: 'https://example.com/api/customer/123456'
+            href: 'https://example.com/api/customer/123456',
           },
         },
       });
@@ -632,8 +656,8 @@ describe('halbuilder test resources', function () {
         expect(headers.Link).toEqual([
           '<foo>;rel="bar";rev="baz"',
           '<lorem>;ipsum="dolor";sit="amet"',
-          '<elitr>'
-          ]);
+          '<elitr>',
+        ]);
         return true;
       })
       .respond(null);
@@ -644,7 +668,7 @@ describe('halbuilder test resources', function () {
           new halClient.LinkHeader('foo', {rel: 'bar', rev: 'baz'}),
           new halClient.LinkHeader('lorem', {ipsum: 'dolor', sit: 'amet'}),
           new halClient.LinkHeader('elitr'),
-          ]);
+        ]);
       })
       .then(function () {});
 
@@ -699,25 +723,25 @@ describe('halbuilder test resources', function () {
         _links: {
           cart: {
             href: 'https://example.com/api/customer/123456/cart',
-            title: 'Shopping Cart'
+            title: 'Shopping Cart',
           },
           department: {
             href: 'https://example.com/api/customer/123456/department',
-            title: 'Department'
-          }
-        }
+            title: 'Department',
+          },
+        },
       });
 
     halClient.$get('https://example.com/api/customer/123456')
       .then(function (resource) {
         expect(resource.$link('cart')).toEqual({
           href: 'https://example.com/api/customer/123456/cart',
-          title: 'Shopping Cart'
+          title: 'Shopping Cart',
         });
 
         expect(resource.$link('department')).toEqual({
           href: 'https://example.com/api/customer/123456/department',
-          title: 'Department'
+          title: 'Department',
         });
 
         expect(function() {

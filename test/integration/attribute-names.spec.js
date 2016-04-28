@@ -27,16 +27,16 @@ describe('special attribute names', function () {
       .expect('GET', '/')
       .respond({
         links: {
-          self: '/'
+          self: '/',
         },
         embedded: {
           testing: {
             links: {
-              self: '/testing'
+              self: '/testing',
             },
-            id: 'one!'
-          }
-        }
+            id: 'one!',
+          },
+        },
       });
 
     halClient.$get('/')
@@ -47,7 +47,7 @@ describe('special attribute names', function () {
           .$get('testing')
           .then(function (resource) {
             expect(toObject(resource)).toEqual({
-              id: 'one!'
+              id: 'one!',
             });
           });
       });
@@ -61,17 +61,17 @@ describe('special attribute names', function () {
       .respond({
         links: {
           self: '/',
-          testing: '/testing'
-        }
+          testing: '/testing',
+        },
       });
 
     $httpBackend
       .expect('GET', '/testing')
       .respond({
         links: {
-          self: '/testing'
+          self: '/testing',
         },
-        id: 'one!'
+        id: 'one!',
       });
 
     halClient.$get('/')
@@ -81,7 +81,7 @@ describe('special attribute names', function () {
         return resource.$request()
           .$get('testing').then(function (resource) {
             expect(toObject(resource)).toEqual({
-              id: 'one!'
+              id: 'one!',
             });
           });
       });
