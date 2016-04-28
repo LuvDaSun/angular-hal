@@ -40,9 +40,9 @@ describe('simple', function () {
           self: '/',
           item: {
             templated: true,
-            href: '/item{/id}'
-          }
-        }
+            href: '/item{/id}',
+          },
+        },
       });
 
     $httpBackend
@@ -50,20 +50,20 @@ describe('simple', function () {
       .respond({
         id: 1,
         _links: {
-          self: '/item/1'
-        }
+          self: '/item/1',
+        },
       });
 
     $http({ url: 'http://example.com/api/' }).then(function (resource) {
       expect(toObject(resource)).toEqual({
-        root: true
+        root: true,
       });
 
       resource.$request().$get('item', {
-        id: 1
+        id: 1,
       }).then(function (resource) {
         expect(toObject(resource)).toEqual({
-          id: 1
+          id: 1,
         });
       });
     });

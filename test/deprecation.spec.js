@@ -18,24 +18,21 @@ describe('deprecation', function () {
   it('should log a notice if the deprecation value of a link is set', function () {
     this.$httpBackend
       .expect('GET', '/')
-      .respond(
-        200,
-        {
-          _links: {
-            test1: {
-              href: '/foo',
-              deprecation: 'http://some.url/with/infos'
-            },
-            test2: {
-              href: '/foo',
-              deprecation: 'http://some.url/with/infos'
-            },
+      .respond(200, {
+        _links: {
+          test1: {
+            href: '/foo',
+            deprecation: 'http://some.url/with/infos',
+          },
+          test2: {
+            href: '/foo',
+            deprecation: 'http://some.url/with/infos',
           },
         },
-        {
-          'Content-Type': 'application/hal+json',
-        }
-      );
+      },
+      {
+        'Content-Type': 'application/hal+json',
+      });
 
     this.$http({url:  '/'})
       .then((resource) => {

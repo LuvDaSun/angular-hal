@@ -21,7 +21,7 @@ export default function ResourceHttpInterceptorFactory($halConfiguration, Resour
     } else {
       request.headers.Accept = [
         CONTENT_TYPE,
-        request.headers.Accept
+        request.headers.Accept,
       ].join(', ');
     }
 

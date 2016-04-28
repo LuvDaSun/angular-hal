@@ -25,8 +25,8 @@ describe('simple', function () {
       .expect('GET', '/')
       .respond({
         _links: {
-          self: '/'
-        }
+          self: '/',
+        },
       });
 
     halClient.$get('/').then(function (resource) {
@@ -43,13 +43,13 @@ describe('simple', function () {
       .respond({
         test: true,
         _links: {
-          self: '/'
-        }
+          self: '/',
+        },
       });
 
     halClient.$get('/').then(function (resource) {
       expect(toObject(resource)).toEqual({
-        test: true
+        test: true,
       });
     });
 
@@ -65,9 +65,9 @@ describe('simple', function () {
           self: '/',
           item: {
             templated: true,
-            href: '/item{/id}'
-          }
-        }
+            href: '/item{/id}',
+          },
+        },
       });
 
     $httpBackend
@@ -75,20 +75,20 @@ describe('simple', function () {
       .respond({
         id: 1,
         _links: {
-          self: '/item/1'
-        }
+          self: '/item/1',
+        },
       });
 
     halClient.$get('http://example.com/').then(function (resource) {
       expect(toObject(resource)).toEqual({
-        root: true
+        root: true,
       });
 
       resource.$request().$get('item', {
-        id: 1
+        id: 1,
       }).then(function (resource) {
         expect(toObject(resource)).toEqual({
-          id: 1
+          id: 1,
         });
       });
     });
@@ -105,43 +105,45 @@ describe('simple', function () {
           self: '/',
           item: {
             templated: true,
-            href: '/item{/id}'
-          }
+            href: '/item{/id}',
+          },
         },
         _embedded: {
-          item: [{
-            id: 1,
-            _links: {
-              self: '/item/1'
-            }
-          }, {
-            id: 2,
-            _links: {
-              self: '/item/2'
-            }
-          }, {
-            id: 3,
-            _links: {
-              self: '/item/3'
-            }
-          }]
-        }
+          item: [
+            {
+              id: 1,
+              _links: {
+                self: '/item/1',
+              },
+            }, {
+              id: 2,
+              _links: {
+                self: '/item/2',
+              },
+            }, {
+              id: 3,
+              _links: {
+                self: '/item/3',
+              },
+            },
+          ],
+        },
       });
 
     halClient.$get('http://example.com/').then(function (resource) {
       expect(toObject(resource)).toEqual({
-        root: true
+        root: true,
       });
 
       resource.$request().$get('item').then(function (resource) {
         expect(toObject(resource[0])).toEqual({
-          id: 1
+          id: 1,
         });
         expect(toObject(resource[1])).toEqual({
-          id: 2
+          id: 2,
         });
         expect(toObject(resource[2])).toEqual({
-          id: 3
+          id: 3,
         });
       });
     });
@@ -158,18 +160,18 @@ describe('simple', function () {
           self: '/',
           item: {
             templated: true,
-            href: '/item{/id}'
-          }
-        }
+            href: '/item{/id}',
+          },
+        },
       });
 
     halClient.$get('https://example.com/').then(function (resource) {
       expect(toObject(resource)).toEqual({
-        root: true
+        root: true,
       });
 
       expect(resource.$href('item', {
-        id: 1
+        id: 1,
       })).toEqual('https://example.com/item/1');
     });
 
@@ -186,14 +188,14 @@ describe('simple', function () {
           self: '/',
           item: {
             templated: true,
-            href: '/item{/id}'
-          }
-        }
+            href: '/item{/id}',
+          },
+        },
       });
 
     halClient.$get('https://example.com/').then(function (resource) {
       expect(toObject(resource)).toEqual({
-        id: 1
+        id: 1,
       });
 
       expect(resource.$response().status).toEqual(200);

@@ -13,8 +13,26 @@
     "it": false,
     "require": false
   },
-  "rules":{
-    "comma-dangle": [ 0, "always-multiline" ]
+  "rules": {
+    "indent": [
+      "error",
+      2,
+      {
+        "SwitchCase": 1
+      }
+    ],
+    "quotes": [
+      "error",
+      "single"
+    ],
+    "semi": [
+      "error",
+      "always"
+    ],
+    "comma-dangle": [
+      "error",
+      "always-multiline"
+    ]
   },
   "parserOptions": {
     "sourceType": "module"

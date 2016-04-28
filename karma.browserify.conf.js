@@ -27,17 +27,23 @@ module.exports = function(config) {
       transform: [
         [
           'babelify',
-          {presets: ['es2015']}
+          {
+            presets: [
+              'es2015',
+            ],
+          },
         ],
       ],
     },
 
     proxies: {
-      '/local/': 'http://localhost:8080/'
+      '/local/': 'http://localhost:8080/',
     },
 
     autoWatch: true,
-    browsers: ['PhantomJS']
+    browsers: [
+      'PhantomJS',
+    ],
   });
 
 };
