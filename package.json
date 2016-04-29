@@ -3,6 +3,7 @@
   "version": "2.1.5",
   "description": "Hal client for angularjs",
   "repository": "git@github.com:LuvDaSun/angular-hal.git",
+  "homepage": "http://angular-hal.io",
   "contributors": [
     {
       "name": "Elmer Bulthuis",
