@@ -9,4 +9,4 @@
 npm install angular-hal --save
 ```
 
-[Check our Documentation](http://luvdasun.github.io/angular-hal/)
+[Check our Documentation](http://angular-hal.io/)
