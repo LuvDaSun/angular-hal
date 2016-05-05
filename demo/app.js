@@ -4,7 +4,10 @@
   'use strict';
 
   angular
-    .module('app', [angularHal.default])
+    .module('app', [
+      angularHal.default,
+      'app.debug',
+    ])
     .run(function ($rootScope, $http) {
       $rootScope.apiRoot = $http({
         url: '//api/'
@@ -69,5 +72,6 @@
           element.attr('href', 'mailto:' + encodeURIComponent(scope.mailto));
         }
       };
-    });
+    })
+;
 })(angular, angularHal);

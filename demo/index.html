@@ -1,40 +1,101 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>angular-hal demo</title>
-  <link rel="stylesheet" type="text/css" href="style.css" />
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular-mocks.js"></script>
-  <script src="angular-hal.map.js"></script>
-  <script src="mocks.js"></script>
-  <script src="app.js"></script>
-</head>
-<body ng-app="app.mock">
-  <main ng-controller="contacts">
-    <form novalidate>
-      <input type="search" ng-model="search" placeholder="search" /><br />
-    </form>
-    <p ng-if="contacts.count === 0">
-      No contacts found :-(
-    </p>
-    <p ng-if="contacts.count === 1">
-      One contact found :-)
-    </p>
-    <p ng-if="contacts.count > 1">
-      <span ng-bind="contacts.count"></span> contacts found.
-    </p>
 
-    <ul>
-      <li ng-repeat="contactItem in contactItems">
-        <a href data-mailto="{{ contactItem.email }}" ng-bind="contactItem.name"></a>
-        <a href ng-click="deleteContact($index)">X</a>
-      </li>
-    </ul>
-    <form novalidate name="newContactForm" ng-submit="submitNewContactForm()">
-      <input type="name" required ng-model="newContact.name" ng-minlength="2" placeholder="name" /><br />
-      <input type="email" required ng-model="newContact.email" placeholder="email" /><br />
-      <button type="submit">Add contact</button><br />
-    </form>
-  </main>
+<head>
+    <title>angular-hal demo</title>
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular-mocks.js"></script>
+    <script src="angular-hal.map.js"></script>
+    <script src="mocks.js"></script>
+    <script src="debug.js"></script>
+    <script src="app.js"></script>
+</head>
+
+<body ng-app="app.mock" class="container">
+    <a href="/">
+        <span class="glyphicon glyphicon-arrow-left"></span> Back to Documentation
+    </a>
+    <h1>
+      Angular-hal Demo
+    </h1>
+    <section class="row">
+        <main ng-controller="contacts" class="col-md-4">
+            <section class="panel panel-default">
+                <div class="panel-heading">
+                    <h3>Search Contact</h3>
+                </div>
+                <form novalidate class="form panel-body">
+                    <input type="search" ng-model="search" placeholder="search" class="form-control" />
+                </form>
+            </section>
+            <section class="panel panel-default">
+                <div class="panel-heading">
+                    <h3>Contacts</h3>
+                </div>
+                <div class="panel-body">
+                    <p ng-if="contacts.count === 0" class="alert alert-danger">
+                        No contacts found :-(
+                    </p>
+                    <p ng-if="contacts.count === 1" class="alert alert-warning">
+                        One contact found :-)
+                    </p>
+                    <p ng-if="contacts.count > 1" class="alert alert-info">
+                        <span ng-bind="contacts.count"></span> contacts found.
+                    </p>
+                    <ul class="list-group">
+                        <li ng-repeat="contactItem in contactItems" class="list-group-item">
+                            <a href data-mailto="{{ contactItem.email }}" ng-bind="contactItem.name"></a>
+                            <a href ng-click="deleteContact($index)" class="badge">
+                                <span class="glyphicon glyphicon-remove" />
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+            <section class="panel panel-default">
+                <div class="panel-heading">
+                    <h3>Add Contact</h3>
+                </div>
+                <form novalidate name="newContactForm" ng-submit="submitNewContactForm()" class="form panel-body">
+                    <div class="form-group">
+                        <input type="name" required ng-model="newContact.name" ng-minlength="2" placeholder="name" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <input type="email" required ng-model="newContact.email" placeholder="email" class="form-control" />
+                    </div>
+                    <button type="submit" class="btn btn-default">Add contact</button>
+                </form>
+            </section>
+        </main>
+        <aside class="col-md-8" ng-controller="requests as requests" class="panel-group">
+            <div ng-repeat="request in requests.requests.slice().reverse()" class="panel panel-default">
+                <div class="panel-heading" role="tab" ng-click="request.shown = !request.shown">
+                    <h4 class="panel-title">
+                        <span ng-show="!request.shown" class="glyphicon glyphicon-chevron-down"></span>
+                        <span ng-show="!!request.shown" class="glyphicon glyphicon-chevron-up"></span>
+                        {{ request.request.method }} {{ request.request.url }}
+                    </h4>
+                </div>
+                <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" ng-class="{in: !!request.shown}">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            Resource:
+                            <pre>{{ request.resource | json }}</pre>
+                        </li>
+                        <li class="list-group-item">
+                            Request:
+                            <pre>{{ request.request | json }}</pre>
+                        </li>
+                        <li class="list-group-item">
+                            Response:
+                            <pre>{{ request.response | json }}</pre>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </aside>
+    </section>
 </body>
+
 </html>
