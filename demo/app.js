@@ -1,77 +1,64 @@
-/* globals angular: false, angularHal: false */
+/* jshint esversion: 6 */
 
-(function(angular, angularHal) {
-  'use strict';
+angular
+  .module('app', [
+    angularHal.default,
+    'app.debug',
+  ])
+  .factory('$api', function ApiFactory($http) {
+    return $http({
+      url: '//api/'
+    });
+  })
+  .controller('ContactsController', function ContactsController($api, $scope) {
+    this.contacts = [];
 
-  angular
-    .module('app', [
-      angularHal.default,
-      'app.debug',
-    ])
-    .run(function ($rootScope, $http) {
-      $rootScope.apiRoot = $http({
-        url: '//api/'
-      });
-    })
-    .controller('contacts', function ($window, $scope, $timeout) {
-      var searchTimeout;
-      $scope.$watch('search', function (value) {
-        $timeout.cancel(searchTimeout);
-        searchTimeout = $timeout(load, 300);
-      }, true);
+    $scope.$watch('search', () => load());
 
-      $scope.submitNewContactForm = function () {
-        if ($scope.newContactForm.$invalid) return;
+    this.submitNewContactForm = () => {
+      return $api
+        .then((apiRoot) => {
+          return apiRoot.$request()
+            .$post('contacts', null, $scope.newContact);
+        })
+        .then(() => load());
+    };
+    this.deleteContact = (contact) => {
+      contact
+        .$request().$del('self')
+        .then(() => load());
+    };
 
-        return $scope.apiRoot.then(function (apiRoot) {
-          return apiRoot.$request().$post('contacts', null, $scope.newContact);
-        }).then(load);
-      };
-
-      $scope.deleteContact = function (index) {
-        var contact = $scope.contactItems[index];
-
-        contact.$request().$del('self').then(load);
-      };
-
-      $scope.$watch('contacts', function (contacts) {
-        if (!contacts) return;
-        contacts.$request().$get('item').then(function (contactItems) {
-          $scope.contactItems = contactItems;
-        });
-      });
-
-      function load() {
-        var search = $scope.search;
-        var promise;
-        if (search) {
-          promise = $scope.apiRoot.then(function (apiRoot) {
-            return apiRoot.$request().$get('contacts', {
-              search: search
-            });
-          });
-        } else {
-          promise = $scope.apiRoot.then(function (apiRoot) {
-            return apiRoot.$request().$get('contacts');
-          });
-        }
-        return promise.then(function (contacts) {
-          $scope.contacts = contacts;
+    var load = () => {
+      var params = {};
+      if($scope.search) {
+        params.search = $scope.search;
+      }
+      return $api
+        .then((apiRoot) => {
+          return apiRoot.$request().$get('contacts', params);
+        })
+        .then((contactsList) => {
+          return contactsList.$request().$get('item');
+        })
+        .then((contacts) => {
+          this.contacts = contacts;
           $scope.newContactForm.$setPristine();
           delete $scope.newContact;
         });
+    };
+
+    return this;
+  })
+  .directive('mailto', function () {
+    return {
+      restrict: 'A',
+      scope: {
+        'mailto': '@'
+      },
+      link: (scope, element) => {
+        element.attr('href', 'mailto:' + encodeURIComponent(scope.mailto));
       }
-    })
-    .directive('mailto', function () {
-      return {
-        restrict: 'A',
-        scope: {
-          'mailto': '@'
-        },
-        link: function (scope, element) {
-          element.attr('href', 'mailto:' + encodeURIComponent(scope.mailto));
-        }
-      };
-    })
+    };
+  })
 ;
-})(angular, angularHal);

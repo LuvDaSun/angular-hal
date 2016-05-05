@@ -19,34 +19,35 @@
     <h1>
       Angular-hal Demo
     </h1>
+    <div class="alert alert-danger">
+      This demo uses newest ES6 / ES2015 features. Only the newest browsers will be compatible.
+    </div>
     <section class="row">
-        <main ng-controller="contacts" class="col-md-4">
-            <section class="panel panel-default">
-                <div class="panel-heading">
-                    <h3>Search Contact</h3>
-                </div>
-                <form novalidate class="form panel-body">
-                    <input type="search" ng-model="search" placeholder="search" class="form-control" />
-                </form>
-            </section>
+        <main ng-controller="ContactsController as controller" class="col-md-4">
             <section class="panel panel-default">
                 <div class="panel-heading">
                     <h3>Contacts</h3>
                 </div>
                 <div class="panel-body">
-                    <p ng-if="contacts.count === 0" class="alert alert-danger">
+                    <form novalidate class="form">
+                        <div class="form-group">
+                            <input type="search" ng-model="search" placeholder="search" class="form-control" ng-model-options="{ debounce: 300 }" />
+                        </div>
+                    </form>
+
+                    <p ng-if="controller.contacts.length === 0" class="alert alert-danger">
                         No contacts found :-(
                     </p>
-                    <p ng-if="contacts.count === 1" class="alert alert-warning">
+                    <p ng-if="controller.contacts.length === 1" class="alert alert-warning">
                         One contact found :-)
                     </p>
-                    <p ng-if="contacts.count > 1" class="alert alert-info">
-                        <span ng-bind="contacts.count"></span> contacts found.
+                    <p ng-if="controller.contacts.length > 1" class="alert alert-info">
+                        <span ng-bind="controller.contacts.length"></span> contacts found.
                     </p>
                     <ul class="list-group">
-                        <li ng-repeat="contactItem in contactItems" class="list-group-item">
-                            <a href data-mailto="{{ contactItem.email }}" ng-bind="contactItem.name"></a>
-                            <a href ng-click="deleteContact($index)" class="badge">
+                        <li ng-repeat="contact in controller.contacts" class="list-group-item">
+                            <a href data-mailto="{{ contact.email }}" ng-bind="contact.name"></a>
+                            <a href ng-click="controller.deleteContact(contact)" class="badge">
                                 <span class="glyphicon glyphicon-remove" />
                             </a>
                         </li>
@@ -57,14 +58,32 @@
                 <div class="panel-heading">
                     <h3>Add Contact</h3>
                 </div>
-                <form novalidate name="newContactForm" ng-submit="submitNewContactForm()" class="form panel-body">
-                    <div class="form-group">
-                        <input type="name" required ng-model="newContact.name" ng-minlength="2" placeholder="name" class="form-control" />
+                <form novalidate name="newContactForm"
+                    ng-submit="newContactForm.$valid && controller.submitNewContactForm()"
+                    class="form panel-body">
+                    <div class="form-group" ng-class="{'has-error': newContactForm.name.$invalid}">
+                        <input type="name"
+                            name="name"
+                            required
+                            ng-model="newContact.name"
+                            ng-minlength="2"
+                            placeholder="name"
+                            class="form-control" />
                     </div>
-                    <div class="form-group">
-                        <input type="email" required ng-model="newContact.email" placeholder="email" class="form-control" />
+                    <div class="form-group" ng-class="{'has-error': newContactForm.email.$invalid}">
+                        <input type="email"
+                            name="email"
+                            required
+                            ng-model="newContact.email"
+                            placeholder="email"
+                            class="form-control"/>
                     </div>
-                    <button type="submit" class="btn btn-default">Add contact</button>
+                    <button type="submit"
+                        class="btn btn-default"
+                        ng-disabled="newContactForm.$invalid"
+                        ng-class="{disabled: newContactForm.$invalid}">
+                        Add contact
+                    </button>
                 </form>
             </section>
         </main>
