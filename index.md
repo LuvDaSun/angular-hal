@@ -1,6 +1,6 @@
 ---
 layout: default
-title: "Jekyll Docs Template"
+title: "angular-hal is a library to use HAL in angular via $http"
 ---
 
 [![Build Status](https://travis-ci.org/LuvDaSun/angular-hal.svg?branch=master)](https://travis-ci.org/LuvDaSun/angular-hal)
