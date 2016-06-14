@@ -248,6 +248,6 @@ HalResourceClientFactory.$inject = [
   '$q',
   '$injector',
   '$halConfiguration',
-  '$log'
+  '$log',
 ];
 
