@@ -5,7 +5,8 @@ import { toObject } from '../helpers';
 
 describe('simple', function () {
   var halClient
-    , $httpBackend;
+    , $httpBackend
+    , $http;
 
   beforeEach(angular.mock.module(angularHal, function($halConfigurationProvider) {
     $halConfigurationProvider.setForceJSONResource(true);
@@ -53,6 +54,38 @@ describe('simple', function () {
       });
     });
 
+    $httpBackend.flush();
+  });
+
+  it('should reload self', function () {
+    $httpBackend
+      .expect('GET', '/')
+      .respond({
+        test: true,
+        _links: {
+          self: '/',
+        },
+      });
+
+    $httpBackend
+      .expect('GET', '/')
+      .respond({
+        test: false,
+        _links: {
+          self: '/',
+        },
+      });
+
+    halClient.$get('/').then(function(resource) {
+      expect(toObject(resource)).toEqual({
+        test: true
+      });
+      resource.$request().$reloadSelf().then(function(resource) {
+        expect(toObject(resource)).toEqual({
+          test: false
+        });
+      });
+    });
     $httpBackend.flush();
   });
 

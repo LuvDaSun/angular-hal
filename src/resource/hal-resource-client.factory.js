@@ -230,6 +230,21 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
     }
 
     /**
+     * Execute a HTTP GET request on self
+     *
+     * @param {String}      rel
+     * @param {Object|null} urlParams
+     * @param {Object}      options
+     * @return {Promise}
+     */
+    function $reloadSelf(urlParams, options) {
+      return $http(angular.extend({}, options, {
+        method: 'GET',
+        url: resource.$href($halConfiguration.selfLink, urlParams)
+      }));
+    }
+
+    /**
      * Execute a HTTP DELETE request on self
      *
      * @param {Object|null} urlParams
