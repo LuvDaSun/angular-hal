@@ -38,7 +38,7 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
         $unlink: $unlink,
         $reloadSelf: $reloadSelf,
         $putSelf: $putSelf,
-        $deleteSelf: $deleteSelf
+        $deleteSelf: $deleteSelf,
       });
     })();
 
@@ -240,7 +240,7 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
     function $reloadSelf(urlParams, options) {
       return $http(angular.extend({}, options, {
         method: 'GET',
-        url: resource.$href($halConfiguration.selfLink, urlParams)
+        url: resource.$href($halConfiguration.selfLink, urlParams),
       }));
     }
 
@@ -273,6 +273,6 @@ HalResourceClientFactory.$inject = [
   '$q',
   '$injector',
   '$halConfiguration',
-  '$log'
+  '$log',
 ];
 

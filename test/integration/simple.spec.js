@@ -5,8 +5,7 @@ import { toObject } from '../helpers';
 
 describe('simple', function () {
   var halClient
-    , $httpBackend
-    , $http;
+    , $httpBackend;
 
   beforeEach(angular.mock.module(angularHal, function($halConfigurationProvider) {
     $halConfigurationProvider.setForceJSONResource(true);
@@ -78,11 +77,11 @@ describe('simple', function () {
 
     halClient.$get('/').then(function(resource) {
       expect(toObject(resource)).toEqual({
-        test: true
+        test: true,
       });
       resource.$request().$reloadSelf().then(function(resource) {
         expect(toObject(resource)).toEqual({
-          test: false
+          test: false,
         });
       });
     });
