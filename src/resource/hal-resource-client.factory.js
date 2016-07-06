@@ -36,6 +36,13 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
         $link: $link,
         $unlink: $unlink,
         $getSelf: $getSelf,
+        $postSelf: $postSelf,
+        $putSelf: $putSelf,
+        $patchSelf: $patchSelf,
+        $deleteSelf: $deleteSelf,
+        $delSelf: $deleteSelf,
+        $linkSelf: $linkSelf,
+        $unlinkSelf: $unlinkSelf
       });
     })();
 
@@ -231,6 +238,65 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
     function $getSelf(options) {
       const fullOptions = angular.extend({}, options, {method: 'GET'});
       return performHttpRequest($halConfiguration.selfLink, {}, fullOptions);
+    }
+
+    /**
+     * Perform a PUT request on self
+     * @param payload
+     * @param options
+     * @returns {Promise}
+     */
+    function $putSelf(payload, options){
+      return $put($halConfiguration.selfLink, null, payload, options);
+    }
+
+    /**
+     * Perform a POST request on self
+     * @param payload
+     * @param options
+     * @returns {Promise}
+     */
+    function $postSelf(payload, options){
+      return $post($halConfiguration.selfLink, null, payload, options);
+    }
+
+    /**
+     * Perform a PATCH request on self
+     * @param payload
+     * @param options
+     * @returns {Promise}
+     */
+    function $patchSelf(payload, options){
+      return $patch($halConfiguration.selfLink, null, payload, options);
+    }
+
+    /**
+     * Perform a LINK request on self
+     * @param payload
+     * @param options
+     * @returns {Promise}
+     */
+    function $linkSelf(links, options){
+      return $link($halConfiguration.selfLink, null, links, options);
+    }
+
+    /**
+     * Perform an UNLINK request on self
+     * @param payload
+     * @param options
+     * @returns {Promise}
+     */
+    function $unlinkSelf(links, options){
+      return $unlink($halConfiguration.selfLink, null, links, options);
+    }
+
+    /**
+     * Perform a DELETE request on self
+     * @param options
+     * @returns {Promise}
+     */
+    function $deleteSelf(options){
+      return $delete($halConfiguration.selfLink, null, options);
     }
 
     /**
