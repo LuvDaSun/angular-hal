@@ -141,6 +141,29 @@ describe('simple', function () {
     $httpBackend.flush();
   });
 
+  it('should get with options', function () {
+    $httpBackend
+      .expect('GET', '/')
+      .respond({
+        somedata: 'data',
+        _links: {
+          books: '/books',
+        },
+      });
+
+    $httpBackend
+      .expect('GET', '/books', null, headers => headers['some-header'] === 'aaa')
+      .respond({});
+
+    halClient.$get('/').then(function (resource) {
+      resource.$request().$get('books', null, {headers: {'some-header': 'aaa'}})
+        .then(books => {
+          expect(toObject(books)).toEqual({});
+        });
+    });
+    $httpBackend.flush();
+  });
+
   it('should get link by templated url', function () {
     $httpBackend
       .expect('GET', 'http://example.com/')

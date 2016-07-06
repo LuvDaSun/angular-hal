@@ -92,9 +92,7 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
           return $q.all(promises);
         }
 
-        return $http(angular.extend({}, options, {
-          url: resource.$href(rel, urlParams),
-        }));
+        return performHttpRequest(rel, urlParams, options);
       }
 
       return $q.reject(new Error('link "' + rel + '" is undefined'));
@@ -227,14 +225,24 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
     /**
      * Execute a HTTP GET request on self
      *
-     * @param {Object|null} urlParams
      * @param {Object}      options
      * @return {Promise}
      */
-    function $getSelf(urlParams, options) {
+    function $getSelf(options) {
+      const fullOptions = angular.extend({}, options, {method: 'GET'});
+      return performHttpRequest($halConfiguration.selfLink, {}, fullOptions);
+    }
+
+    /**
+     * Peform http request on resource's rel
+     * @param rel link name
+     * @param urlParams
+     * @param options
+     * @returns {*}
+     */
+    function performHttpRequest(rel, urlParams, options){
       return $http(angular.extend({}, options, {
-        method: 'GET',
-        url: resource.$href($halConfiguration.selfLink, urlParams),
+        url: resource.$href(rel, urlParams),
       }));
     }
   }
