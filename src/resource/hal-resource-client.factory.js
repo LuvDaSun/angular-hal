@@ -27,6 +27,7 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
       extendReadOnly(self, {
         $request: $request,
         $get: $get,
+        $getCollection: $getCollection,
         $post: $post,
         $put: $put,
         $patch: $patch,
@@ -34,6 +35,7 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
         $del: $delete,
         $link: $link,
         $unlink: $unlink,
+        $getSelf: $getSelf,
       });
     })();
 
@@ -57,7 +59,7 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
       options = options || {};
 
       if(method === 'GET' &&
-          rel === $halConfiguration.selfLink) {
+         rel === $halConfiguration.selfLink) {
         return $q.resolve(resource);
       }
 
@@ -90,9 +92,7 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
           return $q.all(promises);
         }
 
-        return $http(angular.extend({}, options, {
-          url: resource.$href(rel, urlParams),
-        }));
+        return performHttpRequest(rel, urlParams, options);
       }
 
       return $q.reject(new Error('link "' + rel + '" is undefined'));
@@ -109,6 +109,26 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
      */
     function $get(rel, urlParams, options) {
       return $request('GET', rel, urlParams, undefined, options);
+    }
+
+    /**
+     * Execute a HTTP GET request to load a collection. If no embedded collection is found in the response,
+     * returns an empty array.
+     *
+     * @param {String}      rel
+     * @param {Object|null} urlParams
+     * @param {Object}      options
+     * @return {Promise}
+     */
+    function $getCollection(rel, urlParams, options) {
+      return $get(rel, urlParams, options)
+        .then(resource => {
+          if (!resource.$has(rel)) {
+            return [];
+          } else {
+            return resource.$request().$get(rel);
+          }
+        });
     }
 
     /**
@@ -201,6 +221,30 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
     function toStringItem(item) {
       return item.toString();
     }
+
+    /**
+     * Execute a HTTP GET request on self
+     *
+     * @param {Object}      options
+     * @return {Promise}
+     */
+    function $getSelf(options) {
+      const fullOptions = angular.extend({}, options, {method: 'GET'});
+      return performHttpRequest($halConfiguration.selfLink, {}, fullOptions);
+    }
+
+    /**
+     * Peform http request on resource's rel
+     * @param rel link name
+     * @param urlParams
+     * @param options
+     * @returns {*}
+     */
+    function performHttpRequest(rel, urlParams, options){
+      return $http(angular.extend({}, options, {
+        url: resource.$href(rel, urlParams),
+      }));
+    }
   }
 }
 
@@ -209,3 +253,4 @@ HalResourceClientFactory.$inject = [
   '$injector',
   '$halConfiguration',
 ];
+
