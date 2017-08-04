@@ -42,7 +42,7 @@ describe('requests on self', function() {
         },
       });
 
-    $http.get('/someresource').then(resource => {
+    $http.get('/someresource').then(({ data: resource }) => {
       resource.$request().$getSelf();
     });
     $httpBackend.flush();
@@ -53,7 +53,7 @@ describe('requests on self', function() {
       .expect('POST', '/someresource', {data: 'hello'})
       .respond({});
 
-    $http.get('/someresource').then(resource => {
+    $http.get('/someresource').then(({data: resource }) => {
       resource.$request().$postSelf({data: 'hello'});
     });
     $httpBackend.flush();
@@ -64,7 +64,7 @@ describe('requests on self', function() {
       .expect('PUT', '/someresource', {test: true, data: 'hello'})
       .respond({});
 
-    $http.get('/someresource').then(resource => {
+    $http.get('/someresource').then(({data: resource }) => {
       resource.$request().$putSelf({test: true, data: 'hello'});
     });
     $httpBackend.flush();
@@ -75,7 +75,7 @@ describe('requests on self', function() {
       .expect('PATCH', '/someresource', {data: 'hello'})
       .respond({});
 
-    $http.get('/someresource').then(resource => {
+    $http.get('/someresource').then(({data: resource }) => {
       resource.$request().$patchSelf({data: 'hello'});
     });
     $httpBackend.flush();
@@ -86,7 +86,7 @@ describe('requests on self', function() {
       .expect('LINK', '/someresource', null, headers => headers['Link'][0] === 'aaa')
       .respond({});
 
-    $http.get('/someresource').then(resource => {
+    $http.get('/someresource').then(({data: resource }) => {
       resource.$request().$linkSelf(['aaa']);
     });
     $httpBackend.flush();
@@ -97,7 +97,7 @@ describe('requests on self', function() {
       .expect('UNLINK', '/someresource', null, headers => headers['Link'][0] === 'aaa')
       .respond({});
 
-    $http.get('/someresource').then(resource => {
+    $http.get('/someresource').then(({data: resource }) => {
       resource.$request().$unlinkSelf(['aaa']);
     });
     $httpBackend.flush();

@@ -29,7 +29,7 @@ describe('simple', function () {
       );
 
     $http({url:  '/'})
-      .then(function (resource) {
+      .then(function ({ data: resource }) {
         expect(resource.constructor.name).toEqual('Resource');
       });
 
@@ -48,7 +48,7 @@ describe('simple', function () {
       );
 
     $http({url:  '/'})
-      .then(function (resource) {
+      .then(function ({ data: resource }) {
         expect(resource.constructor.name).toEqual('Resource');
       });
 
@@ -67,7 +67,7 @@ describe('simple', function () {
       );
 
     $http({url:  '/'})
-      .then(function (resource) {
+      .then(function ({ data: resource }) {
         expect(resource.constructor.name).toEqual('Object');
       });
 
@@ -84,7 +84,7 @@ describe('simple', function () {
       );
 
     $http({url:  '/'})
-      .then(function (resource) {
+      .then(function ({ data: resource }) {
         expect(resource.constructor.name).toEqual('Object');
       });
 

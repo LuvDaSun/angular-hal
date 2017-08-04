@@ -50,7 +50,7 @@ export default class HalClient {
       method: method,
       url: this._$halConfiguration.urlTransformer(href),
       data: data,
-    }));
+    })).then(({ data: resource }) => resource);
   }
 }
 

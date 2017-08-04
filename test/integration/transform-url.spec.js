@@ -54,7 +54,7 @@ describe('simple', function () {
         },
       });
 
-    $http({ url: 'http://example.com/api/' }).then(function (resource) {
+    $http({ url: 'http://example.com/api/' }).then(function ({ data: resource }) {
       expect(toObject(resource)).toEqual({
         root: true,
       });

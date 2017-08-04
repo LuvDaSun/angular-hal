@@ -56,7 +56,8 @@ export default function ResourceHttpInterceptorFactory($halConfiguration, Resour
     return response;
   }
   function transformResponseToResource(response) {
-    return new Resource(response.data, response);
+    response.data = new Resource(response.data, response);
+    return response;
   }
 }
 

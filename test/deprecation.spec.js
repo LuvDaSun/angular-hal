@@ -35,7 +35,7 @@ describe('deprecation', function () {
       });
 
     this.$http({url:  '/'})
-      .then((resource) => {
+      .then(({ data: resource }) => {
         resource.$link('test1');
         expect(this.$log.warn.logs.length).toEqual(1);
         expect(this.$log.warn.logs[0][0])
