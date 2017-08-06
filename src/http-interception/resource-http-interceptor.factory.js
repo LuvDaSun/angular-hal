@@ -46,9 +46,9 @@ export default function ResourceHttpInterceptorFactory($halConfiguration, Resour
       return transformResponseToResource(response);
     }
     if((
-        response.headers('Content-Type') === 'application/json' ||
+      response.headers('Content-Type') === 'application/json' ||
         response.headers('Content-Type') === null
-      ) &&
+    ) &&
       $halConfiguration.forceJSONResource) {
       return transformResponseToResource(response);
     }

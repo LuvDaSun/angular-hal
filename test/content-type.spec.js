@@ -23,9 +23,9 @@ describe('simple', function () {
       .respond(
         200,
         {},
-      {
-        'Content-Type': 'application/hal+json',
-      }
+        {
+          'Content-Type': 'application/hal+json',
+        }
       );
 
     $http({url:  '/'})
@@ -42,9 +42,9 @@ describe('simple', function () {
       .respond(
         200,
         {},
-      {
-        'Content-Type': 'application/hal+json;charset=utf8',
-      }
+        {
+          'Content-Type': 'application/hal+json;charset=utf8',
+        }
       );
 
     $http({url:  '/'})
@@ -61,9 +61,9 @@ describe('simple', function () {
       .respond(
         200,
         {},
-      {
-        'Content-Type': 'text/plain',
-      }
+        {
+          'Content-Type': 'text/plain',
+        }
       );
 
     $http({url:  '/'})

@@ -9,7 +9,7 @@
  */
 export default function resolveUrl(baseUrl, path) {
   var resultHref = ''
-    , reFullUrl = /^((?:\w+\:)?)((?:\/\/)?)([^\/]*)((?:\/.*)?)$/
+    , reFullUrl = /^((?:\w+:)?)((?:\/\/)?)([^/]*)((?:\/.*)?)$/
     , baseHrefMatch = reFullUrl.exec(baseUrl)
     , hrefMatch = reFullUrl.exec(path);
 

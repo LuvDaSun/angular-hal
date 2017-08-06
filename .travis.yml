@@ -19,8 +19,6 @@ install:
 
 script:
   - yarn test
-  - yarn run eslint
-  - yarn run jshint
 
 deploy:
   provider: npm
