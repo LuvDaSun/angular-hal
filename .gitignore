@@ -4,3 +4,4 @@
 *.log
 /jspm_packages/
 /config.js
+/yarn.lock
