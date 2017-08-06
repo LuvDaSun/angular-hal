@@ -1,25 +1,20 @@
 /* jshint node: true */
 /* eslint-env node */
-'use strict';
+"use strict";
 
 module.exports = function(config) {
   config.set({
-    basePath: '.',
-    frameworks: ['jasmine'],
+    basePath: ".",
+    frameworks: ["jasmine"],
     files: [
-      'node_modules/angular/angular.js',
-      'node_modules/angular-mocks/angular-mocks.js',
-      'test/**/*.spec.js',
+      "node_modules/angular/angular.js",
+      "node_modules/angular-mocks/angular-mocks.js",
+      "test/**/*.spec.js"
     ],
 
-
-    reporters: [
-      'dots',
-    ],
+    reporters: ["dots"],
     preprocessors: {
-      'test/**/*.js': [
-        'webpack',
-      ],
+      "test/**/*.js": ["webpack"]
     },
 
     webpack: {
@@ -30,29 +25,26 @@ module.exports = function(config) {
             exclude: /node_modules/,
             use: [
               {
-                loader: 'babel-loader',
+                loader: "babel-loader",
                 options: {
-                  'presets': [
-                    'es2015',
-                  ],
-                },
-              },
-            ],
-          },
-        ],
-      },
+                  presets: ["es2015"]
+                }
+              }
+            ]
+          }
+        ]
+      }
     },
 
     webpackMiddleware: {
-      noInfo: true,
+      noInfo: true
     },
 
     proxies: {
-      '/local/': 'http://localhost:8080/',
+      "/local/": "http://localhost:8080/"
     },
 
     autoWatch: true,
-    browsers: ['PhantomJS'],
+    browsers: ["PhantomJS"]
   });
-
 };

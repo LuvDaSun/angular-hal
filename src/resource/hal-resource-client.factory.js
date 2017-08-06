@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-import extendReadOnly from '../utility/extend-read-only';
+import extendReadOnly from "../utility/extend-read-only";
 
 /**
  * Factory for HalResourceClient
@@ -8,7 +8,11 @@ import extendReadOnly from '../utility/extend-read-only';
  * @param {Injector} $injector Prevent Circular Dependency by injecting $injector instead of $http
  * @param {Object}   $halConfiguration
  */
-export default function HalResourceClientFactory($q, $injector, $halConfiguration) {
+export default function HalResourceClientFactory(
+  $q,
+  $injector,
+  $halConfiguration
+) {
   return HalResourceClient;
 
   /**
@@ -17,8 +21,8 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
    * @param {Object}   embedded
    */
   function HalResourceClient(resource, embedded) {
-    var self = this
-      , $http = $injector.get('$http');
+    var self = this,
+      $http = $injector.get("$http");
 
     /**
      * Initialize the client
@@ -42,7 +46,7 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
         $deleteSelf: $deleteSelf,
         $delSelf: $deleteSelf,
         $linkSelf: $linkSelf,
-        $unlinkSelf: $unlinkSelf,
+        $unlinkSelf: $unlinkSelf
       });
     })();
 
@@ -59,45 +63,51 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
     function $request(method, rel, urlParams, body, options) {
       var promises;
 
-      method = method || 'GET';
+      method = method || "GET";
       rel = rel || $halConfiguration.selfLink;
       urlParams = urlParams || {};
       body = body || null;
       options = options || {};
 
-      if(method === 'GET' &&
-         rel === $halConfiguration.selfLink) {
+      if (method === "GET" && rel === $halConfiguration.selfLink) {
         return $q.resolve(resource);
       }
 
-      if(resource.$hasEmbedded(rel) &&
-        Array.isArray(embedded[rel])) {
+      if (resource.$hasEmbedded(rel) && Array.isArray(embedded[rel])) {
         promises = [];
-        for(var i = 0; i < embedded[rel].length; i++) {
-          promises.push(embedded[rel][i].$request().$request(method, 'self', urlParams, body, options));
+        for (var i = 0; i < embedded[rel].length; i++) {
+          promises.push(
+            embedded[rel][i]
+              .$request()
+              .$request(method, "self", urlParams, body, options)
+          );
         }
         return $q.all(promises);
       }
 
-      if(resource.$hasEmbedded(rel)) {
-        return embedded[rel].$request().$request(method, 'self', urlParams, body, options);
+      if (resource.$hasEmbedded(rel)) {
+        return embedded[rel]
+          .$request()
+          .$request(method, "self", urlParams, body, options);
       }
 
-      if(resource.$hasLink(rel)) {
+      if (resource.$hasLink(rel)) {
         var url = resource.$href(rel, urlParams);
 
         angular.extend(options, {
           method: method,
-          data: body,
+          data: body
         });
 
-        if(Array.isArray(url)) {
+        if (Array.isArray(url)) {
           promises = [];
-          for(var j = 0; j < url.length; j++) {
-            promises.push($http(angular.extend({}, options, {url: url[j]})));
+          for (var j = 0; j < url.length; j++) {
+            promises.push($http(angular.extend({}, options, { url: url[j] })));
           }
           // map the HTTP responses to actual resources
-          const resources = promises.map(promise => promise.then(({ data: resource }) => resource));
+          const resources = promises.map(promise =>
+            promise.then(({ data: resource }) => resource)
+          );
           return $q.all(resources);
         }
 
@@ -117,7 +127,7 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
      * @return {Promise}
      */
     function $get(rel, urlParams, options) {
-      return $request('GET', rel, urlParams, undefined, options);
+      return $request("GET", rel, urlParams, undefined, options);
     }
 
     /**
@@ -130,14 +140,13 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
      * @return {Promise}
      */
     function $getCollection(rel, urlParams, options) {
-      return $get(rel, urlParams, options)
-        .then(resource => {
-          if (!resource.$has(rel)) {
-            return [];
-          } else {
-            return resource.$request().$get(rel);
-          }
-        });
+      return $get(rel, urlParams, options).then(resource => {
+        if (!resource.$has(rel)) {
+          return [];
+        } else {
+          return resource.$request().$get(rel);
+        }
+      });
     }
 
     /**
@@ -150,7 +159,7 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
      * @return {Promise}
      */
     function $post(rel, urlParams, body, options) {
-      return $request('POST', rel, urlParams, body, options);
+      return $request("POST", rel, urlParams, body, options);
     }
 
     /**
@@ -163,7 +172,7 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
      * @return {Promise}
      */
     function $put(rel, urlParams, body, options) {
-      return $request('PUT', rel, urlParams, body, options);
+      return $request("PUT", rel, urlParams, body, options);
     }
 
     /**
@@ -176,7 +185,7 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
      * @return {Promise}
      */
     function $patch(rel, urlParams, body, options) {
-      return $request('PATCH', rel, urlParams, body, options);
+      return $request("PATCH", rel, urlParams, body, options);
     }
 
     /**
@@ -188,7 +197,7 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
      * @return {Promise}
      */
     function $delete(rel, urlParams, options) {
-      return $request('DELETE', rel, urlParams, undefined, options);
+      return $request("DELETE", rel, urlParams, undefined, options);
     }
 
     /**
@@ -204,7 +213,7 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
       options = options || {};
       options.headers = options.headers || {};
       options.headers.Link = links.map(toStringItem);
-      return $request('LINK', rel, urlParams, undefined, options);
+      return $request("LINK", rel, urlParams, undefined, options);
     }
 
     /**
@@ -220,7 +229,7 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
       options = options || {};
       options.headers = options.headers || {};
       options.headers.Link = links.map(toStringItem);
-      return $request('UNLINK', rel, urlParams, undefined, options);
+      return $request("UNLINK", rel, urlParams, undefined, options);
     }
 
     /**
@@ -238,7 +247,7 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
      * @return {Promise}
      */
     function $getSelf(options) {
-      const fullOptions = angular.extend({}, options, {method: 'GET'});
+      const fullOptions = angular.extend({}, options, { method: "GET" });
       return performHttpRequest($halConfiguration.selfLink, {}, fullOptions);
     }
 
@@ -248,7 +257,7 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
      * @param options
      * @returns {Promise}
      */
-    function $putSelf(payload, options){
+    function $putSelf(payload, options) {
       return $put($halConfiguration.selfLink, null, payload, options);
     }
 
@@ -258,7 +267,7 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
      * @param options
      * @returns {Promise}
      */
-    function $postSelf(payload, options){
+    function $postSelf(payload, options) {
       return $post($halConfiguration.selfLink, null, payload, options);
     }
 
@@ -268,7 +277,7 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
      * @param options
      * @returns {Promise}
      */
-    function $patchSelf(payload, options){
+    function $patchSelf(payload, options) {
       return $patch($halConfiguration.selfLink, null, payload, options);
     }
 
@@ -278,7 +287,7 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
      * @param options
      * @returns {Promise}
      */
-    function $linkSelf(links, options){
+    function $linkSelf(links, options) {
       return $link($halConfiguration.selfLink, null, links, options);
     }
 
@@ -288,7 +297,7 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
      * @param options
      * @returns {Promise}
      */
-    function $unlinkSelf(links, options){
+    function $unlinkSelf(links, options) {
       return $unlink($halConfiguration.selfLink, null, links, options);
     }
 
@@ -297,7 +306,7 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
      * @param options
      * @returns {Promise}
      */
-    function $deleteSelf(options){
+    function $deleteSelf(options) {
       return $delete($halConfiguration.selfLink, null, options);
     }
 
@@ -308,17 +317,14 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
      * @param options
      * @returns {*}
      */
-    function performHttpRequest(rel, urlParams, options){
-      return $http(angular.extend({}, options, {
-        url: resource.$href(rel, urlParams),
-      })).then(({data: resource }) => resource);
+    function performHttpRequest(rel, urlParams, options) {
+      return $http(
+        angular.extend({}, options, {
+          url: resource.$href(rel, urlParams)
+        })
+      ).then(({ data: resource }) => resource);
     }
   }
 }
 
-HalResourceClientFactory.$inject = [
-  '$q',
-  '$injector',
-  '$halConfiguration',
-];
-
+HalResourceClientFactory.$inject = ["$q", "$injector", "$halConfiguration"];

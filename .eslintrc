@@ -1,5 +1,7 @@
 {
-  "extends": "eslint:recommended",
+  "extends": [
+    "prettier"
+  ],
   "env": {
     "es6": true
   },
@@ -12,27 +14,6 @@
     "fail": false,
     "it": false,
     "require": false
-  },
-  "rules": {
-    "indent": [
-      "error",
-      2,
-      {
-        "SwitchCase": 1
-      }
-    ],
-    "quotes": [
-      "error",
-      "single"
-    ],
-    "semi": [
-      "error",
-      "always"
-    ],
-    "comma-dangle": [
-      "error",
-      "always-multiline"
-    ]
   },
   "parserOptions": {
     "sourceType": "module"

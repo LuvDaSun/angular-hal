@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * @param {String}
@@ -10,19 +10,14 @@ export function noopUrlTransformer(url) {
 
 export default class HalConfigurationProvider {
   constructor() {
-    this._linksAttribute = '_links';
-    this._embeddedAttribute = '_embedded';
-    this._ignoreAttributePrefixes = [
-      '_',
-      '$',
-    ];
-    this._selfLink = 'self';
+    this._linksAttribute = "_links";
+    this._embeddedAttribute = "_embedded";
+    this._ignoreAttributePrefixes = ["_", "$"];
+    this._selfLink = "self";
     this._forceJSONResource = false;
     this._urlTransformer = noopUrlTransformer;
 
-    this.$get.$inject = [
-      '$log',
-    ];
+    this.$get.$inject = ["$log"];
   }
 
   /**
@@ -82,8 +77,10 @@ export default class HalConfigurationProvider {
    * @return {Object}
    */
   $get($log) {
-    if(this._urlTransformer !== noopUrlTransformer) {
-      $log.log('$halConfigurationProvider.setUrlTransformer is deprecated. Please write a http interceptor instead.');
+    if (this._urlTransformer !== noopUrlTransformer) {
+      $log.log(
+        "$halConfigurationProvider.setUrlTransformer is deprecated. Please write a http interceptor instead."
+      );
     }
 
     return Object.freeze({
@@ -92,7 +89,7 @@ export default class HalConfigurationProvider {
       ignoreAttributePrefixes: this._ignoreAttributePrefixes,
       selfLink: this._selfLink,
       forceJSONResource: this._forceJSONResource,
-      urlTransformer: this._urlTransformer,
+      urlTransformer: this._urlTransformer
     });
   }
 }
