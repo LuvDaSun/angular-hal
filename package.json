@@ -30,9 +30,10 @@
     "babelify": "^7.2.0",
     "browserify": "^14.4.0",
     "eslint": "^4.4.0",
+    "eslint-config-prettier": "^2.3.0",
+    "eslint-plugin-prettier": "^2.1.2",
+    "husky": "^0.14.3",
     "jasmine-core": "^2.4.1",
-    "jshint": "^2.9.2",
-    "jshint-stylish": "^2.1.0",
     "jspm": "^0.16.33",
     "karma": "^1.7.0",
     "karma-browserify": "^5.0.3",
@@ -40,7 +41,9 @@
     "karma-jspm": "^2.1.0",
     "karma-phantomjs-launcher": "^1.0.0",
     "karma-webpack": "^2.0.4",
+    "lint-staged": "^4.0.2",
     "phantomjs-prebuilt": "^2.1.4",
+    "prettier": "^1.5.3",
     "uglifyify": "^4.0.3",
     "watchify": "^3.7.0",
     "webpack": "^3.4.1"
@@ -50,7 +53,6 @@
     "build:prod": "./node_modules/.bin/browserify src/index.js -o dist/angular-hal.min.js  -t [ babelify --presets [ es2015 ] ] -t [ uglifyify --mangle --compress [ --sequences --dead_code --booleans ] ] -g [ uglifyify --mangle --compress [ --sequences --dead_code --booleans ] ] --s angularHal",
     "build:watch": "./node_modules/.bin/watchify src/index.js -o dist/angular-hal.map.js  -t [ babelify --presets [ es2015 ] ] --s angularHal -d -v",
     "compile": "echo Build Dev; npm run build:dev; echo Build Prod; npm run build:prod;",
-    "jshint": "./node_modules/.bin/jshint .",
     "eslint": "./node_modules/.bin/eslint .",
     "karma:browserify:single": "./node_modules/.bin/karma start karma.browserify.conf.js --single-run",
     "karma:browserify:watch": "./node_modules/.bin/karma start karma.browserify.conf.js",
@@ -59,7 +61,15 @@
     "karma:webpack:single": "./node_modules/.bin/karma start karma.webpack.conf.js --single-run",
     "karma:webpack:watch": "./node_modules/.bin/karma start karma.webpack.conf.js",
     "karma:single": "npm run karma:browserify:single && npm run karma:jspm:single && npm run karma:webpack:single",
-    "test": "npm run karma:single && npm run jshint && npm run eslint"
+    "test": "npm run karma:single && npm run eslint",
+    "format": "prettier --single-quote --trailing-comma --write \"**/*.js\" && prettier --single-quote --trailing-comma --write \"*.js\"",
+    "precommit": "lint-staged && npm run compile"
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "jspm": {
     "dependencies": {
