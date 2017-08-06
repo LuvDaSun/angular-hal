@@ -22,7 +22,7 @@ describe('special attribute names', function () {
   });
 
 
-  it('should get embedde item resource', function () {
+  it('should get embedded item resource', function () {
     $httpBackend
       .expect('GET', '/')
       .respond({

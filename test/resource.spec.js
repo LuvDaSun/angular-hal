@@ -21,8 +21,8 @@ describe('resource', function () {
   it('should be read-only', function() {
     this.$http
       .get('/test')
-      .then(response => {
-        expect(() => response.some = 'change').toThrow();
+      .then(({data: resource }) => {
+        expect(() => resource.some = 'change').toThrow();
       });
     this.$httpBackend.flush();
   });

@@ -96,7 +96,9 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
           for(var j = 0; j < url.length; j++) {
             promises.push($http(angular.extend({}, options, {url: url[j]})));
           }
-          return $q.all(promises);
+          // map the HTTP responses to actual resources
+          const resources = promises.map(promise => promise.then(({ data: resource }) => resource));
+          return $q.all(resources);
         }
 
         return performHttpRequest(rel, urlParams, options);
@@ -309,7 +311,7 @@ export default function HalResourceClientFactory($q, $injector, $halConfiguratio
     function performHttpRequest(rel, urlParams, options){
       return $http(angular.extend({}, options, {
         url: resource.$href(rel, urlParams),
-      }));
+      })).then(({data: resource }) => resource);
     }
   }
 }

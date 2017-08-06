@@ -55,7 +55,7 @@ describe('special attribute names', function () {
       .respond({});
 
     $http({url: '/'})
-      .then(function(resource) {
+      .then(function({ data: resource }) {
         expect(resource.$href('multiString')).toEqual([
           '/link/string1',
           '/link/string2',
