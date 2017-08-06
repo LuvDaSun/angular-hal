@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * Link Header
@@ -18,7 +18,7 @@ export default class LinkHeader {
         hreflang: null,
         media: null,
         title: null,
-        type: null,
+        type: null
       },
       linkParams
     );
@@ -27,21 +27,21 @@ export default class LinkHeader {
    * @return {String}
    */
   toString() {
-    var result = '<' + this.uriReference + '>'
-      , params = [];
+    var result = "<" + this.uriReference + ">",
+      params = [];
 
-    for(let paramName in this.linkParams) {
+    for (let paramName in this.linkParams) {
       let paramValue = this.linkParams[paramName];
-      if(paramValue) {
+      if (paramValue) {
         params.push(paramName + '="' + paramValue + '"');
       }
     }
 
-    if(params.length < 1) {
+    if (params.length < 1) {
       return result;
     }
 
-    result = result + ';' + params.join(';');
+    result = result + ";" + params.join(";");
 
     return result;
   }

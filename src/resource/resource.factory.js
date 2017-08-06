@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
-import extendReadOnly from '../utility/extend-read-only';
-import defineReadOnly from '../utility/define-read-only';
-import generateUrl from '../utility/generate-url';
-import normalizeLink from '../utility/normalize-link';
+import extendReadOnly from "../utility/extend-read-only";
+import defineReadOnly from "../utility/define-read-only";
+import generateUrl from "../utility/generate-url";
+import normalizeLink from "../utility/normalize-link";
 
 /**
  * Factory for Resource
@@ -12,7 +12,11 @@ import normalizeLink from '../utility/normalize-link';
  * @param {Object}   $halConfiguration
  * @param {Log}      $log
  */
-export default function ResourceFactory(HalResourceClient, $halConfiguration, $log) {
+export default function ResourceFactory(
+  HalResourceClient,
+  $halConfiguration,
+  $log
+) {
   return Resource;
 
   /**
@@ -20,17 +24,16 @@ export default function ResourceFactory(HalResourceClient, $halConfiguration, $l
    * @param {Object} response
    */
   function Resource(data, response) {
-    var self = this
-      , links = {}
-      , embedded = {}
-      , client;
+    var self = this,
+      links = {},
+      embedded = {},
+      client;
 
     /**
      * Initialize the Resource
      */
     (function init() {
-      if(typeof data !== 'object' ||
-        data === null) {
+      if (typeof data !== "object" || data === null) {
         data = {};
       }
       initializeData();
@@ -46,7 +49,7 @@ export default function ResourceFactory(HalResourceClient, $halConfiguration, $l
         $meta: $meta,
         $link: $link,
         $request: $request,
-        $response: $response,
+        $response: $response
       });
     })();
 
@@ -54,11 +57,11 @@ export default function ResourceFactory(HalResourceClient, $halConfiguration, $l
      * Add all data from data to itself
      */
     function initializeData() {
-      for(var propertyName in data) {
-        if(!data.hasOwnProperty(propertyName)) {
+      for (var propertyName in data) {
+        if (!data.hasOwnProperty(propertyName)) {
           continue;
         }
-        if(isMetaProperty(propertyName)) {
+        if (isMetaProperty(propertyName)) {
           continue;
         }
         defineReadOnly(self, propertyName, data[propertyName]);
@@ -69,31 +72,31 @@ export default function ResourceFactory(HalResourceClient, $halConfiguration, $l
      * Normalize all Links
      */
     function initializeLinks() {
-      if(typeof data[$halConfiguration.linksAttribute] !== 'object') {
+      if (typeof data[$halConfiguration.linksAttribute] !== "object") {
         return;
       }
 
-      Object
-        .keys(data[$halConfiguration.linksAttribute])
-        .forEach(function(rel) {
-          var link = data[$halConfiguration.linksAttribute][rel];
-          links[rel] = normalizeLink(response.config.url, link);
-        });
+      Object.keys(data[$halConfiguration.linksAttribute]).forEach(function(
+        rel
+      ) {
+        var link = data[$halConfiguration.linksAttribute][rel];
+        links[rel] = normalizeLink(response.config.url, link);
+      });
     }
 
     /**
      * Normalize Embedded Contents
      */
     function initializeEmbedded() {
-      if(typeof data[$halConfiguration.embeddedAttribute] !== 'object') {
+      if (typeof data[$halConfiguration.embeddedAttribute] !== "object") {
         return;
       }
 
-      Object
-        .keys(data[$halConfiguration.embeddedAttribute])
-        .forEach(function(rel) {
-          embedResource(rel, data[$halConfiguration.embeddedAttribute][rel]);
-        });
+      Object.keys(data[$halConfiguration.embeddedAttribute]).forEach(function(
+        rel
+      ) {
+        embedResource(rel, data[$halConfiguration.embeddedAttribute][rel]);
+      });
     }
 
     /**
@@ -112,7 +115,7 @@ export default function ResourceFactory(HalResourceClient, $halConfiguration, $l
     function embedResource(rel, resources) {
       if (Array.isArray(resources)) {
         embedded[rel] = [];
-        resources.forEach(function (resource) {
+        resources.forEach(function(resource) {
           embedded[rel].push(new Resource(resource, response));
         });
         return;
@@ -126,12 +129,21 @@ export default function ResourceFactory(HalResourceClient, $halConfiguration, $l
      * @return {Boolean}
      */
     function isMetaProperty(propertyName) {
-      for(var i = 0; i < $halConfiguration.ignoreAttributePrefixes.length; i++) {
-        if(propertyName.substr(0, 1) === $halConfiguration.ignoreAttributePrefixes[i]) {
+      for (
+        var i = 0;
+        i < $halConfiguration.ignoreAttributePrefixes.length;
+        i++
+      ) {
+        if (
+          propertyName.substr(0, 1) ===
+          $halConfiguration.ignoreAttributePrefixes[i]
+        ) {
           return true;
         }
-        if(propertyName === $halConfiguration.linksAttribute ||
-          propertyName === $halConfiguration.embeddedAttribute) {
+        if (
+          propertyName === $halConfiguration.linksAttribute ||
+          propertyName === $halConfiguration.embeddedAttribute
+        ) {
           return true;
         }
       }
@@ -143,7 +155,7 @@ export default function ResourceFactory(HalResourceClient, $halConfiguration, $l
      * @return {Boolean}
      */
     function $hasLink(rel) {
-      return typeof links[rel] !== 'undefined';
+      return typeof links[rel] !== "undefined";
     }
 
     /**
@@ -151,7 +163,7 @@ export default function ResourceFactory(HalResourceClient, $halConfiguration, $l
      * @return {Boolean}
      */
     function $hasEmbedded(rel) {
-      return typeof embedded[rel] !== 'undefined';
+      return typeof embedded[rel] !== "undefined";
     }
 
     /**
@@ -170,24 +182,22 @@ export default function ResourceFactory(HalResourceClient, $halConfiguration, $l
      * @return {String}
      */
     function $href(rel, parameters) {
-      var link = $link(rel)
-        , href = link.href;
+      var link = $link(rel),
+        href = link.href;
 
-      if(Array.isArray(link)) {
+      if (Array.isArray(link)) {
         href = [];
-        for(var i = 0; i < link.length; i++) {
-          var subLink = link[i]
-            , subHref = subLink.href;
-          if(typeof subLink.templated !== 'undefined' &&
-            subLink.templated) {
+        for (var i = 0; i < link.length; i++) {
+          var subLink = link[i],
+            subHref = subLink.href;
+          if (typeof subLink.templated !== "undefined" && subLink.templated) {
             subHref = generateUrl(subLink.href, parameters);
           }
           subHref = $halConfiguration.urlTransformer(subHref);
           href.push(subHref);
         }
       } else {
-        if(typeof link.templated !== 'undefined' &&
-          link.templated) {
+        if (typeof link.templated !== "undefined" && link.templated) {
           href = generateUrl(link.href, parameters);
         }
 
@@ -206,13 +216,15 @@ export default function ResourceFactory(HalResourceClient, $halConfiguration, $l
      * @return {Object}
      */
     function $link(rel) {
-      if(!$hasLink(rel)) {
+      if (!$hasLink(rel)) {
         throw new Error('link "' + rel + '" is undefined');
       }
       var link = links[rel];
 
-      if(typeof link.deprecation !== 'undefined') {
-        $log.warn(`The link "${rel}" is marked as deprecated with the value "${link.deprecation}".`);
+      if (typeof link.deprecation !== "undefined") {
+        $log.warn(
+          `The link "${rel}" is marked as deprecated with the value "${link.deprecation}".`
+        );
       }
 
       return link;
@@ -229,7 +241,11 @@ export default function ResourceFactory(HalResourceClient, $halConfiguration, $l
      * @return {Object}
      */
     function $meta(name) {
-      for(var i = 0; i < $halConfiguration.ignoreAttributePrefixes.length; i++) {
+      for (
+        var i = 0;
+        i < $halConfiguration.ignoreAttributePrefixes.length;
+        i++
+      ) {
         var fullName = $halConfiguration.ignoreAttributePrefixes[i] + name;
         return data[fullName];
       }
@@ -254,8 +270,4 @@ export default function ResourceFactory(HalResourceClient, $halConfiguration, $l
     }
   }
 }
-ResourceFactory.$inject = [
-  'HalResourceClient',
-  '$halConfiguration',
-  '$log',
-];
+ResourceFactory.$inject = ["HalResourceClient", "$halConfiguration", "$log"];

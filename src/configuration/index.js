@@ -1,16 +1,12 @@
-'use strict';
+"use strict";
 
-const MODULE_NAME = 'angular-hal.configuration';
+const MODULE_NAME = "angular-hal.configuration";
 
-
-
-import HalConfigurationProvider from './hal-configuration.provider';
+import HalConfigurationProvider from "./hal-configuration.provider";
 
 // Add module for configuration
 angular
   .module(MODULE_NAME, [])
-
-  .provider('$halConfiguration', HalConfigurationProvider)
-;
+  .provider("$halConfiguration", HalConfigurationProvider);
 
 export default MODULE_NAME;

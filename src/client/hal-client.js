@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * @deprecated The halClient service is deprecated. Please use $http directly instead.
@@ -17,47 +17,50 @@ export default class HalClient {
     this.LinkHeader = LinkHeader;
   }
   $get(href, options) {
-    return this.$request('GET', href, options);
+    return this.$request("GET", href, options);
   }
   $post(href, options, data) {
-    return this.$request('POST', href, options, data);
+    return this.$request("POST", href, options, data);
   }
   $put(href, options, data) {
-    return this.$request('PUT', href, options, data);
+    return this.$request("PUT", href, options, data);
   }
   $patch(href, options, data) {
-    return this.$request('PATCH', href, options, data);
+    return this.$request("PATCH", href, options, data);
   }
   $delete(href, options) {
-    return this.$request('DELETE', href, options);
+    return this.$request("DELETE", href, options);
   }
   $link(href, options, linkHeaders) {
     options = options || {};
     options.headers = options.headers || {};
-    options.headers.Link = linkHeaders.map(function(link) { return link.toString(); });
-    return this.$request('LINK', href, options);
+    options.headers.Link = linkHeaders.map(function(link) {
+      return link.toString();
+    });
+    return this.$request("LINK", href, options);
   }
   $unlink(href, options, linkHeaders) {
     options = options || {};
     options.headers = options.headers || {};
-    options.headers.Link = linkHeaders.map(function(link) { return link.toString(); });
-    return this.$request('UNLINK', href, options);
+    options.headers.Link = linkHeaders.map(function(link) {
+      return link.toString();
+    });
+    return this.$request("UNLINK", href, options);
   }
   $request(method, href, options, data) {
     options = options || {};
-    this._$log.log('The halClient service is deprecated. Please use $http directly instead.');
-    return this._$http(angular.extend({}, options, {
-      method: method,
-      url: this._$halConfiguration.urlTransformer(href),
-      data: data,
-    })).then(({ data: resource }) => resource);
+    this._$log.log(
+      "The halClient service is deprecated. Please use $http directly instead."
+    );
+    return this._$http(
+      angular.extend({}, options, {
+        method: method,
+        url: this._$halConfiguration.urlTransformer(href),
+        data: data
+      })
+    ).then(({ data: resource }) => resource);
   }
 }
 
 // Inject Dependencies
-HalClient.$inject = [
-  '$log',
-  '$http',
-  'LinkHeader',
-  '$halConfiguration',
-];
+HalClient.$inject = ["$log", "$http", "LinkHeader", "$halConfiguration"];

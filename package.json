@@ -63,7 +63,7 @@
     "karma:single": "npm run karma:browserify:single && npm run karma:jspm:single && npm run karma:webpack:single",
     "test": "npm run karma:single && npm run eslint",
     "format": "prettier --single-quote --trailing-comma --write \"**/*.js\" && prettier --single-quote --trailing-comma --write \"*.js\"",
-    "precommit": "lint-staged && npm run compile"
+    "precommit": "lint-staged && npm run compile && git add dist"
   },
   "lint-staged": {
     "*.js": [

@@ -1,6 +1,6 @@
-'use strict';
+"use strict";
 
-import resolveUrl from '../utility/resolve-url';
+import resolveUrl from "../utility/resolve-url";
 
 /**
  * @param {String} baseUrl
@@ -9,28 +9,28 @@ import resolveUrl from '../utility/resolve-url';
  */
 export default function normalizeLink(baseUrl, link) {
   if (Array.isArray(link)) {
-    return link.map(function (item) {
+    return link.map(function(item) {
       return normalizeLink(baseUrl, item);
     });
   }
-  if(typeof link === 'string') {
+  if (typeof link === "string") {
     return {
-      href: resolveUrl(baseUrl, link),
+      href: resolveUrl(baseUrl, link)
     };
   }
-  if(typeof link.href === 'string') {
+  if (typeof link.href === "string") {
     link.href = resolveUrl(baseUrl, link.href);
     return link;
   }
-  if(Array.isArray(link.href)) {
-    return link.href.map(function (href) {
+  if (Array.isArray(link.href)) {
+    return link.href.map(function(href) {
       var newLink = angular.extend({}, link, {
-        href: href,
+        href: href
       });
       return normalizeLink(baseUrl, newLink);
     });
   }
   return {
-    href: baseUrl,
+    href: baseUrl
   };
 }
