@@ -10,3 +10,53 @@ npm install angular-hal --save
 ```
 
 [Check our Documentation](http://angular-hal.io/)
+
+## Versions
+
+### 3.0.0
+
+Version 3.0.0 includes a breaking change: the response interceptor no longer returns a Resource, instead it returns an Angular `$http` response object.
+This only affects consuming code when using the `$http` service directly.
+
+To migrate from 2.x to 3.x, make the following change to your code:
+
+```js
+const halConfig = {
+    headers: {
+        'Accept': 'application/hal+json'
+    }
+};
+
+// 2.x
+$http.get('/api/users', halConfig).then(function (resource) {
+  console.log(resource.$hasEmbedded('users')); // true    
+});
+
+// 3.x
+$http.get('/api/users', halConfig).then(function (response) {
+  const resource = response.data;  
+  console.log(resource.$hasEmbedded('users')); // true    
+});
+
+// 3.x with ES6
+$http.get('/api/users', halConfig).then(({ data: resource }) => {
+  console.log(resource.$hasEmbedded('users')); // true    
+});
+```
+
+Other integrations points are **unchanged**. For example, using `halResourceClient`:
+
+```js
+let $apiRoot;
+
+$http.get('/api', halConfig)
+  .then(function (response) {
+    $apiRoot = response.data;   
+  });
+
+// later
+$apiRoot.$request().$get('users')
+  .then(function (resource) {
+    console.log(resource.$hasEmbedded('users')); // true    
+  });
+```
